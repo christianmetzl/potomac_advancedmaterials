@@ -7,6 +7,29 @@ do not retroactively soften the success criteria below to match whatever comes o
 
 ---
 
+## 0. Reproducibility finding (2026-06) — amends §6–§7 *before* any transfer result was read
+
+Diagnostics on the shipped GQE machinery in a clean environment:
+
+- **Random search**, 4000 circuits (len-8) over the fixed UCC/discrete-angle pool: best **53 mHa**
+  (H6) / **45 mHa** (CO). The action space *cannot sample chemical accuracy*.
+- **GPT-QE stage-1**, proper budget (batch 128, 120 it): mean generated energy **118 → 55 mHa**
+  (genuine learning — the distribution shifts), best **31 mHa**. The transformer learns, but the
+  discrete-angle ceiling is ~30 mHa.
+- **No stage-2** (adjoint-gradient angle refinement) exists in the code — every `.backward()` trains
+  the transformer, none refines circuit angles. The standalone "two-stage GQE" numbers in the
+  knowledge-transfer doc (H6 0.298 mHa) are **not reproducible from the repo** (and their evidence
+  JSON is absent).
+- **What is reproducible:** chemical accuracy comes from the **QSCI** step.
+  `gqe_qsci_evidence.json`: raw GQE 51 mHa → QSCI **1.05 mHa**.
+
+**Consequence:** the original §7 bar ("conditioned reaches 1.6 mHa in ≤½ the evals") assumed raw GQE
+reaches chemical accuracy; it does not. §6–§7 are revised to measure transfer on the quantity where
+the learning actually lives (generator quality) plus the QSCI accuracy endpoint. This amendment was
+made before any transfer (B0/B1/conditioned) comparison was run.
+
+---
+
 ## 1. Why this exists
 
 The Phase-2 honest scoring (`docs/KNOWLEDGE_TRANSFER.md` §11) puts the binding constraint on
@@ -88,25 +111,33 @@ The GQE objective (sign/scale of the logit-sum↔energy regression) is fixed and
 on a single molecule before any transfer numbers are taken (the existing repo code's sign is checked,
 not assumed).
 
-## 6. Metrics (all traceable to a JSON in `results/encoder/`)
+## 6. Metrics (revised per §0; all traceable to a JSON in `results/encoder/`)
 
-1. **Transfer curve** — error to FCI (mHa) vs. number of circuit evaluations, for B0 / B1 / conditioned.
-   This is the headline figure.
-2. **Evaluations-to-chemical-accuracy** — circuit evaluations to first reach 1.6 mHa (∞ if not reached
-   in budget), per method.
-3. **Zero-shot error** — conditioned vs. B1 with no fine-tuning (isolates the conditioning signal).
-4. **Final integrated energy** — best conditioned circuit run through the real QSCI step
-   (sample determinants → diagonalize, as in `gqe_qsci.py`), reported in mHa to FCI.
+The encoder conditions the **generator**, so transfer is measured on generator quality (where the
+learning lives), with QSCI providing the chemical-accuracy endpoint.
 
-## 7. Pre-registered success criteria
+1. **Zero-shot transfer (primary, isolates the encoder)** — after joint pre-training on the light
+   monoxides, feed held-out SnO's descriptor and generate circuits with **no SnO training**. Compare
+   mean and best raw GQE energy (mHa to FCI) of conditioned vs. B1 (warm-start, no descriptor) vs.
+   random. Conditioned − B1 is the pure conditioning effect.
+2. **Few-shot transfer curve** — raw GQE best/mean (mHa to FCI) vs. number of SnO circuit evaluations,
+   for B0 / B1 / conditioned. Report evaluations to reach a fixed target (the raw-energy level B0
+   attains at full budget) per method.
+3. **Chemical-accuracy endpoint** — best conditioned circuits → QSCI (sample determinants →
+   diagonalize, as in `gqe_qsci.py`) → energy in mHa to FCI on SnO.
 
-- **PASS (claimable):** on held-out SnO, conditioned reaches 1.6 mHa in **≤ ½** the circuit
-  evaluations of B0, **and** beats B1 (warm-start) on both evaluations-to-accuracy and zero-shot error.
-- **WEAK (report, don't headline):** conditioned beats B0 but not B1 — i.e., transfer helps but the
-  *conditioning* adds little over plain weight reuse. We would say MP2 conditioning is not yet
-  carrying its weight and propose the richer (token-level / GNN) variant.
-- **FAIL (do not claim):** conditioned does not beat B0. Report the negative result and the likely
-  cause (too few molecules, descriptor uninformative, scale too small to show headroom).
+## 7. Pre-registered success criteria (revised per §0)
+
+- **PASS (claimable):** on held-out SnO, conditioned beats B1 (warm-start) on **zero-shot** mean/best
+  raw energy, **and** reaches the fixed raw-energy target in **fewer** SnO evaluations than both B0
+  and B1, with QSCI delivering chemical accuracy on the conditioned circuits.
+- **WEAK (report, don't headline):** conditioned beats B0 but is statistically tied with B1 — transfer
+  helps but MP2 conditioning adds little over plain weight reuse. We say so and propose the richer
+  (token-level MP2 prior / GNN) variant.
+- **FAIL (do not claim):** conditioned does not beat B0. Report the negative result and likely cause
+  (too few molecules, descriptor uninformative, scale too small for headroom).
+
+Single-seed results are reported with that caveat; multi-seed error bars are added if compute allows.
 
 The criteria are fixed **before** the run. Whatever the outcome, it goes in the results JSON and is
 reported to the team verbatim.
