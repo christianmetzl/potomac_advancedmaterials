@@ -20,4 +20,8 @@ Both reach chemical accuracy vs the CASCI reference. Reproduce with: `python tra
 ## Recommendation
 - Do **not** put a 38q CrO/NiO claim in any Phase 3 deliverable unless it is produced on the GPUs with shipped code that reruns clean.
 - If you want transition-metal evidence now, **these honest 20q results are real and reproducible** and can be added to the repo as such.
-- The submitted paper's §2 already uses SnO/SnO₂ (16q/20q), which also reproduces — so the paper does not depend on CrO/NiO at all.
+- ~~The submitted paper's §2 already uses SnO/SnO₂ (16q/20q)… so the paper does not depend on CrO/NiO at all.~~
+  **CORRECTION (2026-06-21):** Christian confirmed the *AdvancedMaterials* version was submitted to Aqora —
+  it **does** assert "CrO ⁵Π / NiO ³Σ⁻, 38q, ≤0.08 mHa" in §2. So the finalist paper **does** depend on a
+  CrO/NiO claim that is not reproducible (38q does not exist; NiO is 0.197 mHa at 20q). See
+  `docs/paper_version_discrepancy.md` for the resolution and Phase 3 options.
