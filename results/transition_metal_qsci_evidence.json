@@ -1,0 +1,24 @@
+[
+  {
+    "system": "CrO",
+    "term_symbol": "5-Pi (quintet)",
+    "qubits": 20,
+    "active_space": "CAS(10,10)",
+    "n_pauli_terms": 3727,
+    "CASCI_energy_Ha": -1117.8916405549203,
+    "qsci_best_err_mHa": 0.038,
+    "NOT_38q": true,
+    "note": "tractable 20-qubit demonstration; not the 38q <=0.08 mHa claim"
+  },
+  {
+    "system": "NiO",
+    "term_symbol": "3-Sigma- (triplet)",
+    "qubits": 20,
+    "active_space": "CAS(10,10)",
+    "n_pauli_terms": 4823,
+    "CASCI_energy_Ha": -1581.3542558577406,
+    "qsci_best_err_mHa": 0.197,
+    "NOT_38q": true,
+    "note": "tractable 20-qubit demonstration; not the 38q <=0.08 mHa claim"
+  }
+]

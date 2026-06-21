@@ -1,0 +1,32 @@
+[
+  {
+    "system": "H2",
+    "qubits": 4,
+    "HF": -1.1253721946437514,
+    "FCI": -1.1459398102958875,
+    "stage2_energy": -1.1459398109223913,
+    "err_mHa": 0.0,
+    "n_params": 3,
+    "method": "stage-2 adjoint-gradient VQE (UCCSD operator structure)"
+  },
+  {
+    "system": "H4",
+    "qubits": 8,
+    "HF": -2.1158272217230594,
+    "FCI": -2.1568572982997023,
+    "stage2_energy": -2.156848395796597,
+    "err_mHa": 0.009,
+    "n_params": 26,
+    "method": "stage-2 adjoint-gradient VQE (UCCSD operator structure)"
+  },
+  {
+    "system": "H6",
+    "qubits": 12,
+    "HF": -3.1080990925971665,
+    "FCI": -3.1705047974375695,
+    "stage2_energy": -3.1702073031774267,
+    "err_mHa": 0.297,
+    "n_params": 117,
+    "method": "stage-2 adjoint-gradient VQE (UCCSD operator structure)"
+  }
+]
