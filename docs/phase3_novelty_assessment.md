@@ -21,9 +21,11 @@ means for the Phase-3 novelty story.
   **45 mHa** (CO). The action space cannot *sample* chemical accuracy.
 - The GPT-QE transformer genuinely **learns** (mean generated energy 118 → 55 mHa with a real budget),
   but tops out ~**31 mHa** — the discrete-angle ceiling.
-- There is **no stage-2** (adjoint-gradient angle refinement) in the repo; every `.backward()` trains
-  the transformer. The standalone "two-stage GQE" sub-mHa numbers in the transfer doc are **not
-  reproducible from the shipped code** (their evidence JSON is absent).
+- ~~There is **no stage-2** (adjoint-gradient angle refinement) in the repo... their evidence JSON is
+  absent.~~ **[Corrected 2026-06-21]** Outdated: commit `4e9e319` imported `src/stage2_refinement.py`
+  and `results/stage2_refinement_evidence.json`, and the 2026-06-21 reproducibility audit reruns them
+  exactly (H2 0.000, H4 0.009, H6 0.297 mHa). Stage-2 is present and reproducible. The transferred
+  sub-mHa stage-2 numbers therefore *do* have shipped, rerunnable code.
 - **What is reproducible:** chemical accuracy comes from the **QSCI** step. `gqe_qsci_evidence.json`:
   raw GQE 51 mHa → QSCI **1.05 mHa** (H6, 12q). QSCI is the workhorse.
 
