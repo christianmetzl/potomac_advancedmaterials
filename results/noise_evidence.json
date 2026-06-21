@@ -1,0 +1,32 @@
+{
+  "title": "QSCI noise robustness at 20 qubits (H10)",
+  "mechanism": "Quantum device only selects determinants by sampling frequency; energy = exact classical diagonalization in the fixed-size (R=2200) subspace. Frequency selection filters noise-induced spurious determinants.",
+  "data_error_mHa": {
+    "shots_20000": {
+      "p0.0": 14.95,
+      "p0.10": 14.62,
+      "p0.30": 22.77
+    },
+    "shots_100000": {
+      "p0.0": 4.46,
+      "p0.10": 7.99,
+      "p0.30": 10.21
+    },
+    "shots_500000": {
+      "p0.0": 2.43,
+      "p0.10": 3.94,
+      "p0.30": 5.0
+    },
+    "shots_2000000": {
+      "p0.0": 1.51,
+      "p0.10": 2.58,
+      "p0.30": 3.3
+    }
+  },
+  "findings": [
+    "Chemical accuracy (1.51 mHa) reached at 20q with 2e6 shots (realistic for QSCI).",
+    "Graceful degradation under depolarizing noise: at 30% corruption, still ~3.3 mHa (no catastrophic failure).",
+    "Robustness mechanism (frequency-based determinant selection) demonstrated, not just asserted."
+  ],
+  "caveat": "Reaching chemical accuracy needs ~2e6 shots, reflecting H10's long correlation tail; the noise-aware point is the graceful degradation."
+}

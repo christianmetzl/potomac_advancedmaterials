@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.npy
+*.pkl
+*.log
+.DS_Store
+hamlib_real/

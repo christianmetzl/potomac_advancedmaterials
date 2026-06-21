@@ -1,0 +1,11 @@
+pyscf
+openfermion
+openfermionpyscf
+h5py
+pennylane
+pennylane-lightning
+torch
+quimb
+block2
+scipy
+numpy

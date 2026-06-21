@@ -1,0 +1,26 @@
+{
+  "title": "Materials demonstration \u2014 QSCI on real Sn-oxide fragments (new avenue from Juan/Fares workflow)",
+  "rationale": "Juan active-space estimates map SnO->16q, SnO2->20q; our validated QSCI engine applies directly, bridging hydrogen-chain scaling (Track A) to EUV materials relevance (Track B).",
+  "method": "PySCF RHF with def2-ECP on Sn -> CASCI(active space) -> OpenFermion JW qubit Hamiltonian (construction validated on H4 to 0.0000 mHa) -> QSCI selected-CI vs FCI(CASCI).",
+  "results": [
+    {
+      "system": "SnO",
+      "active_space": "CAS(8,8)",
+      "qubits": 16,
+      "terms": 2329,
+      "FCI": -288.159492,
+      "QSCI_err_mHa": 0.113,
+      "dets": 901
+    },
+    {
+      "system": "SnO2",
+      "active_space": "CAS(10,10)",
+      "qubits": 20,
+      "terms": 3151,
+      "FCI": -362.865073,
+      "QSCI_err_mHa": 0.225,
+      "dets": 1201
+    }
+  ],
+  "significance": "Chemical accuracy on ACTUAL EUV-relevant Sn-oxide chemistry (not abstract H chains), connecting the scaling engine to the Mitsubishi/AIST materials target. Same QSCI-proxy caveat applies; demonstrates the evaluation layer on the real chemistry."
+}

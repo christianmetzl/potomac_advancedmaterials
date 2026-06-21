@@ -1,0 +1,73 @@
+{
+  "title": "MATGEN-Q Phase 2 \u2014 Demonstrated Results & Scaling Boundary (verified, CPU)",
+  "pipeline": "HamLib-format Hamiltonian (PySCF+OpenFermion, validated against published HamLib files) -> PennyLane -> two-stage GQE (generative structure discovery + continuous angle refinement)",
+  "demonstrated_chemical_accuracy": [
+    {
+      "system": "H2",
+      "qubits": 4,
+      "method": "pure GQE",
+      "err_mHa": 0.146,
+      "corr_pct": 99.3,
+      "chem_acc": true
+    },
+    {
+      "system": "H4",
+      "qubits": 8,
+      "method": "GQE + refinement",
+      "err_mHa": 0.009,
+      "corr_pct": 100.0,
+      "chem_acc": true
+    },
+    {
+      "system": "H6",
+      "qubits": 12,
+      "method": "GQE + refinement",
+      "err_mHa": 0.298,
+      "corr_pct": 99.5,
+      "chem_acc": true
+    }
+  ],
+  "scaling_boundary_cpu": {
+    "description": "Hamiltonian-expectation eval cost (lightning.qubit, single statevector eval) \u2014 the CPU bottleneck",
+    "measurements": [
+      {
+        "system": "H6",
+        "qubits": 12,
+        "terms": 919,
+        "ms_per_eval": 42,
+        "gqe_iter_s": 8,
+        "status": "feasible"
+      },
+      {
+        "system": "H8",
+        "qubits": 16,
+        "terms": 2913,
+        "ms_per_eval": 1347,
+        "gqe_iter_s": 259,
+        "status": "edge of feasibility"
+      },
+      {
+        "system": "H10",
+        "qubits": 20,
+        "terms": 7151,
+        "ms_per_eval": 88500,
+        "gqe_iter_s": 17000,
+        "status": "CPU-prohibitive"
+      }
+    ],
+    "growth": "~2100x eval-cost increase from 12 to 20 qubits, driven by exponential statevector dimension x growing Pauli-term count",
+    "implication": "Exact statevector GQE training is CPU-bound at ~16 qubits. Reaching 20-40 qubits requires GPU acceleration + tensor-network (MPS) simulation."
+  },
+  "resource_justification_phase3": {
+    "bottleneck": "Hamiltonian-expectation evaluation cost at scale (memory + term count). Exact statevector at 40q ~ 16 TB; infeasible.",
+    "request": [
+      "NVIDIA A100 80GB or H100 GPUs with CUDA-Q SDK",
+      "tensornet-mps backend for 24-40 qubit tier (memory scales with entanglement, not 2^n)",
+      "cuStateVec exact for validation up to ~32 qubits",
+      "1 high-memory GPU sufficient for MPS; 4-8 GPUs (NVLink) for parallel circuit eval (Pillar 4) + >40q bonus attempt",
+      "qBraid platform access for hardware validation at 10-16 qubits",
+      "~2 weeks GPU wall-clock for pre-training + scaling sweep + benchmarking"
+    ]
+  },
+  "validation": "Hamiltonians verified term-for-term and spectrally against published HamLib files (ground-state agreement 0.00000 mHa for H2/H4/H6). HamLib contains no reference energies; FCI(<=20q)/CCSD(T)(<=40q) computed first-principles by our reproducible pipeline."
+}

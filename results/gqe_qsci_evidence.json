@@ -1,0 +1,15 @@
+{
+  "system": "H6",
+  "qubits": 12,
+  "FCI": -3.1705047974375766,
+  "HF": -3.108099092597162,
+  "GQE_expectation": -3.1190425899563348,
+  "GQE_err_mHa": 51.462,
+  "GQE_to_QSCI": -3.169451116392901,
+  "GQE_to_QSCI_err_mHa": 1.054,
+  "distinct_dets_pooled": 141,
+  "dets_used": 141,
+  "n_gqe_circuits": 161,
+  "shots_per_circuit": 2500,
+  "note": "GPT-QE generated the circuit; QSCI sampled determinants from that state (qml.sample) and diagonalized. Real integrated pipeline, not perturbative selection."
+}

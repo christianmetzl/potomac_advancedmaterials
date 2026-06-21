@@ -1,0 +1,39 @@
+{
+  "title": "Validation against real HamLib files at 28, 32, 40 qubits (R=0.70 STO-6G, ham_JW)",
+  "source": "HamLib (Sawaya et al.), NERSC portal; files provided by user",
+  "systems": {
+    "H14_28q": {
+      "terms_ours": 27735,
+      "terms_hamlib": 27735,
+      "match": true,
+      "onenorm_ours": 151.39933003406128,
+      "onenorm_hamlib": 151.39933003406185,
+      "onenorm_diff": 5.7e-13,
+      "pauli_sets_identical": true,
+      "differing_terms": 12096,
+      "all_exact_signflips": true,
+      "magnitude_multiset_maxdiff": 9.4e-14
+    },
+    "H16_32q": {
+      "terms_ours": 47489,
+      "terms_hamlib": 47489,
+      "match": true,
+      "onenorm_diff": 3.2e-12,
+      "pauli_sets_identical": true,
+      "differing_terms": 21044,
+      "all_exact_signflips": true,
+      "magnitude_multiset_maxdiff": 1e-13
+    },
+    "H20_40q": {
+      "terms_ours": 116577,
+      "terms_hamlib": 116577,
+      "match": true,
+      "onenorm_diff": 3.5e-12,
+      "pauli_sets_identical": true,
+      "differing_terms": 51524,
+      "all_exact_signflips": true,
+      "magnitude_multiset_maxdiff": 7e-15
+    }
+  },
+  "conclusion": "Generated Hamiltonians are physically identical to HamLib at 28/32/40q: exact term-count match, identical Pauli structure, identical coefficient magnitudes (one-norms to ~15 sig figs). Only difference = orbital-phase sign convention on off-diagonal terms (all differences are exact sign-flips with preserved magnitudes), a gauge choice that leaves the spectrum exactly invariant. Earlier H2-H6: full spectra reproduced to 0.00000 mHa."
+}

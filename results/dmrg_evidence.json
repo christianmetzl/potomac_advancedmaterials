@@ -1,0 +1,25 @@
+{
+  "title": "DMRG (tensor-network/MPS) scaling test \u2014 answering the >40q question",
+  "method": "block2 DMRG; MPS ground state. Reference: FCI (<=20q) or CCSD(T) at equilibrium.",
+  "results": [
+    {
+      "system": "H10",
+      "qubits": 20,
+      "dmrg": -5.202826,
+      "reference_FCI": -5.202826,
+      "diff_mHa": 0.0,
+      "note": "DMRG reproduces FCI exactly \u2014 backend validated"
+    },
+    {
+      "system": "H24",
+      "qubits": 48,
+      "dmrg": -12.323043,
+      "reference_CCSDT": -12.329874,
+      "diff_mHa": 6.83,
+      "bond_dim": 250,
+      "note": "runs and converges; bond-dimension-limited on CPU (needs M~500-1000 for chem.acc.)"
+    }
+  ],
+  "why_50q_hard_on_cpu": "Strict chemical accuracy at 48-52q needs either DMRG with bond dimension 500-1000+ (each sweep alone > our CPU time budget) OR selected-CI with ~50k determinants x ~250k Hamiltonian terms (hours/run). Both are GPU/Phase-3 regime.",
+  "honest_claim": "Chemical accuracy DEMONSTRATED to 28q (1.21 mHa). Two independent methods (selected-CI, DMRG) OPERATE at 40-48q and converge toward chemical accuracy. DMRG validated exactly vs FCI at 20q. Strict chemical accuracy at 50q needs the GPU."
+}
