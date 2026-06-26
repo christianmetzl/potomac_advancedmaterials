@@ -67,7 +67,8 @@ Christian / Juan / Fares. Every claim below traces to those documents or to our 
 | CrO/NiO **20q** (0.038 / 0.197 mHa) reproducible | real open-shell multireference chemistry | run on qBraid; **classical baseline + wall-clock** |
 | HamLib equivalence 28/32/40q (exact) | reproducibility win | keep; cite as third-party-verifiable |
 | Noise robustness 20q | noise-aware **bonus** | re-run on qBraid; tie to a real QPU if time permits |
-| Conditional encoder (novelty, criterion 3) | **WEAK first result** (≈ warm-start) | run the decisive cross-family test → headline or drop |
+| ~~Conditional encoder~~ (criterion 3) | **RESOLVED → dropped** (decisive test: clean negative, ≈ warm-start even on diverse family) | innovation now leads with pillars 1–3 |
+| **Operator-pool compression** (criterion 3/4) | **DEMONSTRATED** — MP2 ranking keeps full-pool accuracy at 25–40% of doubles vs random collapse (~22×) | done; cite in write-up |
 | **38q CrO/NiO ≤0.08 mHa claim (in finalist paper)** | **unsubstantiated, CPU-infeasible** | **substantiate on GPU OR correct — see §5** |
 | Classical baselines presented as such | partial (have FCI/CCSD(T)/DMRG refs) | **package as explicit quantum-vs-classical + wall-clock** |
 | qBraid-runnable repo + README + Launch button | **does not exist yet** | build it (criteria 7 & 8) |

@@ -49,8 +49,12 @@ angle refinement → chemical accuracy.
    32–40+q. *This tensor-network tier is what we add beyond the QSCI-only 32q prior art.*
 2. **QSCI energy evaluation** — diagonalize H in a measurement-selected determinant subspace;
    intrinsically noise-robust (device defines only the subspace).
-3. **Operator-pool compression** — MP2-amplitude + point-group/spin symmetry pruning of the O(N⁴)
-   double-excitation pool → smaller vocabulary and shallower circuits at scale.
+3. **Operator-pool compression — MP2-amplitude ranking (demonstrated).** Ranking the O(N⁴)
+   double-excitation pool by active-space MP2 amplitude and keeping the top fraction shrinks the
+   transformer vocabulary with negligible accuracy loss, where random pruning collapses. Deterministic
+   CI-subspace test (CO/N₂/SiO, 12q): **N₂ retains full-pool accuracy (2.26 mHa) keeping only 25% of
+   doubles (vocab 1170→430)** vs **50.4 mHa** for random pruning at the same size (~22×); CO holds 3.7
+   mHa at 40% kept vs random 29.7. (`src/encoder/pool_compression.py`.)
 4. **Distributed hybrid workflow** (CUDA-Q `mqpu`), §4.
 
 **Transfer learning across molecular families (honest negative — resolved).** We tested whether a
