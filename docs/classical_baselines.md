@@ -67,16 +67,31 @@ statevector and vs VQE, on matched instances.
   is 6.83 mHa off CCSD(T) at M=250. Demonstrating the MPS+QSCI pipeline holding chemical accuracy
   there, on GPU, is the Phase 3 win condition. **[run on qBraid]**.
 
-## 4. Baselines still to compute/time (access-independent, short CPU runs)
+## 4. Timed classical ladder on the Hn instances (computed — `src/classical_baselines.py`)
 
-A `src/classical_baselines.py` pass can fill these from the same geometries, all quick on CPU:
-- Per instance: HF, MP2, CISD, CCSD, CCSD(T), FCI/CASCI energies **with wall-clock**, tabled beside the
-  quantum error — so every quantum cell has a matched, timed classical cell.
-- DFT (B3LYP/PBE0) energies on the oxides, to quantify the *"0.3–0.5 eV functional-dependent error"*
-  the paper cites as the motivation for quantum accuracy on open-shell oxides.
+Matched-instance classical methods on the **identical** STO-6G Hn geometries the quantum QSCI ladder
+uses (FCI cross-checked to the committed references to ≤0.0004 mHa — same instances). Wall-clock is
+single-thread CPU (`OMP_NUM_THREADS=1`). Evidence: `results/classical_baselines_evidence.json`.
 
-These need neither qBraid nor the encoder verdict and can run as soon as the CPU is free (the encoder
-sweep is using it now).
+| Instance | Qubits | FCI (Ha) | FCI ref Δ (mHa) | **FCI wall-clock** | CCSD(T) err vs FCI (mHa) | CCSD(T) wall-clock |
+|---|---|---|---|---|---|---|
+| H₂ | 4 | −1.145940 | — | 0.001 s | 0.000 | 0.044 s |
+| H₄ | 8 | −2.156857 | 0.0003 | 0.001 s | 0.004 | 0.049 s |
+| H₆ | 12 | −3.170505 | 0.0002 | 0.036 s | 0.026 | 0.078 s |
+| H₈ | 16 | −4.186089 | 0.000 | 0.049 s | 0.087 | 0.072 s |
+| H₁₀ | 20 | −5.202826 | 0.0004 | 0.326 s | 0.173 | 0.091 s |
+| H₁₂ | 24 | −6.220280 | — | **7.813 s** | 0.282 | 0.144 s |
+
+**Reading (the classical exact wall):** FCI wall-clock grows ~24× from 20→24 qubits (0.33 s → 7.8 s) —
+the exponential CI-dimension blow-up; H₁₄/28q FCI is minutes, H₁₆+/32q+ intractable on CPU. CCSD(T)
+stays cheap (~0.14 s at 24q) but its error climbs with correlation (0.000 → 0.28 mHa even near
+equilibrium) and breaks down under strong correlation (cf. H₂₄/48q DMRG 6.83 mHa off CCSD(T), §1). This
+is the matched non-quantum cost curve to place beside the quantum MPS/QSCI wall-clock once run on
+qBraid GPU.
+
+**Still optional (short CPU runs, not blocking):** DFT (B3LYP/PBE0) on the oxides to quantify the
+*"0.3–0.5 eV functional-dependent error"* the paper cites as the motivation for quantum accuracy on
+open-shell oxides.
 
 ## 5. Cross-references
 - `reproducibility_audit_2026-06-21.md` — every quantum number above is reproduced there.
