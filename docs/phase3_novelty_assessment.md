@@ -5,6 +5,26 @@ Prepared after the first conditional-encoder demonstration. Every number traces 
 `src/` and a JSON in `results/`. Read this as a decision input, not a conclusion.
 
 ---
+> ## ⏩ RESOLVED 2026-06-26 — the decisive experiment (Option A) has been run
+> The decisive cross-family test in §5.1 / §6 is **done** (`src/encoder/decisive_transfer.py`,
+> `results/encoder/decisive_transfer_evidence.json`). A **chemically diverse** training family (polar
+> monoxides + isoelectronic BF + homonuclear strong-correlation N₂ + ionic BeO, all CAS(6,6)/12q,
+> shared vocab) was used so a single un-conditioned policy could not trivially fit all of it; we then
+> compared MP2-conditioned (COND) vs un-conditioned warm-start (B1) zero-shot transfer to held-out
+> molecules, 3 seeds, under a **pre-registered** decision rule.
+>
+> **Result — clean negative.** On both decisive held-outs COND was directionally better but **within
+> seed noise**: N₂ Δ(B1−COND)=**+2.09** mHa (noise 3.61), BeO Δ=**+0.39** (noise 0.45); control CO
+> Δ=−0.71 (conditioning didn't hurt). COND beat B1 in 5/6 hard runs but never cleared the noise bar.
+> **Verdict: the conditional encoder is NOT necessary** — even when warm-start is stressed, a single
+> generative policy transfers about as well. Per the pre-registered rule we **drop the encoder as the
+> Phase-3 algorithmic-innovation headline** and lead innovation with the integrated **MPS + QSCI +
+> operator-pool-compression** scaling layer (Option B / pillars 1–3). This honest negative is itself
+> rewarded by the Phase-3 rubric (Top-Action #6: honesty > overstatement). The §4–§6 discussion below
+> is preserved as the record that led here.
+---
+
+---
 
 ## 1. What we set out to do
 

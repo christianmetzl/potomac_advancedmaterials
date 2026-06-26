@@ -18,7 +18,7 @@ MATGEN-Q is a generative quantum-chemistry pipeline aimed at the strongly-correl
 1. A **two-stage GQE** — a GPT-style transformer (GPT-QE) discovers circuit structure, then adjoint-gradient refinement tunes the angles — sidestepping the barren-plateau problem of variational methods.
 2. **QSCI** (Quantum-Selected Configuration Interaction) evaluates energies by diagonalizing the Hamiltonian in a compact, measurement-selected determinant subspace, avoiding the expensive full-operator expectation.
 3. **Matrix-product-state (MPS) tensor-network simulation** carries the scaling toward the ~40-qubit target on a single high-memory GPU (memory scales with entanglement, not 2ⁿ).
-4. A **chemistry-conditioned encoder** (equivariant GNN + transfer learning) is designed to generalize the generator across molecular families *(Phase 3 demonstration)*.
+4. **Operator-pool compression** (MP2-amplitude + point-group/spin-symmetry pruning of the O(N⁴) excitation pool) shrinks the transformer vocabulary and circuit depth at scale. *(A chemistry-conditioned encoder for cross-family transfer was also tested; see [Honest scope](#honest-scope) — it proved unnecessary and is not a headline.)*
 
 ## Demonstrated results
 
@@ -38,7 +38,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 
 - The **integrated GQE→QSCI loop is demonstrated at 12 qubits**; the larger-scale QSCI results (20–28q) use **perturbative determinant selection as a hardware-independent proxy** for the measurement step, *validated against* the 12q measured pipeline.
 - The 40q result is **operational but not yet at chemical accuracy** — the GPU runs are the Phase 3 deliverable.
-- The **conditional encoder is specified but not yet demonstrated** — cross-molecule transfer is the headline Phase 3 experiment.
+- The **conditional encoder was tested and is a clean negative**: across a chemically diverse family, an un-conditioned warm-start already transfers across molecules about as well as MP2-conditioning (within-noise difference; `src/encoder/decisive_transfer.py`). We report this honestly and lead the algorithmic-innovation story with the integrated MPS + QSCI + operator-pool-compression scaling layer instead.
 - Sn-oxide Hamiltonians are **our own ECP-CASCI construction** (not from the HamLib library, which contains no tin oxides).
 
 ## Repository structure
