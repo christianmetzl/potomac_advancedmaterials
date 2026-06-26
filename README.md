@@ -60,9 +60,14 @@ pip install pyscf openfermion openfermionpyscf h5py pennylane pennylane-lightnin
             torch scipy numpy matplotlib
 ```
 
-Each script writes a JSON to `results/` and prints its headline number. **Every command below was
-re-run from a clean checkout on 2026-06-21 and matches the committed `results/*.json`** (see
-`docs/reproducibility_audit_2026-06-21.md`):
+**One command** runs the verified CPU suite and checks each headline number against the committed
+`results/*.json`, printing a PASS/FAIL table (`--quick` skips the slower scripts):
+```bash
+python src/reproduce.py
+```
+
+Or run each individually — every command below was re-run from a clean checkout on 2026-06-21 and
+matches the committed `results/*.json` (see `docs/reproducibility_audit_2026-06-21.md`):
 
 ```bash
 python src/transition_metal_oxide_qsci.py   # CrO 0.038 / NiO 0.197 mHa (20q, open-shell multireference)
