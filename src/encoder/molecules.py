@@ -30,6 +30,17 @@ REGISTRY = {
                 basis={"Ge": "def2-svp", "O": "def2-svp"}, ecp=None),
     "SnO": dict(Re=1.833, Zmetal=50, atom=lambda R: f"Sn 0 0 0; O 0 0 {R:.4f}",
                 basis={"Sn": "def2-svp", "O": "def2-svp"}, ecp={"Sn": "def2-svp"}),
+    # --- chemically DIVERSE diatomics (decisive cross-family transfer test, docs/encoder_design.md) ---
+    # All closed-shell singlets at CAS(6,6)/12q; deliberately span distinct bonding/correlation
+    # regimes so a single un-conditioned policy cannot fit all of them (unlike the monoxide family).
+    "N2":  dict(Re=1.098, Zmetal=7,  atom=lambda R: f"N 0 0 0; N 0 0 {R:.4f}",      # homonuclear triple bond, strong covalent correlation
+                basis={"N": "def2-svp"}, ecp=None),
+    "BF":  dict(Re=1.263, Zmetal=5,  atom=lambda R: f"B 0 0 0; F 0 0 {R:.4f}",      # polar, isoelectronic with CO/N2
+                basis={"B": "def2-svp", "F": "def2-svp"}, ecp=None),
+    "LiF": dict(Re=1.564, Zmetal=3,  atom=lambda R: f"Li 0 0 0; F 0 0 {R:.4f}",     # ionic closed shell
+                basis={"Li": "def2-svp", "F": "def2-svp"}, ecp=None),
+    "BeO": dict(Re=1.331, Zmetal=4,  atom=lambda R: f"Be 0 0 0; O 0 0 {R:.4f}",     # ionic metal-oxide, singlet
+                basis={"Be": "def2-svp", "O": "def2-svp"}, ecp=None),
 }
 
 
