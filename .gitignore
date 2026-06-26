@@ -7,3 +7,4 @@ __pycache__/
 hamlib_real/
 .mol_cache/
 src/results/
+results/encoder/decisive_transfer_evidence.json  # in-progress; force-add complete version on run completion
