@@ -1,3 +1,4 @@
+# Core (CPU-verified results) — Python 3.11
 pyscf
 openfermion
 openfermionpyscf
@@ -5,7 +6,11 @@ h5py
 pennylane
 pennylane-lightning
 torch
-quimb
-block2
 scipy
 numpy
+matplotlib
+
+# GPU / tensor-network scaling (Phase 3 on qBraid)
+cudaq            # NVIDIA CUDA-Q: tensornet-mps + cuStateVec backends (GPU)
+quimb            # tensor-network utilities
+block2           # DMRG reference (classical tensor-network baseline)
