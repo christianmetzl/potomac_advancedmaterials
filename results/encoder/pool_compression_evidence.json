@@ -1,0 +1,222 @@
+{
+  "config": {
+    "mols": [
+      "CO",
+      "N2",
+      "SiO"
+    ],
+    "fractions": [
+      1.0,
+      0.6,
+      0.4,
+      0.25,
+      0.15,
+      0.08
+    ],
+    "random_seeds": [
+      0,
+      1,
+      2
+    ],
+    "ncas": 6,
+    "nelec": 6,
+    "metric": "HF + all singles + kept doubles -> QSCI diagonalization"
+  },
+  "results": [
+    {
+      "molecule": "CO",
+      "nq": 12,
+      "ne": 6,
+      "n_singles": 18,
+      "n_doubles": 99,
+      "n_spin_forbidden_doubles": 0,
+      "e_cas": -112.69741416960586,
+      "levels": [
+        {
+          "fraction": 1.0,
+          "n_doubles_kept": 99,
+          "vocab": 1170,
+          "mp2_err_mHa": 3.276,
+          "mp2_dets": 118,
+          "rnd_err_mHa_mean": 3.276,
+          "rnd_err_mHa_std": 0.0
+        },
+        {
+          "fraction": 0.6,
+          "n_doubles_kept": 59,
+          "vocab": 770,
+          "mp2_err_mHa": 3.276,
+          "mp2_dets": 78,
+          "rnd_err_mHa_mean": 17.99,
+          "rnd_err_mHa_std": 7.98
+        },
+        {
+          "fraction": 0.4,
+          "n_doubles_kept": 40,
+          "vocab": 580,
+          "mp2_err_mHa": 3.659,
+          "mp2_dets": 59,
+          "rnd_err_mHa_mean": 29.654,
+          "rnd_err_mHa_std": 5.187
+        },
+        {
+          "fraction": 0.25,
+          "n_doubles_kept": 25,
+          "vocab": 430,
+          "mp2_err_mHa": 5.287,
+          "mp2_dets": 44,
+          "rnd_err_mHa_mean": 36.167,
+          "rnd_err_mHa_std": 6.699
+        },
+        {
+          "fraction": 0.15,
+          "n_doubles_kept": 15,
+          "vocab": 330,
+          "mp2_err_mHa": 14.458,
+          "mp2_dets": 34,
+          "rnd_err_mHa_mean": 41.556,
+          "rnd_err_mHa_std": 1.877
+        },
+        {
+          "fraction": 0.08,
+          "n_doubles_kept": 8,
+          "vocab": 260,
+          "mp2_err_mHa": 24.8,
+          "mp2_dets": 27,
+          "rnd_err_mHa_mean": 46.952,
+          "rnd_err_mHa_std": 1.354
+        }
+      ]
+    },
+    {
+      "molecule": "N2",
+      "nq": 12,
+      "ne": 6,
+      "n_singles": 18,
+      "n_doubles": 99,
+      "n_spin_forbidden_doubles": 0,
+      "e_cas": -108.92115625529705,
+      "levels": [
+        {
+          "fraction": 1.0,
+          "n_doubles_kept": 99,
+          "vocab": 1170,
+          "mp2_err_mHa": 2.262,
+          "mp2_dets": 118,
+          "rnd_err_mHa_mean": 2.262,
+          "rnd_err_mHa_std": 0.0
+        },
+        {
+          "fraction": 0.6,
+          "n_doubles_kept": 59,
+          "vocab": 770,
+          "mp2_err_mHa": 2.262,
+          "mp2_dets": 78,
+          "rnd_err_mHa_mean": 21.782,
+          "rnd_err_mHa_std": 15.747
+        },
+        {
+          "fraction": 0.4,
+          "n_doubles_kept": 40,
+          "vocab": 580,
+          "mp2_err_mHa": 2.262,
+          "mp2_dets": 59,
+          "rnd_err_mHa_mean": 22.851,
+          "rnd_err_mHa_std": 10.553
+        },
+        {
+          "fraction": 0.25,
+          "n_doubles_kept": 25,
+          "vocab": 430,
+          "mp2_err_mHa": 2.262,
+          "mp2_dets": 44,
+          "rnd_err_mHa_mean": 50.369,
+          "rnd_err_mHa_std": 3.567
+        },
+        {
+          "fraction": 0.15,
+          "n_doubles_kept": 15,
+          "vocab": 330,
+          "mp2_err_mHa": 4.077,
+          "mp2_dets": 34,
+          "rnd_err_mHa_mean": 60.76,
+          "rnd_err_mHa_std": 9.57
+        },
+        {
+          "fraction": 0.08,
+          "n_doubles_kept": 8,
+          "vocab": 260,
+          "mp2_err_mHa": 7.74,
+          "mp2_dets": 27,
+          "rnd_err_mHa_mean": 61.44,
+          "rnd_err_mHa_std": 10.304
+        }
+      ]
+    },
+    {
+      "molecule": "SiO",
+      "nq": 12,
+      "ne": 6,
+      "n_singles": 18,
+      "n_doubles": 99,
+      "n_spin_forbidden_doubles": 0,
+      "e_cas": -363.6746866318381,
+      "levels": [
+        {
+          "fraction": 1.0,
+          "n_doubles_kept": 99,
+          "vocab": 1170,
+          "mp2_err_mHa": 4.072,
+          "mp2_dets": 118,
+          "rnd_err_mHa_mean": 4.072,
+          "rnd_err_mHa_std": 0.0
+        },
+        {
+          "fraction": 0.6,
+          "n_doubles_kept": 59,
+          "vocab": 770,
+          "mp2_err_mHa": 4.072,
+          "mp2_dets": 78,
+          "rnd_err_mHa_mean": 14.588,
+          "rnd_err_mHa_std": 6.592
+        },
+        {
+          "fraction": 0.4,
+          "n_doubles_kept": 40,
+          "vocab": 580,
+          "mp2_err_mHa": 12.144,
+          "mp2_dets": 59,
+          "rnd_err_mHa_mean": 22.723,
+          "rnd_err_mHa_std": 5.045
+        },
+        {
+          "fraction": 0.25,
+          "n_doubles_kept": 25,
+          "vocab": 430,
+          "mp2_err_mHa": 13.217,
+          "mp2_dets": 44,
+          "rnd_err_mHa_mean": 28.132,
+          "rnd_err_mHa_std": 3.312
+        },
+        {
+          "fraction": 0.15,
+          "n_doubles_kept": 15,
+          "vocab": 330,
+          "mp2_err_mHa": 16.342,
+          "mp2_dets": 34,
+          "rnd_err_mHa_mean": 31.986,
+          "rnd_err_mHa_std": 1.976
+        },
+        {
+          "fraction": 0.08,
+          "n_doubles_kept": 8,
+          "vocab": 260,
+          "mp2_err_mHa": 19.993,
+          "mp2_dets": 27,
+          "rnd_err_mHa_mean": 36.326,
+          "rnd_err_mHa_std": 2.059
+        }
+      ]
+    }
+  ]
+}
