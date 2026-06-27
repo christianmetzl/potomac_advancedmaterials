@@ -19,12 +19,13 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 | 3 | Measured QSCI 16q / 20q | 28.1 / 50.4 mHa | `src/encoder/measured_qsci.py` | `measured_qsci_evidence.json` | — | circuit-sampled |
 | 3b | measured-vs-proxy (16q/20q) | trained 26.6↔28.1 / 49.3↔50.4; **measured-random 24.0 / 46.7** (edges trained at low shot budget — coverage effect) | `measured_qsci.py` | `measured_qsci_evidence.json` | — | proxy validated vs circuit-sampled; measured-random disclosed |
 | 4 | CrO ⁵Π / NiO ³Σ⁻ 20q | 0.038 / 0.197 mHa | `src/transition_metal_oxide_qsci.py` | `transition_metal_qsci_evidence.json` | PASS | executed-CPU (CASCI ref) |
-| 5 | SnO / SnO₂ | chemical accuracy (≤0.6; ~0.11/0.23) | `src/sno_demo.py`, `src/sno2_demo.py` | `materials_evidence.json` | PASS (≤0.6 mHa) | executed-CPU; exact value PySCF-version sensitive |
+| 5 | SnO / SnO₂ | chemical accuracy (≤0.6; SnO ~0.11–0.34 version-sensitive, SnO₂ 0.23) | `src/sno_demo.py`, `src/sno2_demo.py` | `materials_evidence.json` | PASS (≤0.6 mHa) | executed-CPU; exact value PySCF-version sensitive |
 | 6 | QSCI scaling 20q / 28q | 0.57 / 1.21 mHa (3.8% / 0.15% of CI) | `src/qsci_vec.py` | `qsci_scaling_evidence.json` | — | proxy (perturbative selection) |
 | 7 | HamLib match 28/32/40q | exact term-count + one-norm (~1e-13) | `src/hamlib_validate.py` | `hamlib_validation_large.json` | PASS (28q) | executed-CPU |
 | 8 | Noise robustness 20q | ≤3.3 mHa @ 30% corrupt, 2×10⁶ shots | `src/noise_demo2.py` | `noise_evidence.json` | — | executed-CPU |
 | 9 | DFT functional spread | CrO 1.9 eV (sign flip), NiO 0.11 eV | `src/dft_baseline.py` | `dft_functional_spread_evidence.json` | — | executed-CPU |
-| 10 | Classical baseline + exact wall | FCI 0.33s(20q)→7.8s(24q); intractable 32q+ | `src/classical_baselines.py` | `classical_baselines_evidence.json` | PASS | executed-CPU |
+| 10 | Classical baseline + exact wall | FCI 0.69s(20q)→3.58s(24q) (single-thread, machine-dependent); intractable 32q+ | `src/classical_baselines.py` | `classical_baselines_evidence.json` | PASS | executed-CPU |
+| 10b | DMRG (tensor-network) reference | reproduces FCI 0.000 mHa @20q; H₂₄/48q 6.83 mHa off CCSD(T) (bond-dim 250) | `src/dmrg_scale.py` | `dmrg_evidence.json` | — (needs block2) | executed-CPU (block2) |
 | 11 | **Strong-corr trust result** | CCSD(T) −217 mHa (below FCI); selected-CI chem-acc @ ~500 dets; HF-weight 0.93→0.06 | `src/encoder/selected_ci_strongcorr.py`, `src/encoder/strong_correlation.py` | `selected_ci_strongcorr_evidence.json` (energies/dets), `strong_correlation_evidence.json` (HF-weight / multireference diagnostic) | — | executed-CPU (FCI ref) |
 | 12 | Operator-pool compression | N₂ 2.26 mHa @ 25% of doubles vs 50.4 random | `src/encoder/pool_compression.py` | `pool_compression_evidence.json` | — | executed-CPU |
 | 13 | Transfer ladder 16→56q | +8.9/+8.3/+7.1/+5.8/+5.0/+4.4 mHa (3-seed mean); 13/18 paired wins; across-seed SD ≈2.0 vs ≈7.4 mHa (3.7× tighter) | `src/encoder/scaling_transfer.py --ladder` | `scaling_ladder_evidence.json` | — | proxy; mean trend, narrows into noise beyond ~28q |

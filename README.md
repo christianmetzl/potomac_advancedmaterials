@@ -78,7 +78,7 @@ matches the committed `results/*.json` (see `docs/reproducibility_audit_2026-06-
 
 ```bash
 python src/transition_metal_oxide_qsci.py   # CrO 0.038 / NiO 0.197 mHa (20q, open-shell multireference)
-python src/sno_demo.py                       # SnO  0.11 mHa (16q EUV target)
+python src/sno_demo.py                       # SnO  ≤0.5 mHa, chem-acc (16q EUV target; value PySCF-version sensitive)
 python src/sno2_demo.py                      # SnO₂ 0.23 mHa (20q)
 python src/stage2_refinement.py              # two-stage GQE: H2 0.000 / H4 0.009 / H6 0.297 mHa
 python src/gqe_qsci.py                        # integrated GQE→QSCI at 12q: 1.05 mHa
