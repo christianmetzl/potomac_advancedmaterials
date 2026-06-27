@@ -26,7 +26,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 
 | Result | Value | Notes |
 |---|---|---|
-| Two-stage GQE, H₂/H₄/H₆ | 0.146 / 0.009 / 0.298 mHa | chemical accuracy, 4–12 qubits |
+| Two-stage GQE (UCCSD), H₂/H₄/H₆ | 0.000 / 0.009 / 0.297 mHa | chemical accuracy, 4–12 qubits (`stage2_refinement.py`) |
 | **Integrated GQE→QSCI, H₆ (12q)** | **1.05 mHa** | GPT-QE generates circuits → QSCI samples determinants *from the generated states* → diagonalizes; refines the raw 51 mHa generative state ~50× |
 | QSCI scaling, H₁₄ (28q) | 1.21 mHa | 18,201 determinants = 0.15% of the FCI space |
 | QSCI, H₂₀ (40q) | 39 mHa | operational; converging (not yet chemical accuracy — CPU-bound) |
