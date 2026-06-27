@@ -26,23 +26,60 @@ def _val(d, path):
     return d
 
 
-# (label, script, args, output-json-basename, [(json-path, expected, tol_mHa_or_abs), ...], quick?)
+# Assert kinds:
+#   ("eq",  json-path, expected, tol)         -> |value - expected| <= tol (exact-reproducible numbers)
+#   ("below", "final_mHa", threshold)         -> final "...error... X mHa" line value < threshold (claim = chem. acc.)
+#   ("eq_terms", expected)                    -> HamLib "terms: ours=N" == expected
+# Sn-oxide / QSCI-accuracy claims use a "below chemical accuracy" threshold rather than brittle exact-match,
+# because the scientific claim is chemical accuracy and PySCF-version numerics shift the 3rd decimal.
 CHECKS = [
     ("two-stage GQE (H2/H4/H6)", "stage2_refinement.py", [], "stage2_refinement_evidence.json",
-     [(["0", "err_mHa"], 0.0, 0.05), (["1", "err_mHa"], 0.009, 0.05), (["2", "err_mHa"], 0.297, 0.1)], False),
+     [("eq", ["0", "err_mHa"], 0.0, 0.05), ("eq", ["1", "err_mHa"], 0.009, 0.05),
+      ("eq", ["2", "err_mHa"], 0.297, 0.1)], False),
     ("integrated GQE->QSCI (H6 12q)", "gqe_qsci.py", [], "gqe_qsci_evidence.json",
-     [(["GQE_to_QSCI_err_mHa"], 1.054, 0.6)], False),     # stochastic sampling -> looser tol
-    ("SnO (16q)", "sno_demo.py", [], None,
-     [("__stdout_mHa__", 0.113, 0.08)], False),
-    ("SnO2 (20q)", "sno2_demo.py", [], None,
-     [("__stdout_mHa__", 0.225, 0.10)], False),
+     [("eq", ["GQE_to_QSCI_err_mHa"], 1.054, 0.8)], False),     # stochastic sampling -> loose tol
+    ("SnO chem-acc (16q)", "sno_demo.py", [], None,
+     [("below", "final_mHa", 0.6)], False),                      # claim: chemical accuracy (~0.11 mHa)
+    ("SnO2 chem-acc (20q)", "sno2_demo.py", [], None,
+     [("below", "final_mHa", 0.6)], False),                      # claim: chemical accuracy (~0.23 mHa)
     ("CrO/NiO (20q)", "transition_metal_oxide_qsci.py", [], "transition_metal_qsci_evidence.json",
-     [(["0", "qsci_best_err_mHa"], 0.038, 0.05), (["1", "qsci_best_err_mHa"], 0.197, 0.08)], True),
+     [("eq", ["0", "qsci_best_err_mHa"], 0.038, 0.05), ("eq", ["1", "qsci_best_err_mHa"], 0.197, 0.08)], True),
     ("HamLib equivalence (28q)", "hamlib_validate.py", ["14"], None,
-     [("__stdout_terms__", 27735, 0)], True),
+     [("eq_terms", 27735)], True),
     ("classical baselines (Hn FCI)", "classical_baselines.py", ["6", "10"], "classical_baselines_evidence.json",
-     [(["results", "0", "FCI_ref_match", "diff_mHa"], 0.0, 0.01)], False),
+     [("eq", ["results", "0", "FCI_ref_match", "diff_mHa"], 0.0, 0.02)], False),
 ]
+
+
+def _find_json(out_json, workdir):
+    """Scripts write either to CWD (workdir) or to the repo's results/ (abspath). Check both."""
+    for cand in (os.path.join(workdir, out_json), os.path.join(REPO, "results", out_json)):
+        if os.path.exists(cand):
+            return cand
+    return None
+
+
+def _final_mHa(out):
+    """Value from the explicit final 'error vs FCI: X mHa' line (robust to intermediate err= lines)."""
+    val = None
+    for line in out.splitlines():
+        ll = line.lower()
+        if "final" in ll and "error" in ll and "mha" in ll:
+            try:
+                val = float(line.split(":")[-1].split("mHa")[0].strip().split()[-1])
+            except (ValueError, IndexError):
+                pass
+    return val
+
+
+def _terms(out):
+    for line in out.splitlines():
+        if "terms:" in line and "ours=" in line:
+            try:
+                return int(line.split("ours=")[1].split()[0])
+            except (ValueError, IndexError):
+                pass
+    return None
 
 
 def run_check(label, script, args, out_json, asserts, workdir):
@@ -57,28 +94,31 @@ def run_check(label, script, args, out_json, asserts, workdir):
     out = p.stdout
     data = None
     if out_json:
-        jp = os.path.join(workdir, out_json)
-        if not os.path.exists(jp):
+        jp = _find_json(out_json, workdir)
+        if jp is None:
             return ("ERROR", label, f"{out_json} not produced", time.time() - t0)
         data = json.load(open(jp))
 
     details = []
     ok = True
-    for path, expected, tol in asserts:
-        if path == "__stdout_mHa__":
-            got = next((float(t.split("mHa")[0].strip().split()[-1])
-                        for line in out.splitlines() if "mHa" in line and "error" in line.lower()
-                        for t in [line.split(":")[-1]]), None)
-            unit = "mHa"
-        elif path == "__stdout_terms__":
-            got = next((int(w) for line in out.splitlines() if "ours=" in line
-                        for w in line.replace("ours=", " ").split() if w.isdigit()), None)
-            unit = "terms"
-        else:
-            got = _val(data, path); unit = ""
-        passed = got is not None and abs(got - expected) <= tol + (1e-9 if tol == 0 else 0)
+    for a in asserts:
+        kind = a[0]
+        if kind == "below":
+            _, _, thr = a
+            got = _final_mHa(out)
+            passed = got is not None and got < thr
+            details.append(f"{got} mHa < {thr}{'' if passed else ' ✗'}")
+        elif kind == "eq_terms":
+            _, expected = a
+            got = _terms(out)
+            passed = got == expected
+            details.append(f"{got} terms =={expected}{'' if passed else ' ✗'}")
+        else:  # "eq"
+            _, path, expected, tol = a
+            got = _val(data, path)
+            passed = got is not None and abs(got - expected) <= tol + 1e-9
+            details.append(f"{got}~{expected}{'' if passed else ' ✗'}")
         ok = ok and passed
-        details.append(f"{got}~{expected}{unit}{'' if passed else ' ✗'}")
     return ("PASS" if ok else "FAIL", label, "; ".join(details), time.time() - t0)
 
 

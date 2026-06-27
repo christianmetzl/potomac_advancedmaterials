@@ -1,0 +1,11 @@
+MATGEN-Q reproducibility driver — CPU headline results
+============================================================
+  PASS    two-stage GQE (H2/H4/H6)           0.0~0.0; 0.009~0.009; 0.297~0.297  [25s]
+  PASS    integrated GQE->QSCI (H6 12q)      1.054~1.054  [34s]
+  PASS    SnO chem-acc (16q)                 0.451 mHa < 0.6  [3s]
+  PASS    SnO2 chem-acc (20q)                0.221 mHa < 0.6  [6s]
+  PASS    CrO/NiO (20q)                      0.038~0.038; 0.197~0.197  [12s]
+  PASS    HamLib equivalence (28q)           27735 terms ==27735  [17s]
+  PASS    classical baselines (Hn FCI)       0.0002~0.0  [1s]
+============================================================
+7/7 checks PASS
