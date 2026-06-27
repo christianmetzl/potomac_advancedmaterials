@@ -1,0 +1,38 @@
+{
+  "train": "H6_12q",
+  "target": "H8_16q",
+  "results": [
+    {
+      "seed": 0,
+      "transfer_best": 67.62296170519022,
+      "transfer_mean": 91.81266630072749,
+      "random_best": 85.62948984594155,
+      "random_mean": 128.9918199325335
+    },
+    {
+      "seed": 1,
+      "transfer_best": 69.84547383409812,
+      "transfer_mean": 92.72832320316127,
+      "random_best": 84.14582000281712,
+      "random_mean": 126.42051579503111
+    },
+    {
+      "seed": 2,
+      "transfer_best": 64.70638422370989,
+      "transfer_mean": 90.86871192694801,
+      "random_best": 78.97591912212488,
+      "random_mean": 127.49701492611187
+    }
+  ],
+  "summary": {
+    "metric": "zero-shot mean energy on larger target (mHa to FCI)",
+    "transfer_mean": 91.80323381027893,
+    "random_mean": 127.63645021789216,
+    "delta_mean": 35.833216407613236,
+    "noise_mean": 17.9401471262271,
+    "transfer_best": 67.39160658766609,
+    "random_best": 82.91707632362785,
+    "delta_best": 15.525469735961764,
+    "cross_size_transfer_success": true
+  }
+}
