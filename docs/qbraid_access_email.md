@@ -3,7 +3,7 @@
 **To:** quantum@connecteddmv.org
 **Cc:** (team members)
 **From:** Christian Metzl — Team Lead, EIGENNEXUS (connect@christianmetzl.com)
-**Subject:** EIGENNEXUS (Advanced Materials, Mitsubishi/AIST) — Phase 3 qBraid GPU + QPU access / credits
+**Subject:** EIGENNEXUS (Advanced Materials, Mitsubishi/AIST) — Phase 3 qBraid GPU/QPU access + device-selection correction
 
 ---
 
@@ -13,6 +13,17 @@ Team **EIGENNEXUS** is a Phase 3 finalist in the Advanced Materials challenge (M
 "Scaling the Generative Quantum Eigensolver with NVIDIA CUDA-Q"). We are writing to confirm and activate our
 **qBraid team account and credit allocation** so we can execute the on-platform results for our Phase 3
 submission.
+
+**Important — device selection (please advise on remedy).** We need to flag, transparently, that our
+platform/device selection was **inadvertently omitted from our Phase 2 cover page**. We understand the rule
+that the selection must be recorded on the cover page for usage to be granted, so we want to correct this
+now, well ahead of the Phase 3 deadline. **Our intended platform selection is: qBraid GPU compute (NVIDIA
+CUDA-Q) as the primary platform, plus IonQ/IBM QPU access (via qBraid) for small-scale hardware validation.**
+Could you please advise how we can formally record this so access can be granted — e.g., confirm it via this
+email and the qBraid TypeForm, submit an updated/corrected cover page, or note it on our Phase 3 cover page?
+We are happy to follow whatever process you prefer and to provide anything you need. The selection is fully
+consistent with our Phase 2 write-up, which explicitly requests NVIDIA H100/A100 + CUDA-Q and qBraid hardware
+validation (IonQ/IBM).
 
 **What we need (per our Phase 2 cover-page platform selection):**
 
@@ -48,6 +59,8 @@ Team Lead, EIGENNEXUS
 connect@christianmetzl.com · https://aqora.io/eigennexus
 
 ---
-*Notes for the team before sending: (1) confirm the exact device choice recorded on the Phase 2 cover page so
-this matches it; (2) confirm whether the TypeForm was already submitted (adjust the wording); (3) add Fares
-and Juan to Cc.*
+*Notes for the team before sending: (1) device selection was omitted from the Phase 2 cover page — this email
+discloses that and proposes the correction (qBraid GPU/CUDA-Q + IonQ/IBM); make sure the Phase 3 cover page
+DOES record this selection; (2) confirm whether the qBraid TypeForm was already submitted and adjust the
+wording; (3) add Fares and Juan to Cc; (4) send early — the remedy may need an organizer reply before access
+is granted, so the sooner the better.*

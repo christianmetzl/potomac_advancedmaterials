@@ -18,10 +18,11 @@
 - [ ] **Prepend the official GIC_2026 cover page** (provided .docx template, unmodified) as page 1 of the
       final write-up PDF. Final = [cover page] + `EIGENNEXUS_Phase3_Writeup.pdf`. (Cover page is required and
       excluded from the 5-page limit; do not recreate/modify it.) Then re-zip (swap the PDF in the zip).
-- [ ] **Confirm the device selection on the cover page** = qBraid GPU (CUDA-Q) + IonQ/IBM QPU, matching the
-      platform we use — otherwise access is not granted.
-- [ ] **Send the qBraid access email** (`docs/qbraid_access_email.md`) to quantum@connecteddmv.org; confirm
-      the TypeForm POC step.
+- [ ] **Record the device selection on the Phase 3 cover page** = qBraid GPU (CUDA-Q) + IonQ/IBM QPU.
+      ⚠️ It was **omitted from the Phase 2 cover page** — access is gated on this, so it MUST appear now.
+- [ ] **Send the qBraid access email** (`docs/qbraid_access_email.md`) to quantum@connecteddmv.org **early** —
+      it discloses the omitted device selection and requests the remedy, which may need an organizer reply
+      before access is granted. Confirm the qBraid TypeForm POC step.
 
 ## 🎯 Highest-impact remaining work (needs qBraid GPU access)
 - [ ] Execute the **40q MPS GQE/QSCI** run on H₂₀ (depth, bond dim, shots, GPU wall-clock) → fills the
