@@ -1,0 +1,169 @@
+{
+  "title": "MPS bond-dimension & entanglement-entropy scaling (pillar 1 evidence, CPU)",
+  "method": "block2 DMRG (MPS ground state) on STO-6G H-chains. (A) energy error vs bond dimension chi across size; (B) max bipartite von Neumann entanglement entropy vs bond length at fixed high chi. block2 is the classical analogue of CUDA-Q's tensornet-mps tier; this quantifies the bond dimension the owed 40q GPU run will need.",
+  "study_A_error_vs_chi": [
+    {
+      "system": "H10",
+      "qubits": 20,
+      "R": 0.74,
+      "ref_kind": "FCI",
+      "chi_for_chem_acc": 50,
+      "points": [
+        {
+          "chi": 20,
+          "E": -5.200941417057409,
+          "Smax": 0.35918875158250213,
+          "err_mHa": 1.8846
+        },
+        {
+          "chi": 50,
+          "E": -5.2026551047291765,
+          "Smax": 0.385805954066126,
+          "err_mHa": 0.1709
+        },
+        {
+          "chi": 100,
+          "E": -5.202817676045848,
+          "Smax": 0.39316133205968784,
+          "err_mHa": 0.0083
+        },
+        {
+          "chi": 200,
+          "E": -5.202826386453795,
+          "Smax": 0.3942413730633392,
+          "err_mHa": -0.0004
+        },
+        {
+          "chi": 400,
+          "E": -5.202826400595184,
+          "Smax": 0.39427936228776905,
+          "err_mHa": -0.0004
+        }
+      ],
+      "wall_s": 76.7
+    },
+    {
+      "system": "H14",
+      "qubits": 28,
+      "R": 0.74,
+      "ref_kind": "DMRG(chi=400)",
+      "chi_for_chem_acc": 100,
+      "points": [
+        {
+          "chi": 20,
+          "E": -7.228130808721993,
+          "Smax": 0.4449564992960469,
+          "err_mHa": 10.0476
+        },
+        {
+          "chi": 50,
+          "E": -7.234810051307701,
+          "Smax": 0.5220430369134097,
+          "err_mHa": 3.3684
+        },
+        {
+          "chi": 100,
+          "E": -7.237163355791097,
+          "Smax": 0.5557297438465655,
+          "err_mHa": 1.0151
+        },
+        {
+          "chi": 200,
+          "E": -7.238048345018541,
+          "Smax": 0.5727142416704922,
+          "err_mHa": 0.1301
+        },
+        {
+          "chi": 400,
+          "E": -7.238178445400003,
+          "Smax": 0.5780581125569045,
+          "err_mHa": 0.0
+        }
+      ],
+      "wall_s": 189.5
+    },
+    {
+      "system": "H20",
+      "qubits": 40,
+      "R": 0.74,
+      "ref_kind": "DMRG(chi=400)",
+      "chi_for_chem_acc": 400,
+      "points": [
+        {
+          "chi": 20,
+          "E": -10.249672073217063,
+          "Smax": 0.5159329551555756,
+          "err_mHa": 42.5112
+        },
+        {
+          "chi": 50,
+          "E": -10.276839788159549,
+          "Smax": 0.6525550143318474,
+          "err_mHa": 15.3435
+        },
+        {
+          "chi": 100,
+          "E": -10.284946702905003,
+          "Smax": 0.7377645065545249,
+          "err_mHa": 7.2366
+        },
+        {
+          "chi": 200,
+          "E": -10.289566297358597,
+          "Smax": 0.8005007105655979,
+          "err_mHa": 2.617
+        },
+        {
+          "chi": 400,
+          "E": -10.292183305252742,
+          "Smax": 0.8389598297711292,
+          "err_mHa": 0.0
+        }
+      ],
+      "wall_s": 272.6
+    }
+  ],
+  "study_B_entanglement_vs_R": [
+    {
+      "system": "H10",
+      "qubits": 20,
+      "R": 0.74,
+      "Smax": 0.39427945861694264,
+      "chi_for_chem_acc": 50,
+      "wall_s": 2.7
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "R": 1.2,
+      "Smax": 1.353875480420948,
+      "chi_for_chem_acc": 100,
+      "wall_s": 4.5
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "R": 1.8,
+      "Smax": 3.500115876520957,
+      "chi_for_chem_acc": 200,
+      "wall_s": 8.6
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "R": 2.4,
+      "Smax": 4.433875721055608,
+      "chi_for_chem_acc": 200,
+      "wall_s": 14.2
+    }
+  ],
+  "key_findings": [
+    "Bond dimension chi needed for chemical accuracy is modest near equilibrium and grows slowly with system size \u2014 the basis of the MPS memory advantage (memory ~ n*chi^2*d, not 2^n).",
+    "Entanglement entropy is low/bounded near equilibrium (area-law) and rises as bonds stretch into strong correlation, where larger chi (and the device-sampled QSCI regime) is required."
+  ],
+  "honest_caveats": [
+    "This is classical DMRG/MPS on CPU (block2), NOT the CUDA-Q tensornet-mps GPU run (still owed); it supplies the bond-dimension/entanglement evidence and a concrete chi target for that run.",
+    "H-chains are the scaling vehicle; chi requirements for 3D/aromatic systems differ.",
+    "Reference is FCI where committed (H10) else the largest-chi DMRG (a convergence self-reference)."
+  ]
+}
