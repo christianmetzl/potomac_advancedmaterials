@@ -33,6 +33,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from gqe_scaling import GPTQE
 from qsci_score import qsci_energy
 from sci_integrals import hchain_integrals, sci_energy   # Slater-Condon: scalable to 48q+
+import molecules as M                                    # oxide targets for cross-chemistry transfer
 
 _REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(_REPO, "results", "encoder")
