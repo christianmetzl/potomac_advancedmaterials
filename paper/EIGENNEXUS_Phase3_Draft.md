@@ -100,12 +100,17 @@ scaling question is whether a generator trained on a *small* system can propose 
 encoded as (occupied depth below HOMO, virtual height above LUMO), independent of qubit count, so a
 small system's token vocabulary is a provable subset of a larger one (verified: H₆/12q ⊂ H₈/16q ⊂
 H₁₀/20q). A GPT-QE generator trained **only on H₆ (12 qubits)** then generates zero-shot for **H₈ (16
-qubits)** and **beats random search on H₈ across all three seeds and both metrics — mean 91.8 vs 127.6
-mHa, best 67.4 vs 82.9 mHa** (within-seed spread ~1 mHa against a ~36 mHa gap). It **extends to H₁₀ (20
-qubits)**: a generator trained on H₄+H₆ selects better determinants for H₁₀ than random at a matched
-determinant budget — **QSCI 58.7 vs 73.9 mHa, all three seeds** (equal determinant count, controlling
-for sampling diversity). The learned policy generalizes to larger, unseen systems — direct evidence for
-scalability. (`src/encoder/scaling_transfer.py`; `--large` for the 20q run.) *Honest contrast:* a same-size, cross-*molecule* conditioning
+qubits)**. The headline is **train-small, deploy-large**: one generator trained only on **H₄+H₆ (8q+12q)**
+is deployed zero-shot across **16→20→28→40 qubits** and **beats random search at every size and every
+seed** — advantage **+9.2 / +8.5 / +7.4 / +6.0 mHa at 16/20/28/40q** (3-seed mean; trained spread ~1 mHa
+vs random ~7–10). Since GQE training is the cost that is CPU-bound near ~16 qubits, transferring a
+small-trained generator to the 40-qubit target — instead of training at scale — attacks the field's
+central bottleneck. The enabler is a **determinant-space evaluation** (each proposed excitation maps by
+bitmask to a determinant; QSCI diagonalizes that subspace) that needs **no 2ⁿ statevector**, so 40q runs
+on CPU. *Honest scope:* relative advantage at a small fixed determinant budget (K=96), not absolute
+chemical accuracy at 40q (the GPU/large-subspace deliverable). The earlier H₆→H₈ raw-energy test (mean
+91.8 vs 127.6 mHa) corroborates with a fully independent metric. (`src/encoder/scaling_transfer.py
+--ladder`.) *Honest contrast:* a same-size, cross-*molecule* conditioning
 variant (FiLM on an MP2 descriptor) gave only a within-noise gain over an unconditioned warm-start
 (N₂ +2.1 mHa vs noise 3.6) — reported as a negative; the value is in cross-*size* transfer, not
 molecule conditioning.

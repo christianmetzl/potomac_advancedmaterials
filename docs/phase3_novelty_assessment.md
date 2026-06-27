@@ -35,7 +35,17 @@ Prepared after the first conditional-encoder demonstration. Every number traces 
 > H₄+H₆, it selects better determinants for H₁₀ than random at a **matched determinant budget** — QSCI
 > 58.7 vs 73.9 mHa, all 3 seeds. (A diversity-uncontrolled pooled metric favors random because random
 > samples more distinct determinants; the matched-budget control isolates determinant *quality* — both
-> reported transparently.) **Net: cross-*size* transfer is a real, on-theme contribution at 16q and 20q
+> reported transparently.)
+>
+> ## 🚀 LEAP 2026-06-27 — train-small/deploy-large confirmed to **40 qubits**
+> Full ladder (`--ladder`, `results/encoder/scaling_ladder_evidence.json`, `scaling_ladder.png`): one
+> generator trained only on H₄+H₆ (8q+12q), deployed zero-shot across **16→20→28→40q**, beats random at
+> **every size and every seed** — advantage +9.2/+8.5/+7.4/**+6.0 mHa @ 40q** (3-seed mean; trained
+> spread ~1 mHa vs random ~7–10). Enabled by determinant-space QSCI (bitmask determinant enumeration, no
+> 2ⁿ statevector → 40q on CPU). **This is the headline: GQE training (CPU-bound at ~16q) can be amortized
+> once at small scale and transferred to the 40q target — not trained at scale.** Honest scope: relative
+> advantage at a small fixed determinant budget (K=96), not absolute chemical accuracy at 40q (GPU
+> deliverable). **Net: cross-*size* / train-small-deploy-large transfer is the real, on-theme leap
 > (primary criterion: scalability); cross-*molecule* conditioning is an honest negative.** All in the paper.
 ---
 
