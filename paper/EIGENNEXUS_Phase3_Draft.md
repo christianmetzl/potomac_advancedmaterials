@@ -23,9 +23,13 @@ GQE has stayed small-scale, and QSCI-paired GQE only recently reached 32 qubits 
 with executed, reproducible results — is the problem we address in Phase 3.**
 
 Our concrete target is EUV semiconductor photoresist chemistry: tin-oxo clusters and Sn/Hf/Zr oxides,
-whose open-shell, multireference character is exactly where DFT's 0.3–0.5 eV functional-dependent
+whose open-shell, multireference character is exactly where DFT's functional-dependent
 errors make candidate rankings unreliable, and which are the focus of an active quantum-simulation
-program by one of this challenge's providers (Kharazi et al., Xanadu & Mitsubishi Chemical, 2026). The
+program by one of this challenge's providers (Kharazi et al., Xanadu & Mitsubishi Chemical, 2026). We
+quantify this directly (`src/dft_baseline.py`): across six standard functionals the **CrO spin-state
+splitting spans 1.9 eV** — PBE0 puts the quintet 1.84 eV below the triplet while B3LYP inverts the
+order (−0.08 eV) — and even the milder NiO gap varies 0.11 eV, against a chemical-accuracy target of
+0.044 eV; a single quantum-accurate number removes this functional-choice band. The
 MATGEN-Q pipeline — AI proposes candidate metal-oxide molecules → DFT filters → GQE refines with
 quantum accuracy → Bayesian optimisation selects the next candidate — generalises beyond photoresists
 to battery electrolytes, catalysts, and functional polymers central to Mitsubishi Chemical's portfolio
