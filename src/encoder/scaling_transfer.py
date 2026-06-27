@@ -400,8 +400,10 @@ def mp2_determinants(target_rec, R=0.74):
             return 0.0
         return abs(float(t2[i // 2, j // 2, a // 2 - nocc_sp, b // 2 - nocc_sp]))
     dord = sorted((tuple(d) for d in doubles), key=lambda d: -w(d))
-    dets = [hf] + [hf ^ (1 << i) ^ (1 << a) for (i, a) in singles]
-    dets += [hf ^ (1 << i) ^ (1 << j) ^ (1 << a) ^ (1 << b) for (i, j, a, b) in dord]
+    # doubles dominate correlation (singles don't couple to HF, Brillouin); rank doubles first for a
+    # fair MP2 selected-CI baseline, singles appended after.
+    dets = [hf] + [hf ^ (1 << i) ^ (1 << j) ^ (1 << a) ^ (1 << b) for (i, j, a, b) in dord]
+    dets += [hf ^ (1 << i) ^ (1 << a) for (i, a) in singles]
     return dets
 
 
