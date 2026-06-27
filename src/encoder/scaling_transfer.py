@@ -31,6 +31,7 @@ from openfermion import MolecularData, jordan_wigner, get_fermion_operator, get_
 from openfermionpyscf import run_pyscf
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from gqe_scaling import GPTQE
+from qsci_score import qsci_energy
 
 _REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(_REPO, "results", "encoder")
@@ -96,13 +97,16 @@ def build_realized_pool(tokens, ne, nq):
 
 
 # ---------- H-chain Hamiltonian + exact energy ----------
+REF_FCI = {4: -2.156857, 6: -3.170505, 8: -4.186089, 10: -5.202826}  # committed references (Ha)
+
+
 def hchain_ham(n_atoms, R=0.74):
     geom = [("H", (0.0, 0.0, i * R)) for i in range(n_atoms)]
     mol = MolecularData(geom, "sto-6g", multiplicity=1, charge=0)
     mol = run_pyscf(mol, run_scf=True, run_fci=(n_atoms <= 8))
     qop = jordan_wigner(get_fermion_operator(mol.get_molecular_hamiltonian()))
     nq = 2 * mol.n_orbitals; ne = mol.n_electrons
-    e_fci = mol.fci_energy if mol.fci_energy is not None else mol.ccsd_energy
+    e_fci = mol.fci_energy if mol.fci_energy is not None else REF_FCI.get(n_atoms)
     return dict(qop=qop, nq=nq, ne=ne, hf=mol.hf_energy, e_fci=float(e_fci), n_atoms=n_atoms)
 
 
@@ -196,6 +200,109 @@ def random_best(rec, tokens, n=256, seq_len=8, seed=0):
     return float((En.min() - rec["e_fci"]) * 1000), float((En.mean() - rec["e_fci"]) * 1000)
 
 
+# ---------- multi-system training + QSCI evaluation at the larger target (for 20q) ----------
+def train_gptqe_multi(recs, tokens, n_iter=180, batch=32, seq_len=8, beta=300.0, lr=5e-4, seed=0, log=None):
+    """Train one generator over several systems (cycled), masking each system's invalid tokens.
+
+    Vocabulary = canonical `tokens` (the largest training system's set); smaller systems mask the
+    tokens that do not fit them. This teaches a single size-agnostic generative policy.
+    """
+    torch.manual_seed(seed); np.random.seed(seed)
+    sysd = []
+    for rec in recs:
+        pool, valid = build_realized_pool(tokens, rec["ne"], rec["nq"])
+        sysd.append(dict(rec=rec, pool=pool, inval=torch.tensor(~valid), Efn=energy_fn(rec),
+                         best=rec["hf"]))
+    vocab = len(tokens) * len(TVALS)
+    model = GPTQE(vocab, seq_len)
+    opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.01)
+    t0 = time.time()
+    for it in range(n_iter):
+        s = sysd[it % len(sysd)]; rec = s["rec"]
+        temp = 2.0 + (0.3 - 2.0) * it / max(n_iter - 1, 1)
+        seqs = _generate(model, batch, seq_len, temp, s["inval"])
+        sub = subseq_energies(seqs.cpu().numpy(), s["pool"], s["Efn"], seq_len)
+        s["best"] = min(s["best"], float(sub[:, -1].min()))
+        target = torch.tensor(-beta * (sub - rec["hf"]), dtype=torch.float32)
+        loss = F.mse_loss(model.logit_sums(seqs), target)
+        opt.zero_grad(); loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0); opt.step()
+        if log and (it % 30 == 0 or it == n_iter - 1):
+            msg = " ".join(f"H{s['rec']['n_atoms']}={abs(s['best']-s['rec']['e_fci'])*1000:.1f}" for s in sysd)
+            log(f"  multi it{it:3d} best[{msg}] mHa loss={loss.item():.1f} t={time.time()-t0:.0f}s")
+    return model
+
+
+def sample_dets(seqs, pool, target_rec, shots=2000):
+    """Sample computational-basis determinants from each generated circuit on the target system."""
+    nq, ne = target_rec["nq"], target_rec["ne"]
+    hf = np.where(np.arange(nq) < ne)[0]
+    dev = qml.device("lightning.qubit", wires=nq, shots=shots)
+
+    @qml.qnode(dev)
+    def samp(applied):
+        for w in hf:
+            qml.PauliX(int(w))
+        for (typ, wires, t) in applied:
+            qml.SingleExcitation(t, wires=wires) if typ == "s" else qml.DoubleExcitation(t, wires=wires)
+        return qml.sample(wires=range(nq))
+
+    out = []
+    for s in seqs:
+        applied = [pool[int(k)] for k in s if pool[int(k)] is not None]
+        Sm = samp(applied); d = np.zeros(len(Sm), np.uint64)
+        for qi in range(nq):
+            d |= (Sm[:, qi].astype(np.uint64) << np.uint64(qi))
+        out.append(d)
+    return np.concatenate(out)
+
+
+def qsci_transfer(seqs, target_rec, tokens, topk=600):
+    """QSCI energy of the determinant subspace sampled from a set of circuits on the target system."""
+    pool, _ = build_realized_pool(tokens, target_rec["ne"], target_rec["nq"])
+    dets = sample_dets(seqs, pool, target_rec)
+    uq, cnt = np.unique(dets, return_counts=True)
+    keep = uq[np.argsort(cnt)[::-1][:topk]]
+    e, n = qsci_energy(target_rec["qop"], keep)
+    return abs(e - target_rec["e_fci"]) * 1000.0, int(n)
+
+
+def main_large():
+    """Stronger claim: train on H4(8q)+H6(12q); transfer to H10(20q), QSCI-evaluated."""
+    def log(s): print(s, flush=True)
+    log(f"\n######## SCALING TRANSFER (train H4+H6 -> transfer H10/20q, QSCI) {time.strftime('%Y-%m-%d %H:%M')} ########")
+    recs = [hchain_ham(4), hchain_ham(6)]
+    tokens = canonical_tokens(6, 12)                 # H4 tokens are a subset of H6's
+    tgt = hchain_ham(10)
+    log(f"train {[r['n_atoms'] for r in recs]} -> target H10 nq={tgt['nq']} FCI={tgt['e_fci']:.6f}; vocab={len(tokens)} ops")
+    NGEN = 96
+    res = []
+    for seed in [0, 1, 2]:
+        model = train_gptqe_multi(recs, tokens, seed=seed, log=log if seed == 0 else None)
+        pool_t, valid_t = build_realized_pool(tokens, tgt["ne"], tgt["nq"])
+        torch.manual_seed(7000 + seed)
+        gen = _generate(model, NGEN, 8, 0.4, torch.tensor(~valid_t)).cpu().numpy()
+        rng = np.random.default_rng(seed); vids = np.where(valid_t)[0]
+        rnd = np.array([rng.choice(vids, 8) for _ in range(NGEN)])
+        te, tn = qsci_transfer(gen, tgt, tokens)
+        re_, rn = qsci_transfer(rnd, tgt, tokens)
+        log(f"[seed {seed}] H(4,6)->H10 QSCI: trained {te:.2f} mHa ({tn} dets) | random {re_:.2f} mHa ({rn} dets)")
+        res.append(dict(seed=seed, trained_qsci_mHa=te, trained_dets=tn, random_qsci_mHa=re_, random_dets=rn))
+        json.dump(dict(train="H4+H6", target="H10_20q", eval="QSCI", n_gen=NGEN, results=res),
+                  open(os.path.join(OUT, "scaling_transfer_h10_evidence.json"), "w"), indent=2)
+    t = np.array([r["trained_qsci_mHa"] for r in res]); r = np.array([r["random_qsci_mHa"] for r in res])
+    noise = float(np.std(np.concatenate([t, r])))
+    success = bool((r.mean() - t.mean()) > noise)
+    summary = dict(metric="QSCI energy on H10/20q (mHa to FCI)", trained=float(t.mean()), random=float(r.mean()),
+                   delta=float(r.mean() - t.mean()), noise=noise, cross_size_transfer_success=success)
+    log(f"\nSUMMARY H(4,6)->H10/20q: trained {t.mean():.2f}±{t.std():.2f} vs random {r.mean():.2f}±{r.std():.2f} "
+        f"| Δ={r.mean()-t.mean():+.2f} noise={noise:.2f} -> success={success}")
+    out = json.load(open(os.path.join(OUT, "scaling_transfer_h10_evidence.json")))
+    out["summary"] = summary
+    json.dump(out, open(os.path.join(OUT, "scaling_transfer_h10_evidence.json"), "w"), indent=2)
+    log("DONE")
+
+
 def smoke():
     print("=== smoke: canonical tokenization / realize / energy ===")
     t6 = canonical_tokens(6, 12); t8 = canonical_tokens(8, 16); t10 = canonical_tokens(10, 20)
@@ -250,5 +357,7 @@ def main():
 if __name__ == "__main__":
     if "--smoke" in sys.argv:
         smoke()
+    elif "--large" in sys.argv:
+        main_large()
     else:
         main()
