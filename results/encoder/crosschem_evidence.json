@@ -1,0 +1,60 @@
+{
+  "train": "H4+H6 (H-chains)",
+  "K": 64,
+  "results": [
+    {
+      "target": "CO CAS(6,6)",
+      "nq": 12,
+      "trained_mHa": 17.51916129290502,
+      "trained_sd": 3.54862036339325,
+      "random_mHa": 21.879613528308067,
+      "mp2_mHa": 5.378338517985526,
+      "advantage_vs_random": 4.360452235403045
+    },
+    {
+      "target": "SiO CAS(6,6)",
+      "nq": 12,
+      "trained_mHa": 15.345513473581226,
+      "trained_sd": 1.75001419519337,
+      "random_mHa": 19.316002890282864,
+      "mp2_mHa": 7.921324838605415,
+      "advantage_vs_random": 3.9704894167016374
+    },
+    {
+      "target": "SnO CAS(6,6)",
+      "nq": 12,
+      "trained_mHa": 23.911870474800406,
+      "trained_sd": 3.7210849431803843,
+      "random_mHa": 21.68716627905572,
+      "mp2_mHa": 15.689504022645906,
+      "advantage_vs_random": -2.2247041957446854
+    },
+    {
+      "target": "BeO CAS(6,6)",
+      "nq": 12,
+      "trained_mHa": 12.343765980403987,
+      "trained_sd": 2.8280963576906855,
+      "random_mHa": 12.511906063849665,
+      "mp2_mHa": 6.731481952741092,
+      "advantage_vs_random": 0.1681400834456781
+    },
+    {
+      "target": "CO CAS(10,10)",
+      "nq": 20,
+      "trained_mHa": 41.50673410459641,
+      "trained_sd": 3.975817858172236,
+      "random_mHa": 44.68673321977216,
+      "mp2_mHa": 19.719682400165084,
+      "advantage_vs_random": 3.1799991151757467
+    },
+    {
+      "target": "SnO CAS(10,10)",
+      "nq": 20,
+      "trained_mHa": 42.72460494085332,
+      "trained_sd": 3.690165536511595,
+      "random_mHa": 40.55569134247131,
+      "mp2_mHa": 26.44695258277352,
+      "advantage_vs_random": -2.168913598382005
+    }
+  ]
+}
