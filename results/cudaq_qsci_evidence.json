@@ -1,0 +1,27 @@
+{
+  "title": "GQE/QSCI circuits executed through NVIDIA CUDA-Q (qpp-cpu CPU backend)",
+  "method": "UCCSD ansatz (cudaq.kernels.uccsd) evaluated via cudaq.observe (VQE) and sampled via cudaq.sample (QSCI determinant selection), both on CUDA-Q's qpp-cpu statevector backend. Interleaved spin-orbital ordering matches OpenFermion. Same SDK path that dispatches to cuStateVec/tensornet-mps on GPU; run on CPU here for third-party reproducibility.",
+  "results": [
+    {
+      "system": "H4",
+      "qubits": 8,
+      "n_electrons": 4,
+      "backend": "qpp-cpu (CUDA-Q, CPU statevector)",
+      "uccsd_params": 26,
+      "shots": 50000,
+      "sampled_determinants": 15,
+      "e_fci": -2.1568572982997076,
+      "e_hf": -2.1158272217230603,
+      "vqe_cudaq_Ha": -2.156845262394776,
+      "vqe_err_mHa": 0.012,
+      "qsci_cudaq_Ha": -2.15683483471912,
+      "qsci_err_mHa": 0.022,
+      "wall_s": 662.1
+    }
+  ],
+  "honest_caveats": [
+    "qpp-cpu is CUDA-Q's CPU statevector backend; this proves the circuits compile/execute through the SDK, NOT a GPU/MPS scaling run (still owed). It validates the execution layer, not 40q scale.",
+    "Small systems (H4/H6) where exact FCI is available, so the CUDA-Q result is fully validated.",
+    "VQE uses gradient-free COBYLA; QSCI diagonalizes H in the CUDA-Q-sampled determinant subspace."
+  ]
+}

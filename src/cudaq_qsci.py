@@ -90,7 +90,7 @@ def qsci_from_determinants(qop, dets, e_fci):
     return E, n
 
 
-def run(n_atoms, shots=20000, maxiter=300):
+def run(n_atoms, shots=50000, maxiter=400):
     t0 = time.time()
     qop, nelec, nq, e_fci, e_hf = hchain(n_atoms)
     H = cudaq_spinop(qop)
@@ -125,7 +125,9 @@ def run(n_atoms, shots=20000, maxiter=300):
 
 def main():
     print(f"CUDA-Q execution proof — GQE/QSCI pipeline on qpp-cpu (target={cudaq.get_target().name})\n", flush=True)
-    results = [run(4), run(6)]
+    # H4 (8q) where exact FCI is available -> fully-validated CUDA-Q execution. UCCSD VQE at 12q+ is
+    # CPU-bound (observe ~100 s/eval); the 12-40q regime is the owed GPU run (cuStateVec/tensornet-mps).
+    results = [run(4)]
     payload = dict(
         title="GQE/QSCI circuits executed through NVIDIA CUDA-Q (qpp-cpu CPU backend)",
         method="UCCSD ansatz (cudaq.kernels.uccsd) evaluated via cudaq.observe (VQE) and sampled via "
