@@ -1,5 +1,7 @@
-# GPU / tensor-network extras for the Phase-3 qBraid runs (NVIDIA GPU required).
-# Install ONLY on a CUDA-capable machine / qBraid GPU instance, on top of requirements.txt.
-cudaq            # NVIDIA CUDA-Q: tensornet-mps + cuStateVec backends (GPU)
+# GPU extras for the AT-SCALE Phase-3 qBraid runs (NVIDIA GPU).
+# NOTE: cudaq and block2 also install/run on CPU (see requirements.txt) — they are listed there for
+# the CPU-reproducible cudaq_qsci / MPS bond-dimension results. A GPU is required only to run the
+# LARGE tensornet-mps / cuStateVec simulations (the owed 40q deliverable), not to install the packages.
+cudaq            # GPU: tensornet-mps + cuStateVec backends for 24-40q at-scale runs
 quimb            # tensor-network utilities
-block2           # DMRG reference (classical tensor-network baseline)
+block2           # DMRG reference (also CPU); GPU build for larger active spaces

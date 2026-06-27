@@ -1,5 +1,5 @@
 # CPU-verified core (Python 3.11) — installs cleanly on a CPU-only box.
-# This is all you need to reproduce every CPU headline result (see README "Reproduce").
+# This is all you need to reproduce the core CPU headline results (see README "Reproduce").
 pyscf
 openfermion
 openfermionpyscf
@@ -11,5 +11,12 @@ scipy
 numpy
 matplotlib
 
-# GPU / tensor-network extras for the Phase-3 qBraid runs are in requirements-gpu.txt
-# (cudaq, quimb, block2) — do NOT install those on a CPU-only machine; they will fail.
+# Optional CPU extras — also install cleanly on a CPU-only box and reproduce two more results:
+#   cudaq  -> qpp-cpu backend executes the GQE/QSCI circuits (src/cudaq_qsci.py)
+#   block2 -> DMRG / MPS bond-dimension + entanglement study (src/mps_bonddim_study.py, src/dmrg_scale.py)
+# These run WITHOUT a GPU. reproduce.py auto-detects them and runs the extra checks if present.
+cudaq
+block2
+
+# GPU is required only for the AT-SCALE Phase-3 runs (40q tensornet-mps / cuStateVec); see
+# requirements-gpu.txt. The packages themselves (cudaq, block2) install and run on CPU.
