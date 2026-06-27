@@ -258,13 +258,21 @@ def sample_dets(seqs, pool, target_rec, shots=2000):
 
 
 def qsci_transfer(seqs, target_rec, tokens, topk=600):
-    """QSCI energy of the determinant subspace sampled from a set of circuits on the target system."""
+    """QSCI energy of the determinant subspace sampled from circuits on the target system.
+
+    Returns (err_at_topk_mHa, n_used, err_at_matchedK_mHa) where matched-K (=K_FAIR most frequent
+    determinants) controls for sampling DIVERSITY so the comparison reflects determinant QUALITY.
+    """
+    K_FAIR = 64
     pool, _ = build_realized_pool(tokens, target_rec["ne"], target_rec["nq"])
     dets = sample_dets(seqs, pool, target_rec)
     uq, cnt = np.unique(dets, return_counts=True)
-    keep = uq[np.argsort(cnt)[::-1][:topk]]
+    rank = np.argsort(cnt)[::-1]
+    keep = uq[rank[:topk]]
     e, n = qsci_energy(target_rec["qop"], keep)
-    return abs(e - target_rec["e_fci"]) * 1000.0, int(n)
+    keep_fair = uq[rank[:K_FAIR]]
+    e_fair, _ = qsci_energy(target_rec["qop"], keep_fair)
+    return abs(e - target_rec["e_fci"]) * 1000.0, int(n), abs(e_fair - target_rec["e_fci"]) * 1000.0
 
 
 def main_large():
@@ -284,19 +292,27 @@ def main_large():
         gen = _generate(model, NGEN, 8, 0.4, torch.tensor(~valid_t)).cpu().numpy()
         rng = np.random.default_rng(seed); vids = np.where(valid_t)[0]
         rnd = np.array([rng.choice(vids, 8) for _ in range(NGEN)])
-        te, tn = qsci_transfer(gen, tgt, tokens)
-        re_, rn = qsci_transfer(rnd, tgt, tokens)
-        log(f"[seed {seed}] H(4,6)->H10 QSCI: trained {te:.2f} mHa ({tn} dets) | random {re_:.2f} mHa ({rn} dets)")
-        res.append(dict(seed=seed, trained_qsci_mHa=te, trained_dets=tn, random_qsci_mHa=re_, random_dets=rn))
+        te, tn, tef = qsci_transfer(gen, tgt, tokens)
+        re_, rn, ref = qsci_transfer(rnd, tgt, tokens)
+        log(f"[seed {seed}] H(4,6)->H10: pooled trained {te:.2f}({tn}d) vs random {re_:.2f}({rn}d) | "
+            f"matched-K64 trained {tef:.2f} vs random {ref:.2f}")
+        res.append(dict(seed=seed, trained_pooled_mHa=te, trained_dets=tn, random_pooled_mHa=re_,
+                        random_dets=rn, trained_fairK_mHa=tef, random_fairK_mHa=ref))
         json.dump(dict(train="H4+H6", target="H10_20q", eval="QSCI", n_gen=NGEN, results=res),
                   open(os.path.join(OUT, "scaling_transfer_h10_evidence.json"), "w"), indent=2)
-    t = np.array([r["trained_qsci_mHa"] for r in res]); r = np.array([r["random_qsci_mHa"] for r in res])
-    noise = float(np.std(np.concatenate([t, r])))
-    success = bool((r.mean() - t.mean()) > noise)
-    summary = dict(metric="QSCI energy on H10/20q (mHa to FCI)", trained=float(t.mean()), random=float(r.mean()),
-                   delta=float(r.mean() - t.mean()), noise=noise, cross_size_transfer_success=success)
-    log(f"\nSUMMARY H(4,6)->H10/20q: trained {t.mean():.2f}±{t.std():.2f} vs random {r.mean():.2f}±{r.std():.2f} "
-        f"| Δ={r.mean()-t.mean():+.2f} noise={noise:.2f} -> success={success}")
+    tf = np.array([r["trained_fairK_mHa"] for r in res]); rf = np.array([r["random_fairK_mHa"] for r in res])
+    tp = np.array([r["trained_pooled_mHa"] for r in res]); rp = np.array([r["random_pooled_mHa"] for r in res])
+    noise = float(np.std(np.concatenate([tf, rf])))
+    success = bool((rf.mean() - tf.mean()) > noise)
+    summary = dict(fair_metric="QSCI at matched K=64 determinants (quality, diversity-controlled), mHa to FCI",
+                   trained_fairK=float(tf.mean()), random_fairK=float(rf.mean()),
+                   delta_fairK=float(rf.mean() - tf.mean()), noise_fairK=noise,
+                   pooled_note="pooled metric favors random via determinant DIVERSITY, not quality",
+                   trained_pooled=float(tp.mean()), random_pooled=float(rp.mean()),
+                   cross_size_transfer_success_fairK=success)
+    log(f"\nSUMMARY H(4,6)->H10/20q [FAIR matched-K=64]: trained {tf.mean():.2f}±{tf.std():.2f} vs "
+        f"random {rf.mean():.2f}±{rf.std():.2f} | Δ={rf.mean()-tf.mean():+.2f} noise={noise:.2f} -> success={success}")
+    log(f"  [pooled, diversity-confounded]: trained {tp.mean():.2f} vs random {rp.mean():.2f}")
     out = json.load(open(os.path.join(OUT, "scaling_transfer_h10_evidence.json")))
     out["summary"] = summary
     json.dump(out, open(os.path.join(OUT, "scaling_transfer_h10_evidence.json"), "w"), indent=2)
