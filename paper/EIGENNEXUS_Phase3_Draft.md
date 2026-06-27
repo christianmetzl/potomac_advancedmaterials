@@ -110,9 +110,9 @@ encoded as (occupied depth below HOMO, virtual height above LUMO), independent o
 small system's token vocabulary is a provable subset of a larger one (verified: H₆/12q ⊂ H₈/16q ⊂
 H₁₀/20q). A GPT-QE generator trained **only on H₆ (12 qubits)** then generates zero-shot for **H₈ (16
 qubits)**. The headline is **train-small, deploy-large**: one generator trained only on **H₄+H₆ (8q+12q)**
-is deployed zero-shot across **16→20→28→40 qubits** and **beats random search at every size and every
-seed** — advantage **+9.2 / +8.5 / +7.4 / +6.0 mHa at 16/20/28/40q** (3-seed mean; trained spread ~1 mHa
-vs random ~7–10). Since GQE training is the cost that is CPU-bound near ~16 qubits, transferring a
+is deployed zero-shot across **16→56 qubits** and **beats random selection on the 3-seed mean at every
+size** — advantage **+8.9/+8.3/+7.1/+5.8/+5.0/+4.4 mHa at 16/20/28/40/48/56q** (trained spread ~2 mHa vs
+random ~5–10; a mean trend that narrows into run-to-run noise beyond ~28q, not an every-seed guarantee). Since GQE training is the cost that is CPU-bound near ~16 qubits, transferring a
 small-trained generator to the 40-qubit target — instead of training at scale — attacks the field's
 central bottleneck. The enabler is a **determinant-space evaluation** (each proposed excitation maps by
 bitmask to a determinant; QSCI diagonalizes that subspace) that needs **no 2ⁿ statevector**, so 40q runs

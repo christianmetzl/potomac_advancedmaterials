@@ -68,7 +68,7 @@ Christian / Juan / Fares. Every claim below traces to those documents or to our 
 | HamLib equivalence 28/32/40q (exact) | reproducibility win | keep; cite as third-party-verifiable |
 | Noise robustness 20q | noise-aware **bonus** | re-run on qBraid; tie to a real QPU if time permits |
 | ~~Conditional encoder~~ cross-*molecule* (criterion 3) | **RESOLVED → negative** (within-noise tie vs warm-start) | reported honestly |
-| **Train-small/deploy-large transfer** (criteria 1, 3) | **DEMONSTRATED ✅ to 40q** — one generator trained on 8q+12q beats random at 16/20/28/**40q**, all seeds (advantage +9.2/+8.5/+7.4/+6.0 mHa; det-space QSCI, no statevector). H₆→H₈ raw-energy corroborates | the headline scaling-transfer leap; Fig 2 in paper |
+| **Train-small/deploy-large transfer** (criteria 1, 3) | **DEMONSTRATED to 56q** — one generator trained on 8q+12q beats random on the **3-seed mean** at 16/20/28/40/48/56q (advantage +8.9/+8.3/+7.1/+5.8/+5.0/+4.4 mHa; selected-CI proxy, no statevector). Honest: a mean trend that narrows into run-to-run noise beyond ~28q, not an every-seed guarantee | the scaling-transfer result; Fig 2 in paper |
 | **Operator-pool compression** (criterion 3/4) | **DEMONSTRATED** — MP2 ranking keeps full-pool accuracy at 25–40% of doubles vs random collapse (~22×) | done; cite in write-up |
 | **38q CrO/NiO ≤0.08 mHa claim (in finalist paper)** | **unsubstantiated, CPU-infeasible** | **substantiate on GPU OR correct — see §5** |
 | Classical baselines presented as such | partial (have FCI/CCSD(T)/DMRG refs) | **package as explicit quantum-vs-classical + wall-clock** |

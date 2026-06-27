@@ -37,14 +37,15 @@ Prepared after the first conditional-encoder demonstration. Every number traces 
 > samples more distinct determinants; the matched-budget control isolates determinant *quality* — both
 > reported transparently.)
 >
-> ## 🚀 LEAP 2026-06-27 — train-small/deploy-large confirmed to **40 qubits**
+> ## 🚀 LEAP 2026-06-27 — train-small/deploy-large to **56 qubits** (honest, 3-seed mean)
 > Full ladder (`--ladder`, `results/encoder/scaling_ladder_evidence.json`, `scaling_ladder.png`): one
-> generator trained only on H₄+H₆ (8q+12q), deployed zero-shot across **16→20→28→40q**, beats random at
-> **every size and every seed** — advantage +9.2/+8.5/+7.4/**+6.0 mHa @ 40q** (3-seed mean; trained
-> spread ~1 mHa vs random ~7–10). Enabled by determinant-space QSCI (bitmask determinant enumeration, no
-> 2ⁿ statevector → 40q on CPU). **This is the headline: GQE training (CPU-bound at ~16q) can be amortized
-> once at small scale and transferred to the 40q target — not trained at scale.** Honest scope: relative
-> advantage at a small fixed determinant budget (K=96), not absolute chemical accuracy at 40q (GPU
+> generator trained only on H₄+H₆ (8q+12q), deployed zero-shot across **16→20→28→40/48/56q**, beats random
+> **on the 3-seed mean at every size** — advantage +8.9/+8.3/+7.1/+5.8/+5.0/+4.4 mHa (trained spread
+> ~2 mHa vs random ~5–10). Honest robustness: all seeds positive only at 16q; beyond ~28q the advantage is
+> within run-to-run noise — a mean trend, NOT an every-seed guarantee. Enabled by a determinant-space
+> selected-CI proxy (Slater-Condon, no 2ⁿ statevector → 56q on CPU). **GQE training (CPU-bound at ~16q) can
+> be amortized once at small scale and transferred toward the 40q+ target — not trained at scale.** Honest
+> scope: relative advantage at a small fixed determinant budget (K=96), not absolute chemical accuracy (GPU
 > deliverable). **Net: cross-*size* / train-small-deploy-large transfer is the real, on-theme leap
 > (primary criterion: scalability); cross-*molecule* conditioning is an honest negative.** All in the paper.
 ---
