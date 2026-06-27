@@ -24,7 +24,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 | 7 | HamLib match 28/32/40q | exact term-count + one-norm (~1e-13) | `src/hamlib_validate.py` | `hamlib_validation_large.json` | PASS (28q) | executed-CPU |
 | 8 | Noise robustness 20q | ≤3.3 mHa @ 30% corrupt, 2×10⁶ shots | `src/noise_demo2.py` | `noise_evidence.json` | — | executed-CPU |
 | 9 | DFT functional spread | CrO 1.9 eV (sign flip), NiO 0.11 eV | `src/dft_baseline.py` | `dft_functional_spread_evidence.json` | — | executed-CPU |
-| 10 | Classical baseline + exact wall | FCI 0.69s(20q)→3.58s(24q) (single-thread, machine-dependent); intractable 32q+ | `src/classical_baselines.py` | `classical_baselines_evidence.json` | PASS | executed-CPU |
+| 10 | Classical baseline + exact wall | FCI 0.69s(20q)→3.74s(24q) (single-thread, machine-dependent); intractable 32q+ | `src/classical_baselines.py` | `classical_baselines_evidence.json` | PASS | executed-CPU |
 | 10b | DMRG (tensor-network) reference | reproduces FCI 0.000 mHa @20q; H₂₄/48q 6.83 mHa off CCSD(T) (bond-dim 250) | `src/dmrg_scale.py` | `dmrg_evidence.json` | — (needs block2) | executed-CPU (block2) |
 | 10c | **MPS bond-dim & entanglement (pillar 1)** | χ for chem-acc ≈50/100/400 @20/28/40q; Sₘₐₓ 0.39→4.43 (area-law→strong corr) | `src/mps_bonddim_study.py` | `mps_bonddim_evidence.json` | — (needs block2) | executed-CPU (block2) |
 | 10d | **CUDA-Q execution (qpp-cpu)** | H₄ VQE +0.012 / QSCI +0.022 mHa vs FCI via cudaq.observe/sample | `src/cudaq_qsci.py` | `cudaq_qsci_evidence.json` | — (needs cudaq) | executed-CPU (CUDA-Q qpp-cpu) |
@@ -49,7 +49,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
   circuit-sampled pipeline.
 - **GPU-owed (row 19):** the only un-executed items; clearly marked as targets in the paper, never as
   achieved results.
-- **Judges' re-run:** `python src/reproduce.py` → **10/10 PASS** (transcript: `docs/reproduce_transcript.txt`).
+- **Judges' re-run:** `python src/reproduce.py` → **12/12 PASS** (10 core + 2 optional CUDA-Q/MPS; transcript: `docs/reproduce_transcript.txt`).
 
 ## Known honesty caveats (also stated in the paper)
 - Transfer ladder advantage is a **3-seed mean** that narrows into run-to-run noise beyond ~28q — not an

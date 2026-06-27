@@ -46,7 +46,7 @@ CHECKS = [
      [("eq", ["0", "qsci_best_err_mHa"], 0.038, 0.05), ("eq", ["1", "qsci_best_err_mHa"], 0.197, 0.08)], True),
     ("HamLib equivalence (28q)", "hamlib_validate.py", ["14"], None,
      [("eq_terms", 27735)], True),
-    ("classical baselines (Hn FCI)", "classical_baselines.py", ["6", "10"], "classical_baselines_evidence.json",
+    ("classical baselines (Hn FCI)", "classical_baselines.py", ["6", "10", "12"], "classical_baselines_evidence.json",
      [("eq", ["results", "0", "FCI_ref_match", "diff_mHa"], 0.0, 0.02)], False),
     ("CrO dissociation trust", "cro_dissociation.py", [], "cro_dissociation_evidence.json",
      [("lt", ["geometries", "0", "selCI_err_mHa"], 0.5), ("ccsdt_breaks",), ("selci_robust",)], True),

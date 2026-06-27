@@ -41,9 +41,9 @@ const tbl1=new Table({width:{size:9792,type:WidthType.DXA},columnWidths:w1,rows:
 const w2=[1700,1300,2400,2300,2092];
 const tbl2=new Table({width:{size:9792,type:WidthType.DXA},columnWidths:w2,rows:[
   row(["System","Qubits","FCI (exact) wall-clock","CCSD(T) err vs FCI","CCSD(T) wall-clock"],w2,{hdr:true,align:AlignmentType.CENTER}),
-  row(["H₆","12","0.05 s","0.026 mHa","0.16 s"],w2,{align:AlignmentType.CENTER}),
-  row(["H₁₀","20","0.69 s","0.173 mHa","0.21 s"],w2,{align:AlignmentType.CENTER}),
-  row(["H₁₂","24","3.58 s","0.282 mHa","0.22 s"],w2,{align:AlignmentType.CENTER}),
+  row(["H₆","12","0.04 s","0.026 mHa","0.08 s"],w2,{align:AlignmentType.CENTER}),
+  row(["H₁₀","20","0.69 s","0.173 mHa","0.12 s"],w2,{align:AlignmentType.CENTER}),
+  row(["H₁₂","24","3.74 s","0.282 mHa","0.15 s"],w2,{align:AlignmentType.CENTER}),
   row(["H₁₄","28","minutes","—","~0.2 s"],w2,{align:AlignmentType.CENTER}),
   row(["H₁₆+","32+","intractable (CPU)","—","—"],w2,{align:AlignmentType.CENTER}),
 ]});
@@ -86,7 +86,7 @@ const children=[
   P([T("Verified results (CPU; reproduced from a clean checkout via ",{b:true}),T("reproduce.py",{b:true,i:true}),T(").",{b:true}),T(" All values below are reproduced against the committed result files (Table 1).")],{after:50}),
   tbl1,
   new Paragraph({spacing:{before:30,after:50,line:240,lineRule:"auto"},children:[new TextRun({text:"Table 1. Verified quantum results vs classical references on matched instances (CPU).",font:FONT,size:19,italics:true})]}),
-  P([T("Classical baseline and the exact wall (matched instances, timed). ",{b:true}),T("On identical STO-6G Hₙ geometries, classical FCI wall-clock grows steeply (~5× from 20→24 qubits, 0.69 s → 3.58 s on a single CPU thread) and is intractable by 32q on CPU; CCSD(T) stays cheap but its error climbs with correlation and breaks down under strong correlation (at H₂₄/48q, classical DMRG is itself 6.83 mHa off CCSD(T)). Exact quantum-state simulation needs ~16 TB at 40 qubits — the wall the MPS + QSCI tiers remove (Table 2).")],{after:50}),
+  P([T("Classical baseline and the exact wall (matched instances, timed). ",{b:true}),T("On identical STO-6G Hₙ geometries, classical FCI wall-clock grows steeply (~5× from 20→24 qubits, 0.69 s → 3.74 s on a single CPU thread) and is intractable by 32q on CPU; CCSD(T) stays cheap but its error climbs with correlation and breaks down under strong correlation (at H₂₄/48q, classical DMRG is itself 6.83 mHa off CCSD(T)). Exact quantum-state simulation needs ~16 TB at 40 qubits — the wall the MPS + QSCI tiers remove (Table 2).")],{after:50}),
   tbl2,
   new Paragraph({spacing:{before:30,after:50,line:240,lineRule:"auto"},children:[new TextRun({text:"Table 2. Classical reference cost on the Hₙ ladder (single-thread CPU; wall-clocks machine-dependent, reproduced in classical_baselines_evidence.json — the steep growth and the exact-method wall, not absolute seconds, are the claim; H₁₄+/intractable rows are qualitative) — the exact-method wall the quantum approach is measured against.",font:FONT,size:19,italics:true})]}),
   P([T("Scaling results targeted on qBraid GPU (owed — not yet executed). ",{b:true}),

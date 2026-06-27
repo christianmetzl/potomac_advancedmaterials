@@ -8,7 +8,7 @@
 - [x] **Source code** — all CPU-verified scripts + the qBraid GPU run-list scripts (`src/`, `src/encoder/`).
 - [x] **README.md** — team/title/track, setup, step-by-step qBraid run, expected I/O, limitations,
       **Launch on qBraid** button.
-- [x] **Reproducibility** — `python src/reproduce.py` → **10/10 PASS** (transcript: `docs/reproduce_transcript.txt`).
+- [x] **Reproducibility** — `python src/reproduce.py` → **12/12 PASS** (10 core + 2 optional CUDA-Q/MPS; transcript: `docs/reproduce_transcript.txt`).
 - [x] **Traceability** — `docs/claims_ledger.md` (every number → script → evidence → status).
 - [x] **requirements.txt** (CPU) + **requirements-gpu.txt** (cudaq/quimb/block2).
 - [x] **Submission zip** — `python paper/make_submission_zip.py` → `EIGENNEXUS_AdvancedMaterials_Phase3.zip`.

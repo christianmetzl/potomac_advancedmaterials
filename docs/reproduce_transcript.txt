@@ -1,14 +1,18 @@
+# Captured: python src/reproduce.py  (GIC 2026 Phase 3, EIGENNEXUS) — full suite incl. optional CUDA-Q + MPS checks
+
 MATGEN-Q reproducibility driver — CPU headline results
 ============================================================
-  PASS    two-stage GQE (H2/H4/H6)           0.0~0.0; 0.009~0.009; 0.297~0.297  [27s]
-  PASS    integrated GQE->QSCI (H6 12q)      1.047~1.054  [42s]
-  PASS    SnO chem-acc (16q)                 0.341 mHa < 0.6  [3s]
-  PASS    SnO2 chem-acc (20q)                0.214 mHa < 0.6  [9s]
+  PASS    two-stage GQE (H2/H4/H6)           0.0~0.0; 0.009~0.009; 0.297~0.297  [23s]
+  PASS    integrated GQE->QSCI (H6 12q)      1.054~1.054  [34s]
+  PASS    SnO chem-acc (16q)                 0.108 mHa < 0.6  [4s]
+  PASS    SnO2 chem-acc (20q)                0.198 mHa < 0.6  [7s]
   PASS    CrO/NiO (20q)                      0.038~0.038; 0.197~0.197  [14s]
-  PASS    HamLib equivalence (28q)           27735 terms ==27735  [17s]
+  PASS    HamLib equivalence (28q)           27735 terms ==27735  [18s]
   PASS    classical baselines (Hn FCI)       0.0002~0.0  [2s]
   PASS    CrO dissociation trust             0.038<0.5; CCSD(T) max|err|=144mHa nonconv=True; selCI all<5mHa (max 2.77)  [59s]
   PASS    CrO spin-gap decision              1.89>1.0; 1.893>1.0; 1.913>1.5; 1==1  [11s]
-  PASS    EN-PT2 two-sided bracket           E_var≥FCI ∀ 12 pts; 4.133|.|<10.0; 0.99922>0.99  [77s]
+  PASS    EN-PT2 two-sided bracket           E_var≥FCI ∀ 12 pts; 4.133|.|<10.0; 0.99922>0.99  [74s]
+  PASS    CUDA-Q execution (qpp-cpu)         0.012|.|<1.6; 0.067|.|<1.6  [667s]
+  PASS    MPS bond-dim & entanglement        50<100; Smax 0.39->4.43  [199s]
 ============================================================
-10/10 checks PASS
+12/12 checks PASS
