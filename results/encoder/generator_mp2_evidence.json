@@ -1,0 +1,20 @@
+{
+  "system": "H6 (12 qubits)",
+  "n_double_tokens": 99,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "n_generated_sequences_per_seed": 3000,
+  "spearman_rho_genfreq_vs_mp2amp": 0.309,
+  "spearman_p": 0.001859772943419002,
+  "top8_overlap": "4/8",
+  "method": "GPT-QE trained on H6 with energy feedback only (blind to MP2); learned token frequency (angles collapsed) correlated with |MP2 t2| over spin-conserving double-excitation tokens.",
+  "interpretation": "Positive rank correlation = the energy-trained generator rediscovered the MP2 excitation-importance ordering, i.e. it learned the dominant near-frontier doubles (transferable physics), not a per-system fit.",
+  "honest_caveats": [
+    "Generator picks excitation AND angle; angle bins collapsed before correlating.",
+    "GQE rewards energy lowering (correlated with, not identical to, |t2|), so rho is moderate not ~1.",
+    "3-seed aggregate token frequencies; H6 (a system the generator was trained on) -- this probes WHAT it learned, complementing the separate cross-size transfer (deploy to unseen sizes)."
+  ]
+}

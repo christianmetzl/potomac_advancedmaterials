@@ -1,0 +1,68 @@
+{
+  "system": "CrO  quintet (5-Pi) vs triplet, R=1.621 A, CAS(10,10)=20q",
+  "gap_definition": "E(triplet) - E(quintet) [eV]; gap>0 => quintet ground (agrees with experiment X 5-Pi)",
+  "experimental_ground_term": "X 5-Pi (quintet) [gas-phase CrO]",
+  "dft_spread_eV": 1.913,
+  "n_functionals_wrong_sign": 1,
+  "wrong_functionals": [
+    "B3LYP"
+  ],
+  "casci_gap_eV": 1.89,
+  "qsci_gap_eV": 1.893,
+  "decision_table": [
+    {
+      "method": "PBE",
+      "gap_eV": 0.963,
+      "predicted_GS": "quintet (5-Pi)",
+      "correct": true
+    },
+    {
+      "method": "BP86",
+      "gap_eV": 0.926,
+      "predicted_GS": "quintet (5-Pi)",
+      "correct": true
+    },
+    {
+      "method": "TPSS",
+      "gap_eV": 1.018,
+      "predicted_GS": "quintet (5-Pi)",
+      "correct": true
+    },
+    {
+      "method": "B3LYP",
+      "gap_eV": -0.076,
+      "predicted_GS": "triplet",
+      "correct": false
+    },
+    {
+      "method": "PBE0",
+      "gap_eV": 1.837,
+      "predicted_GS": "quintet (5-Pi)",
+      "correct": true
+    },
+    {
+      "method": "TPSSh",
+      "gap_eV": 1.089,
+      "predicted_GS": "quintet (5-Pi)",
+      "correct": true
+    },
+    {
+      "method": "CASCI (CAS(10,10), exact in active space)",
+      "gap_eV": 1.89,
+      "predicted_GS": "quintet (5-Pi)",
+      "correct": true
+    },
+    {
+      "method": "QSCI / selected-CI (this work)",
+      "gap_eV": 1.893,
+      "predicted_GS": "quintet (5-Pi)",
+      "correct": true
+    }
+  ],
+  "key_finding": "DFT functionals span 1.91 eV and B3LYP flips the ground state to triplet; CASCI/QSCI give one consistent quintet ground state, agreeing with the experimental X 5-Pi term. A B3LYP-only screen would carry the wrong spin ground state.",
+  "honest_caveats": [
+    "CAS(10,10)/def2-SVP is a fixed modest active space; the CASCI/QSCI gap is the single value DFT scatters around, not a benchmark-quality experimental gap.",
+    "Each spin state uses CASCI on its own ROHF orbitals (standard), not state-averaged CASSCF.",
+    "The robust, defensible claim is the SIGN/ordering agreement with experiment and the 1.9 eV DFT spread, not the precise gap magnitude."
+  ]
+}

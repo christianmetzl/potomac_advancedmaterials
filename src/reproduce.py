@@ -48,6 +48,14 @@ CHECKS = [
      [("eq_terms", 27735)], True),
     ("classical baselines (Hn FCI)", "classical_baselines.py", ["6", "10"], "classical_baselines_evidence.json",
      [("eq", ["results", "0", "FCI_ref_match", "diff_mHa"], 0.0, 0.02)], False),
+    ("CrO dissociation trust", "cro_dissociation.py", [], "cro_dissociation_evidence.json",
+     [("lt", ["geometries", "0", "selCI_err_mHa"], 0.5), ("ccsdt_breaks",), ("selci_robust",)], True),
+    ("CrO spin-gap decision", "cro_spin_gap.py", [], "cro_spin_gap_evidence.json",
+     [("gt", ["casci_gap_eV"], 1.0), ("gt", ["qsci_gap_eV"], 1.0), ("gt", ["dft_spread_eV"], 1.5),
+      ("eqi", ["n_functionals_wrong_sign"], 1)], True),
+    ("EN-PT2 two-sided bracket", "encoder/selci_pt2.py", [], "encoder/selci_pt2_evidence.json",
+     [("var_upper_bound",), ("abslt", ["results", "0", "extrap_err_mHa"], 10.0),
+      ("gt", ["results", "0", "extrap_R2"], 0.99)], True),
 ]
 
 
@@ -113,6 +121,29 @@ def run_check(label, script, args, out_json, asserts, workdir):
             got = _terms(out)
             passed = got == expected
             details.append(f"{got} terms =={expected}{'' if passed else ' ✗'}")
+        elif kind in ("lt", "gt", "abslt", "eqi"):
+            _, path, ref = a
+            got = _val(data, path)
+            v = abs(got) if kind == "abslt" else got
+            passed = (kind == "lt" and v < ref) or (kind == "gt" and v > ref) or \
+                     (kind == "abslt" and v < ref) or (kind == "eqi" and int(v) == int(ref))
+            op = {"lt": "<", "gt": ">", "abslt": "|.|<", "eqi": "=="}[kind]
+            details.append(f"{got}{op}{ref}{'' if passed else ' ✗'}")
+        elif kind == "ccsdt_breaks":  # CCSD(T) fails on the CrO stretch: large error or non-convergence
+            geos = data["geometries"]
+            errs = [abs(g["CCSDT_err_mHa"]) for g in geos if g.get("CCSDT_err_mHa") is not None]
+            nonconv = any(not g["CCSDT_converged"] for g in geos)
+            passed = (max(errs) > 20.0) if errs else False
+            passed = passed or nonconv
+            details.append(f"CCSD(T) max|err|={max(errs):.0f}mHa nonconv={nonconv}{'' if passed else ' ✗'}")
+        elif kind == "selci_robust":  # selected-CI/QSCI stays accurate at every geometry
+            geos = data["geometries"]
+            passed = all(g["selCI_err_mHa"] < 5.0 for g in geos)
+            details.append(f"selCI all<5mHa (max {max(g['selCI_err_mHa'] for g in geos):.2f}){'' if passed else ' ✗'}")
+        elif kind == "var_upper_bound":  # E_var is a rigorous variational upper bound at every PT2 point
+            pts = [p for r in data["results"] for p in r["points"]]
+            passed = all(p["var_err_mHa"] >= -0.2 for p in pts)
+            details.append(f"E_var≥FCI ∀ {len(pts)} pts{'' if passed else ' ✗'}")
         else:  # "eq"
             _, path, expected, tol = a
             got = _val(data, path)

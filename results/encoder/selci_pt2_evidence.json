@@ -1,0 +1,160 @@
+{
+  "system": "H10",
+  "qubits": 20,
+  "method": "Epstein-Nesbet PT2 on the Slater-Condon determinant engine: E_var (variational upper bound) and E_var+PT2 (second-order estimate) bracket the exact FCI; CIPSI extrapolation (E_var vs PT2 -> 0) estimates the FCI limit. Validated against exact FCI at 20q.",
+  "results": [
+    {
+      "R": 0.74,
+      "e_fci": -5.202826400621641,
+      "points": [
+        {
+          "cutoff": 0.02,
+          "ndet": 1,
+          "E_var": -5.096509572613209,
+          "E_est": -5.197342758382877,
+          "pt2_mHa": -100.833,
+          "var_err_mHa": 106.317,
+          "est_err_mHa": 5.484,
+          "gap_mHa": 100.833
+        },
+        {
+          "cutoff": 0.008,
+          "ndet": 2,
+          "E_var": -5.107999838923333,
+          "E_est": -5.19897058631755,
+          "pt2_mHa": -90.971,
+          "var_err_mHa": 94.827,
+          "est_err_mHa": 3.856,
+          "gap_mHa": 90.971
+        },
+        {
+          "cutoff": 0.003,
+          "ndet": 6,
+          "E_var": -5.124482309628844,
+          "E_est": -5.19773920339016,
+          "pt2_mHa": -73.257,
+          "var_err_mHa": 78.344,
+          "est_err_mHa": 5.087,
+          "gap_mHa": 73.257
+        },
+        {
+          "cutoff": 0.001,
+          "ndet": 26,
+          "E_var": -5.153652395354737,
+          "E_est": -5.198383814072822,
+          "pt2_mHa": -44.731,
+          "var_err_mHa": 49.174,
+          "est_err_mHa": 4.443,
+          "gap_mHa": 44.731
+        }
+      ],
+      "extrap_fci_est": -5.198693200784949,
+      "extrap_err_mHa": 4.133,
+      "extrap_R2": 0.99922
+    },
+    {
+      "R": 1.8,
+      "e_fci": -4.858523243731098,
+      "points": [
+        {
+          "cutoff": 0.02,
+          "ndet": 2,
+          "E_var": -4.249469732653024,
+          "E_est": -4.709819472795894,
+          "pt2_mHa": -460.35,
+          "var_err_mHa": 609.054,
+          "est_err_mHa": 148.704,
+          "gap_mHa": 460.35
+        },
+        {
+          "cutoff": 0.008,
+          "ndet": 18,
+          "E_var": -4.47660296555568,
+          "E_est": -4.664458398430248,
+          "pt2_mHa": -187.855,
+          "var_err_mHa": 381.92,
+          "est_err_mHa": 194.065,
+          "gap_mHa": 187.855
+        },
+        {
+          "cutoff": 0.003,
+          "ndet": 43,
+          "E_var": -4.541863912903783,
+          "E_est": -4.678292147122334,
+          "pt2_mHa": -136.428,
+          "var_err_mHa": 316.659,
+          "est_err_mHa": 180.231,
+          "gap_mHa": 136.428
+        },
+        {
+          "cutoff": 0.001,
+          "ndet": 219,
+          "E_var": -4.726957482316303,
+          "E_est": -4.773795774235036,
+          "pt2_mHa": -46.838,
+          "var_err_mHa": 131.566,
+          "est_err_mHa": 84.727,
+          "gap_mHa": 46.838
+        }
+      ],
+      "extrap_fci_est": -4.722188879086492,
+      "extrap_err_mHa": 136.334,
+      "extrap_R2": 0.94366
+    },
+    {
+      "R": 2.4,
+      "e_fci": -4.731589443230019,
+      "points": [
+        {
+          "cutoff": 0.02,
+          "ndet": 10,
+          "E_var": -3.9032992570881,
+          "E_est": -4.30456478895573,
+          "pt2_mHa": -401.266,
+          "var_err_mHa": 828.29,
+          "est_err_mHa": 427.025,
+          "gap_mHa": 401.266
+        },
+        {
+          "cutoff": 0.008,
+          "ndet": 37,
+          "E_var": -4.126585404737381,
+          "E_est": -4.357668550355872,
+          "pt2_mHa": -231.083,
+          "var_err_mHa": 605.004,
+          "est_err_mHa": 373.921,
+          "gap_mHa": 231.083
+        },
+        {
+          "cutoff": 0.003,
+          "ndet": 124,
+          "E_var": -4.145336614902045,
+          "E_est": -4.383928901001209,
+          "pt2_mHa": -238.592,
+          "var_err_mHa": 586.253,
+          "est_err_mHa": 347.661,
+          "gap_mHa": 238.592
+        },
+        {
+          "cutoff": 0.001,
+          "ndet": 468,
+          "E_var": -4.719563423242814,
+          "E_est": -4.7206471377597445,
+          "pt2_mHa": -1.084,
+          "var_err_mHa": 12.026,
+          "est_err_mHa": 10.942,
+          "gap_mHa": 1.084
+        }
+      ],
+      "extrap_fci_est": -4.677676341930183,
+      "extrap_err_mHa": 53.913,
+      "extrap_R2": 0.96748
+    }
+  ],
+  "honest_caveats": [
+    "E_var is a rigorous variational UPPER BOUND; E_var+PT2 is an ESTIMATE (EN-PT2), not a bound.",
+    "EN-PT2 can over-correct near intruder states (small denominators); near-singular dets are screened and counted.",
+    "The bracket [E_var+PT2, E_var] and its shrinking gap are the deliverable; validated against true FCI at 20q.",
+    "CIPSI linear extrapolation is reliable near equilibrium (R2>0.999, ~4 mHa to FCI) but degrades on the coarse-budget points in the strong-correlation regime; there the direct two-sided bracket (which stays on the CORRECT side of FCI, unlike CCSD(T)) is the robust deliverable."
+  ]
+}

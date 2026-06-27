@@ -27,12 +27,16 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 | 10 | Classical baseline + exact wall | FCI 0.33s(20q)→7.8s(24q); intractable 32q+ | `src/classical_baselines.py` | `classical_baselines_evidence.json` | PASS | executed-CPU |
 | 11 | **Strong-corr trust result** | CCSD(T) −217 mHa (below FCI); selected-CI chem-acc @ ~500 dets; HF-weight 0.93→0.06 | `src/encoder/selected_ci_strongcorr.py`, `src/encoder/strong_correlation.py` | `selected_ci_strongcorr_evidence.json` (energies/dets), `strong_correlation_evidence.json` (HF-weight / multireference diagnostic) | — | executed-CPU (FCI ref) |
 | 12 | Operator-pool compression | N₂ 2.26 mHa @ 25% of doubles vs 50.4 random | `src/encoder/pool_compression.py` | `pool_compression_evidence.json` | — | executed-CPU |
-| 13 | Transfer ladder 16→56q | +8.9/+8.3/+7.1/+5.8/+5.0/+4.4 mHa (3-seed mean); 13/18 paired wins; variance 4.7 vs 17.6 mHa | `src/encoder/scaling_transfer.py --ladder` | `scaling_ladder_evidence.json` | — | proxy; mean trend, narrows into noise beyond ~28q |
+| 13 | Transfer ladder 16→56q | +8.9/+8.3/+7.1/+5.8/+5.0/+4.4 mHa (3-seed mean); 13/18 paired wins; across-seed SD ≈2.0 vs ≈7.4 mHa (3.7× tighter) | `src/encoder/scaling_transfer.py --ladder` | `scaling_ladder_evidence.json` | — | proxy; mean trend, narrows into noise beyond ~28q |
 | 14 | Cross-chemistry transfer | 4/6 oxide targets (SnO fails); MP2 strongest | `scaling_transfer.py --crosschem` | `crosschem_evidence.json` | — | proxy; honest partial |
 | 15 | Budget sweep + transfer×MP2 | trained < random ∀K; MP2 strongest; fusion no gain | `scaling_transfer.py --compose` | `compose_evidence.json` | — | proxy |
 | 16 | Determinant scaling law | ~1.38×/qubit vs 2.0× FCI (log-R²=0.99) | `src/encoder/scaling_law.py` | `scaling_law_evidence.json` | — | fit (exponential, smaller base; NOT polynomial) |
 | 17 | Slater-Condon engine | 0.0000 mHa vs Jordan–Wigner (H6/H10) | `src/encoder/sci_integrals.py` (`_selftest`) | (selftest stdout) | — | validated |
 | 18 | Conditional encoder (cross-molecule) | within-noise tie — honest NEGATIVE | `src/encoder/decisive_transfer.py` | `decisive_transfer_evidence.json` | — | executed-CPU, reported as negative |
+| 20 | **Real-oxide trust (CrO dissociation)** | in-active-space CCSD(T) erratic/non-convergent (to ~140 mHa) vs CASCI; selected-CI/QSCI variational ≤2.8 mHa; dominant-det weight 0.87→0.16 | `src/cro_dissociation.py` | `cro_dissociation_evidence.json` | PASS | executed-CPU (CASCI ref) |
+| 21 | **CrO spin-gap decision** | DFT spans 1.9 eV, B3LYP wrong sign; CASCI/QSCI +1.89 eV quintet = experimental X⁵Π | `src/cro_spin_gap.py` | `cro_spin_gap_evidence.json` | PASS | executed-CPU (CASCI ref) |
+| 22 | EN-PT2 two-sided bracket | E_var upper bound + E_var+PT2 estimate; equilibrium extrapolation → FCI +4.1 mHa (R²=0.999) | `src/encoder/selci_pt2.py` | `selci_pt2_evidence.json` | PASS | executed-CPU (FCI ref) |
+| 23 | Generator learned MP2 hierarchy | Spearman ρ=0.31 (p<0.002); 4/8 top-double overlap | `src/encoder/generator_mp2.py` | `generator_mp2_evidence.json` | — | executed-CPU |
 | 19 | 40q MPS run / CrO·NiO near-38q / QPU validation | — | — | — | — | **GPU-owed** `[QBRAID-RUN]` |
 
 ## Honest status summary
@@ -42,7 +46,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
   circuit-sampled pipeline.
 - **GPU-owed (row 19):** the only un-executed items; clearly marked as targets in the paper, never as
   achieved results.
-- **Judges' re-run:** `python src/reproduce.py` → **7/7 PASS** (transcript: `docs/reproduce_transcript.txt`).
+- **Judges' re-run:** `python src/reproduce.py` → **10/10 PASS** (transcript: `docs/reproduce_transcript.txt`).
 
 ## Known honesty caveats (also stated in the paper)
 - Transfer ladder advantage is a **3-seed mean** that narrows into run-to-run noise beyond ~28q — not an

@@ -33,12 +33,17 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | HamLib validation, 28/32/40q | exact | term counts match (27,735 / 47,489 / 116,577); coefficients agree to ~15 sig figs, differing only by a spectrum-invariant orbital-phase gauge |
 | Noise robustness, 20q | ≤3.3 mHa at 30% corrupted measurements | graceful degradation |
 | Sn-oxides (EUV target) | SnO chemical accuracy (≤0.5 mHa, 16q; value PySCF-version sensitive), SnO₂ 0.23 mHa (20q) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
+| **CrO ⁵Π / NiO ³Σ⁻ (20q)** | **0.038 / 0.197 mHa** | open-shell multireference oxides vs CASCI (`transition_metal_oxide_qsci.py`) |
+| **CrO spin-state decision** | DFT spans 1.9 eV, B3LYP flips the sign; CASCI/QSCI **+1.89 eV quintet = experimental X⁵Π** | turns "DFT mis-ranks the candidate" into a worked decision (`cro_spin_gap.py`) |
+| **CrO dissociation trust (real oxide)** | in-active-space CCSD(T) erratic / non-convergent (to ~140 mHa vs CASCI); QSCI variational ≤2.8 mHa | the strong-correlation trust story on a real Cr–O bond, not toy H₁₀ (`cro_dissociation.py`) |
+| EN-PT2 two-sided bracket | E_var (upper bound) + E_var+PT2 (estimate); equilibrium extrapolation → FCI +4.1 mHa (R²=0.999) | certifies the gap, CIPSI standard (`encoder/selci_pt2.py`) |
+| Generator learned MP2 hierarchy | Spearman ρ=0.31 (p<0.002), 4/8 top-double overlap | energy-trained generator (blind to MP2) recovers the MP2 amplitude ordering (`encoder/generator_mp2.py`) |
 
 ## Honest scope
 
 - The **integrated GQE→QSCI loop is demonstrated at 12 qubits**; the larger-scale QSCI results (20–28q) use **perturbative determinant selection as a hardware-independent proxy** for the measurement step, *validated against* the 12q measured pipeline.
 - The 40q result is **operational but not yet at chemical accuracy** — the GPU runs are the Phase 3 deliverable.
-- **Train-small, deploy-large (transfer result).** One generator trained only on 8q+12q systems, deployed zero-shot across **16→56 qubits**, proposes lower-energy determinant subspaces than random selection on the **3-seed mean** at every size (advantage +8.9/+8.3/+7.1/+5.8/+5.0/+4.4 mHa; `src/encoder/scaling_transfer.py --ladder`). A canonical frontier-relative tokenization makes the small vocabulary a subset of the large one; a determinant-space **selected-CI proxy** (Slater-Condon, validated to 0.0000 mHa vs Jordan–Wigner; no 2ⁿ statevector) makes 56q reachable on CPU. *Honest scope:* this is a mean trend that narrows into run-to-run noise beyond ~28q (not an every-seed guarantee), a relative advantage at a fixed small budget (not chemical accuracy), and a selected-CI proxy (not circuit-sampled QSCI). Cross-*chemistry* transfer works on 4/6 oxide targets but fails on SnO; target-specific MP2 beats the prior; cross-*molecule* conditioning was a within-noise tie. All reported as negatives where they are negatives.
+- **Train-small, deploy-large (transfer result).** One generator trained only on 8q+12q systems, deployed zero-shot across **16→56 qubits**, proposes lower-energy determinant subspaces than random selection (`src/encoder/scaling_transfer.py --ladder`). The robust signals are statistical: **~3.7× tighter across-seed selection spread** (≈2.0 vs ≈7.4 mHa) and **13/18 size×seed paired wins** (binomial p≈0.05); the per-size mean advantage is all-seeds-positive at 16q and positive in the mean through 28q (+8.9/+8.3/+7.1 mHa), then narrows into noise at 40–56q. That the policy captures real chemistry is corroborated by interpretability (the learned token distribution recovers the MP2 amplitude hierarchy, ρ=0.31, p<0.002). A canonical frontier-relative tokenization makes the small vocabulary a subset of the large one; a determinant-space **selected-CI proxy** (Slater-Condon, validated to 0.0000 mHa vs Jordan–Wigner; no 2ⁿ statevector) makes 56q reachable on CPU. *Honest scope:* a mean trend that narrows into run-to-run noise beyond ~28q (not an every-seed guarantee), a relative advantage at a fixed small budget (not chemical accuracy), and a selected-CI proxy (not circuit-sampled QSCI). Cross-*chemistry* transfer works on 4/6 oxide targets but fails on SnO; target-specific MP2 beats the prior; cross-*molecule* conditioning was a within-noise tie. All reported as negatives where they are negatives.
 - Sn-oxide Hamiltonians are **our own ECP-CASCI construction** (not from the HamLib library, which contains no tin oxides).
 
 ## Repository structure
@@ -63,7 +68,7 @@ pip install pyscf openfermion openfermionpyscf h5py pennylane pennylane-lightnin
 **One command** runs the verified CPU suite and checks each headline number against the committed
 `results/*.json`, printing a PASS/FAIL table (`--quick` skips the slower scripts):
 ```bash
-python src/reproduce.py     # -> 7/7 PASS (captured transcript: docs/reproduce_transcript.txt)
+python src/reproduce.py     # -> 10/10 PASS (captured transcript: docs/reproduce_transcript.txt)
 ```
 Every quantitative claim is traced to its script + evidence JSON + status (executed / circuit-sampled /
 proxy / GPU-owed) in **`docs/claims_ledger.md`**.

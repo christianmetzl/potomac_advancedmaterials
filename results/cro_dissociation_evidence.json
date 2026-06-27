@@ -1,0 +1,68 @@
+{
+  "system": "CrO quintet (5-Pi)",
+  "active_space": "CAS(10,10) = 20 qubits",
+  "method": "All-electron def2-SVP ROHF -> CASCI; CCSD(T) embedded in the IDENTICAL active space; selected-CI on the active-space qubit Hamiltonian. Apples-to-apples in-active-space comparison.",
+  "geometries": [
+    {
+      "R_ang": 1.621,
+      "CASCI_Ha": -1117.8916405549223,
+      "CCSD_Ha": -1117.8878962329256,
+      "CCSDT_Ha": -1117.891336042857,
+      "CCSDT_converged": true,
+      "CCSDT_err_mHa": 0.305,
+      "selCI_err_mHa": 0.038,
+      "selCI_dets": 801,
+      "dominant_det_weight": 0.8665
+    },
+    {
+      "R_ang": 1.85,
+      "CASCI_Ha": -1117.8706492383471,
+      "CCSD_Ha": -1117.7266444421714,
+      "CCSDT_Ha": -1117.726761021618,
+      "CCSDT_converged": false,
+      "CCSDT_err_mHa": 143.888,
+      "selCI_err_mHa": 0.027,
+      "selCI_dets": 801,
+      "dominant_det_weight": 0.7029
+    },
+    {
+      "R_ang": 2.1,
+      "CASCI_Ha": -1117.8686901592107,
+      "CCSD_Ha": -1117.7467002395715,
+      "CCSDT_Ha": -1117.7468353136333,
+      "CCSDT_converged": false,
+      "CCSDT_err_mHa": 121.855,
+      "selCI_err_mHa": 0.468,
+      "selCI_dets": 401,
+      "dominant_det_weight": 0.6277
+    },
+    {
+      "R_ang": 2.35,
+      "CASCI_Ha": -1117.7212278012473,
+      "CCSD_Ha": -1117.715161270396,
+      "CCSDT_Ha": -1117.7180977522999,
+      "CCSDT_converged": true,
+      "CCSDT_err_mHa": 3.13,
+      "selCI_err_mHa": 0.043,
+      "selCI_dets": 801,
+      "dominant_det_weight": 0.5091
+    },
+    {
+      "R_ang": 2.6,
+      "CASCI_Ha": -1117.8014802095554,
+      "CCSD_Ha": -1117.700057536203,
+      "CCSDT_Ha": -1117.7002206676173,
+      "CCSDT_converged": false,
+      "CCSDT_err_mHa": 101.26,
+      "selCI_err_mHa": 2.772,
+      "selCI_dets": 4001,
+      "dominant_det_weight": 0.1644
+    }
+  ],
+  "key_finding": "On a real Cr-O bond stretch, in-active-space CCSD(T) develops a large, non-convergent error vs exact CASCI while selected-CI/QSCI stays variational and accurate.",
+  "honest_caveats": [
+    "CCSD(T) is compared to FCI/CASCI in the SAME embedded active space (not full-molecule CCSD(T) vs small CAS).",
+    "On CrO the in-active-space CCSD(T) error stays ABOVE FCI (large + non-convergent), unlike H10 where it dipped below; framed accordingly.",
+    "CAS(10,10) in def2-SVP is a fixed, modest active space; the curve demonstrates the failure-mode contrast, not a benchmark-quality PES."
+  ]
+}

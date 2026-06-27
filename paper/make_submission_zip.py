@@ -25,7 +25,7 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
 - `src/` — all source code (CPU-verified + the qBraid GPU run-list scripts).
 - `results/` — every committed evidence JSON + figures (each headline number traces here).
 - `docs/claims_ledger.md` — per-claim traceability (number -> script -> evidence -> status).
-- `docs/reproduce_transcript.txt` — captured `python src/reproduce.py` -> 7/7 PASS.
+- `docs/reproduce_transcript.txt` — captured `python src/reproduce.py` -> 10/10 PASS.
 - `requirements.txt` (CPU) / `requirements-gpu.txt` (cudaq/quimb/block2 for qBraid GPU).
 
 ## TWO ACTIONS REQUIRED BEFORE UPLOAD (team)
@@ -37,14 +37,16 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
    (see docs/qbraid_access_email.md). It MUST appear on the Phase 3 cover page.
 
 ## Reproducing (judges)
-`pip install -r requirements.txt` then `python src/reproduce.py` -> 7/7 PASS on CPU (seconds-minutes).
+`pip install -r requirements.txt` then `python src/reproduce.py` -> 10/10 PASS on CPU (seconds-minutes).
 GPU/at-scale items (40q MPS, near-38q CrO/NiO, QPU validation) are marked [QBRAID-RUN] in the write-up and
 are the qBraid GPU deliverable; everything else is executed and reproducible on CPU.
 
 ## Honest status
 Executed (CPU/circuit-sampled): two-stage GQE, integrated GQE->QSCI (measured to 20q), CrO/NiO & Sn-oxides
-at 20q, HamLib equivalence, noise robustness, DFT functional-spread, classical baselines, strong-correlation
-selected-CI, operator-pool compression, scaling law. Proxy (validated vs measurement at 16/20q): the
+at 20q, the CrO spin-state decision (DFT spans 1.9 eV / B3LYP wrong sign vs CASCI/QSCI +1.89 eV = experimental
+X5Pi), the real-oxide CrO dissociation trust curve (CCSD(T) breaks down vs variational QSCI), the EN-PT2
+two-sided bracket, generator-MP2 interpretability, HamLib equivalence, noise robustness, DFT functional-spread,
+classical baselines, strong-correlation selected-CI, operator-pool compression, scaling law. Proxy (validated vs measurement at 16/20q): the
 16->56q transfer ladder, cross-chemistry, budget sweep. Owed (qBraid GPU): the 40q MPS run and QPU
 validation. No result is overstated; see docs/claims_ledger.md.
 """
