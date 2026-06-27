@@ -32,6 +32,7 @@ from openfermionpyscf import run_pyscf
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from gqe_scaling import GPTQE
 from qsci_score import qsci_energy
+from sci_integrals import hchain_integrals, sci_energy   # Slater-Condon: scalable to 48q+
 
 _REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(_REPO, "results", "encoder")
@@ -477,22 +478,104 @@ def main_compose():
     log("DONE")
 
 
-def main_ladder():
-    """GAME-CHANGER: train one generator small (H4+H6); deploy across 16->40 qubits, zero-shot.
+def oxide_target(name, ncas, nelec):
+    """Build an oxide/diatomic target from molecules.py as a transfer target (qop, ref, MP2 t2)."""
+    r = M.build(name, ncas=ncas, nelec=nelec)
+    return dict(qop=r["qop"], ne=r["ne"], nq=r["nq"], e_fci=r["e_cas"], t2=r["t2"],
+                name=name, ncas=ncas, ref_kind="CASCI")
 
-    Determinant-space evaluation (no statevector) makes the 28q/40q targets reachable on CPU.
-    Shows whether the small-trained generator's proposed excitations beat random across the size
-    ladder -- i.e. whether GQE training can be done once at small scale and transferred to the 40q
-    target, never trained at scale.
+
+def oxide_mp2_determinants(rec):
+    """HF + doubles(ranked by |MP2 t2|) + singles for an oxide target (fair classical baseline)."""
+    from pennylane import qchem
+    ne, nq, t2 = rec["ne"], rec["nq"], rec["t2"]; nocc_sp = ne // 2; hf = _hf_int(ne)
+    singles, doubles = qchem.excitations(ne, nq)
+
+    def w(d):
+        i, j, a, b = d
+        if sorted([i % 2, j % 2]) != sorted([a % 2, b % 2]):
+            return 0.0
+        return abs(float(t2[i // 2, j // 2, a // 2 - nocc_sp, b // 2 - nocc_sp]))
+    dord = sorted((tuple(d) for d in doubles), key=lambda d: -w(d))
+    dets = [hf] + [hf ^ (1 << i) ^ (1 << j) ^ (1 << a) ^ (1 << b) for (i, j, a, b) in dord]
+    dets += [hf ^ (1 << i) ^ (1 << a) for (i, a) in singles]
+    return dets
+
+
+def main_crosschem():
+    """SECOND CHEMISTRY: train on H-chains, deploy to oxide chemistry (cross-chemistry transfer).
+
+    The canonical frontier-relative tokenization is chemistry-agnostic (depth below HOMO / height above
+    LUMO), so an H-chain-trained generator can propose excitations for oxide active spaces. Tests whether
+    the learned generative policy transfers across CHEMISTRY (and, for the 20q oxides, across size too).
+    Determinant-space QSCI; trained vs random vs target-specific MP2 (classical baseline).
     """
     def log(s): print(s, flush=True)
-    log(f"\n######## SCALING LADDER: train H4+H6 -> deploy 16..40q {time.strftime('%Y-%m-%d %H:%M')} ########")
+    log(f"\n######## CROSS-CHEMISTRY: train H-chains -> oxides {time.strftime('%Y-%m-%d %H:%M')} ########")
+    recs_train = [hchain_ham(4), hchain_ham(6)]; tokens = canonical_tokens(6, 12)
+    targets = [("CO", 6, 6), ("SiO", 6, 6), ("SnO", 6, 6), ("BeO", 6, 6),   # 12q, cross-chemistry
+               ("CO", 10, 10), ("SnO", 10, 10)]                              # 20q, cross-chemistry + size
+    K = 64
+    models = [train_gptqe_multi(recs_train, tokens, seed=s) for s in (0, 1, 2)]
+    rows = []
+    for (name, ncas, nelec) in targets:
+        t = oxide_target(name, ncas, nelec)
+        pool, valid = build_realized_pool(tokens, t["ne"], t["nq"]); vids = np.where(valid)[0]
+        mp2 = oxide_mp2_determinants(t)
+        tr, rd = [], []
+        for si, model in enumerate(models):
+            torch.manual_seed(9000 + si)
+            gen = _generate(model, 200, 8, 0.5, torch.tensor(~valid)).cpu().numpy()
+            rng = np.random.default_rng(si); rnd = np.array([rng.choice(vids, 8) for _ in range(200)])
+            tr.append(qsci_at_K(t["qop"], gen_determinants(gen, t, tokens), K, t["e_fci"]))
+            rd.append(qsci_at_K(t["qop"], gen_determinants(rnd, t, tokens), K, t["e_fci"]))
+        mp2e = qsci_at_K(t["qop"], mp2, K, t["e_fci"])
+        row = dict(target=f"{name} CAS({nelec},{ncas})", nq=t["nq"],
+                   trained_mHa=float(np.mean(tr)), trained_sd=float(np.std(tr)),
+                   random_mHa=float(np.mean(rd)), mp2_mHa=float(mp2e),
+                   advantage_vs_random=float(np.mean(rd) - np.mean(tr)))
+        rows.append(row)
+        log(f"  {name:4s} {t['nq']:2d}q: trained {row['trained_mHa']:7.2f} | random {row['random_mHa']:7.2f} "
+            f"| mp2 {row['mp2_mHa']:7.2f} mHa | adv(vs random) {row['advantage_vs_random']:+.2f}")
+        json.dump(dict(train="H4+H6 (H-chains)", K=K, results=rows),
+                  open(os.path.join(OUT, "crosschem_evidence.json"), "w"), indent=2)
+    npos = sum(1 for r in rows if r["advantage_vs_random"] > 0)
+    log(f"\nCROSS-CHEMISTRY: H-chain-trained generator beats random on {npos}/{len(rows)} oxide targets")
+    log("DONE")
+
+
+def hchain_target_sci(n_atoms, R=0.74):
+    """Integral-based H-chain target (Slater-Condon eval) — scalable to 48q+, no Pauli operator built."""
+    integ = hchain_integrals(n_atoms, R)
+    ne, nq = integ["ne"], 2 * integ["n_orb"]
+    e_ref = REF_FCI.get(n_atoms); ref_kind = "FCI"
+    if e_ref is None:
+        e_ref = _ccsdt_ref(n_atoms, R); ref_kind = "CCSD(T)"
+    return dict(h1=integ["h1"], eri=integ["eri"], ecore=integ["ecore"], ne=ne, nq=nq,
+                e_fci=float(e_ref), ref_kind=ref_kind, n_atoms=n_atoms, hf=integ["e_hf"])
+
+
+def sci_at_K(target, det_list, K):
+    e, _ = sci_energy(target["h1"], target["eri"], target["ecore"], det_list[:K])
+    return abs(e - target["e_fci"]) * 1000.0
+
+
+def main_ladder():
+    """GAME-CHANGER: train one generator small (H4+H6); deploy across 16->56 qubits, zero-shot.
+
+    Determinant-space Slater-Condon evaluation (no statevector, no Pauli operator) makes targets up to
+    56q reachable on CPU. Shows whether the small-trained generator's proposed excitations beat random
+    across the size ladder -- i.e. whether GQE training can be amortized at small scale and transferred
+    to the 40-56q regime, never trained at scale.
+    """
+    def log(s): print(s, flush=True)
+    log(f"\n######## SCALING LADDER: train H4+H6 -> deploy 16..56q {time.strftime('%Y-%m-%d %H:%M')} ########")
     recs_train = [hchain_ham(4), hchain_ham(6)]
     tokens = canonical_tokens(6, 12)
-    log("building targets (16/20/28/40q)...")
-    targets = [hchain_ham(n) for n in (8, 10, 14, 20)]
+    log("building integral targets (16/20/28/40/48/56q, Slater-Condon)...")
+    targets = [hchain_target_sci(n) for n in (8, 10, 14, 20, 24, 28)]
     for t in targets:
-        log(f"  H{t['n_atoms']} {t['nq']}q: ref({t['ref_kind']})={t['e_fci']:.5f}, terms={len(t['qop'].terms)}")
+        log(f"  H{t['n_atoms']} {t['nq']}q: ref({t['ref_kind']})={t['e_fci']:.5f}")
     NGEN, K = 200, 96
     per_size = {t["nq"]: {"trained": [], "random": []} for t in targets}
     for seed in (0, 1, 2):
@@ -503,8 +586,8 @@ def main_ladder():
             gen = _generate(model, NGEN, 8, 0.5, torch.tensor(~valid)).cpu().numpy()
             rng = np.random.default_rng(seed); vids = np.where(valid)[0]
             rnd = np.array([rng.choice(vids, 8) for _ in range(NGEN)])
-            te, _ = det_space_transfer(gen, t, tokens, K)
-            re_, _ = det_space_transfer(rnd, t, tokens, K)
+            te = sci_at_K(t, gen_determinants(gen, t, tokens), K)      # Slater-Condon eval (scales to 56q)
+            re_ = sci_at_K(t, gen_determinants(rnd, t, tokens), K)
             per_size[t["nq"]]["trained"].append(te); per_size[t["nq"]]["random"].append(re_)
             log(f"[seed {seed}] {t['nq']:2d}q: trained {te:7.2f} mHa | random {re_:7.2f} mHa | Δ={re_-te:+.2f}")
     rows = []
@@ -514,9 +597,10 @@ def main_ladder():
                          trained_mHa=float(tr.mean()), trained_sd=float(tr.std()),
                          random_mHa=float(rd.mean()), random_sd=float(rd.std()),
                          advantage_mHa=float(rd.mean() - tr.mean())))
-    summary = dict(claim="train-small (H4+H6) -> deploy across 16-40q; determinant-space QSCI, matched K=96",
-                   ladder=rows,
-                   advantage_persists_to_40q=bool(rows[-1]["advantage_mHa"] > 0),
+    maxq = rows[-1]["qubits"]
+    summary = dict(claim="train-small (H4+H6) -> deploy across 16-56q; Slater-Condon determinant QSCI, matched K=96",
+                   ladder=rows, max_qubits=maxq,
+                   advantage_persists_to_maxq=bool(rows[-1]["advantage_mHa"] > 0),
                    all_sizes_positive=bool(all(r["advantage_mHa"] > 0 for r in rows)))
     json.dump(dict(train="H4+H6", targets_q=[t["nq"] for t in targets], n_gen=NGEN, K=K,
                    per_size={str(k): v for k, v in per_size.items()}, summary=summary),
@@ -525,7 +609,7 @@ def main_ladder():
     for r in rows:
         log(f"  {r['qubits']:2d}q [{r['ref_kind']:7s}]: trained {r['trained_mHa']:7.2f} vs random "
             f"{r['random_mHa']:7.2f} mHa | advantage {r['advantage_mHa']:+.2f}")
-    log(f"  advantage at 40q: {rows[-1]['advantage_mHa']:+.2f} mHa | all sizes positive: "
+    log(f"  advantage at {maxq}q: {rows[-1]['advantage_mHa']:+.2f} mHa | all sizes positive: "
         f"{summary['all_sizes_positive']}")
     try:
         import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
@@ -602,5 +686,7 @@ if __name__ == "__main__":
         main_ladder()
     elif "--compose" in sys.argv:
         main_compose()
+    elif "--crosschem" in sys.argv:
+        main_crosschem()
     else:
         main()
