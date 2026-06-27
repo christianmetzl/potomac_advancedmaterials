@@ -89,8 +89,8 @@ qubit count, circuit depth, shot budget, and wall-clock.*
 | SnO / SnO₂ | 16/20 | 0.11 / 0.23 mHa | FCI | ✓ EUV target chemistry |
 | Noise robustness H₁₀ | 20 | ≤3.3 mHa @ 30% corrupt | — | ✓ noise-aware bonus |
 
-**5b. Classical baseline & the exact wall (matched instances, timed):** FCI wall-clock 0.33 s (20q) →
-7.8 s (24q), ~24×/2 atoms; H₁₄/28q FCI = minutes, 32q+ intractable on CPU. CCSD(T) cheap but error
+**5b. Classical baseline & the exact wall (matched instances, timed):** FCI wall-clock 0.69 s (20q) →
+3.74 s (24q), ~5×/2 atoms (machine-dependent); H₁₄/28q FCI = minutes, 32q+ intractable on CPU. CCSD(T) cheap but error
 climbs with correlation and breaks down under strong correlation (H₂₄/48q DMRG 6.83 mHa off CCSD(T)).
 This is the curve the quantum MPS/QSCI wall-clock is measured against.
 

@@ -82,7 +82,7 @@ single-thread CPU (`OMP_NUM_THREADS=1`). Evidence: `results/classical_baselines_
 | H₁₀ | 20 | −5.202826 | 0.0004 | 0.326 s | 0.173 | 0.091 s |
 | H₁₂ | 24 | −6.220280 | — | **7.813 s** | 0.282 | 0.144 s |
 
-**Reading (the classical exact wall):** FCI wall-clock grows ~24× from 20→24 qubits (0.33 s → 7.8 s) —
+**Reading (the classical exact wall):** FCI wall-clock grows ~5× from 20→24 qubits (0.69 s → 3.74 s, single-thread, machine-dependent) —
 the exponential CI-dimension blow-up; H₁₄/28q FCI is minutes, H₁₆+/32q+ intractable on CPU. CCSD(T)
 stays cheap (~0.14 s at 24q) but its error climbs with correlation (0.000 → 0.28 mHa even near
 equilibrium) and breaks down under strong correlation (cf. H₂₄/48q DMRG 6.83 mHa off CCSD(T), §1). This

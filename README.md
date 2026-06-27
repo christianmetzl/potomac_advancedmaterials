@@ -38,7 +38,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | **CrO dissociation trust (real oxide)** | in-active-space CCSD(T) erratic / non-convergent (to ~140 mHa vs CASCI); QSCI variational ≤2.8 mHa | the strong-correlation trust story on a real Cr–O bond, not toy H₁₀ (`cro_dissociation.py`) |
 | EN-PT2 two-sided bracket | E_var (upper bound) + E_var+PT2 (estimate); equilibrium extrapolation → FCI +4.1 mHa (R²=0.999) | certifies the gap, CIPSI standard (`encoder/selci_pt2.py`) |
 | Generator learned MP2 hierarchy | Spearman ρ=0.31 (p<0.002), 4/8 top-double overlap | energy-trained generator (blind to MP2) recovers the MP2 amplitude ordering (`encoder/generator_mp2.py`) |
-| **CUDA-Q execution (qpp-cpu)** | H₄ VQE **+0.012 mHa**, QSCI **+0.022 mHa** vs FCI | GQE/QSCI pipeline runs through the CUDA-Q SDK on CPU (`cudaq.observe`/`cudaq.sample`); `src/cudaq_qsci.py` |
+| **CUDA-Q execution (qpp-cpu)** | H₄ VQE **+0.012 mHa**; QSCI within chemical accuracy (sampling-based) vs FCI | GQE/QSCI pipeline runs through the CUDA-Q SDK on CPU (`cudaq.observe`/`cudaq.sample`); `src/cudaq_qsci.py` |
 | **MPS bond-dim / entanglement (pillar 1)** | χ for chem-acc ≈50/100/400 @20/28/40q; Sₘₐₓ 0.39→4.43 | bond dimension grows slowly with size; area-law near equilibrium → strong correlation; `src/mps_bonddim_study.py` (block2 DMRG) |
 
 ## Honest scope
@@ -99,7 +99,7 @@ headline value. Runtimes are seconds–minutes on CPU through 28q.
 CUDA-Q + an NVIDIA GPU on qBraid (see below).
 
 > Note: exact statevector Hamiltonian expectation is the CPU bottleneck beyond ~12–16 qubits — exactly
-the cost the QSCI step and the GPU/MPS backend remove. FCI wall-clock itself jumps ~24× from 20→24
+the cost the QSCI step and the GPU/MPS backend remove. FCI wall-clock itself jumps ~5× from 20→24
 qubits (`results/classical_baselines_evidence.json`).
 
 ## Running on qBraid (Phase 3)

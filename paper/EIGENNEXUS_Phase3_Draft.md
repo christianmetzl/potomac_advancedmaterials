@@ -151,7 +151,7 @@ reproducible numbers, with qubit count, circuit depth, shot budget, and wall-clo
 | Noise robustness (H₁₀) | 20 | ≤3.3 mHa @ 30% corruption | — | noise-aware bonus |
 
 **5b. Classical baseline and the exact wall (matched instances, timed).** On the identical STO-6G Hₙ
-geometries, classical FCI wall-clock grows ~24× from 20→24 qubits (0.33 s → 7.8 s); H₁₄/28q FCI is
+geometries, classical FCI wall-clock grows ~5× from 20→24 qubits (0.69 s → 3.74 s, machine-dependent); H₁₄/28q FCI is
 minutes and 32q+ is intractable on CPU. CCSD(T) stays cheap (~0.14 s at 24q) but its error climbs with
 correlation and breaks down under strong correlation (at H₂₄/48q, classical DMRG is itself 6.83 mHa off
 CCSD(T) at bond dimension 250). Exact *quantum-state* statevector simulation is worse still — ~16 TB of
