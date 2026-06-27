@@ -361,6 +361,120 @@ def det_space_transfer(seqs, target_rec, tokens, K=96):
     return abs(e - target_rec["e_fci"]) * 1000.0, int(n)
 
 
+def _hf_int(ne):
+    v = 0
+    for q in range(ne):
+        v |= (1 << q)
+    return v
+
+
+def gen_determinants(seqs, target_rec, tokens):
+    """Determinants a set of circuits proposes on the target, ordered by proposal frequency (HF first)."""
+    pool, _ = build_realized_pool(tokens, target_rec["ne"], target_rec["nq"])
+    hf = _hf_int(target_rec["ne"]); counts = {hf: 10**9}
+    for s in seqs:
+        for k in s:
+            tok = pool[int(k)]
+            if tok is None:
+                continue
+            d = hf
+            for w in tok[1]:
+                d ^= (1 << w)
+            counts[d] = counts.get(d, 0) + 1
+    return [d for d, _ in sorted(counts.items(), key=lambda kv: -kv[1])]
+
+
+def mp2_determinants(target_rec, R=0.74):
+    """HF + singles + doubles (ranked by |MP2 amplitude|) determinants for an H-chain target."""
+    from pyscf import gto, scf, mp
+    from pennylane import qchem
+    n, ne, nq = target_rec["n_atoms"], target_rec["ne"], target_rec["nq"]
+    mol = gto.M(atom="; ".join(f"H 0 0 {i*R:.4f}" for i in range(n)), basis="sto-6g", verbose=0)
+    mf = scf.RHF(mol).run(conv_tol=1e-10); t2 = mp.MP2(mf).run().t2
+    nocc_sp = ne // 2; hf = _hf_int(ne)
+    singles, doubles = qchem.excitations(ne, nq)
+
+    def w(d):
+        i, j, a, b = d
+        if sorted([i % 2, j % 2]) != sorted([a % 2, b % 2]):
+            return 0.0
+        return abs(float(t2[i // 2, j // 2, a // 2 - nocc_sp, b // 2 - nocc_sp]))
+    dord = sorted((tuple(d) for d in doubles), key=lambda d: -w(d))
+    dets = [hf] + [hf ^ (1 << i) ^ (1 << a) for (i, a) in singles]
+    dets += [hf ^ (1 << i) ^ (1 << j) ^ (1 << a) ^ (1 << b) for (i, j, a, b) in dord]
+    return dets
+
+
+def _merge(a, b, k0=10):
+    """Reciprocal-rank fusion of two ordered determinant lists (HF kept first).
+
+    A determinant scores high if EITHER source ranks it high; determinants both favor rise to the top.
+    A principled composition that can beat either source iff they are complementary.
+    """
+    ra = {d: i for i, d in enumerate(a)}; rb = {d: i for i, d in enumerate(b)}
+    allk = set(a) | set(b)
+    score = {d: 1.0 / (k0 + ra.get(d, 10**9)) + 1.0 / (k0 + rb.get(d, 10**9)) for d in allk}
+    hf = a[0]
+    ordered = sorted(allk, key=lambda d: -score[d])
+    if hf in ordered:
+        ordered.remove(hf)
+    return [hf] + ordered
+
+
+def qsci_at_K(qop, det_list, K, ref):
+    e, _ = qsci_energy(qop, np.array(det_list[:K], dtype=np.uint64))
+    return abs(e - ref) * 1000.0
+
+
+def main_compose():
+    """(a) determinant-budget sweep + (b) transfer x MP2 composition, at 20q and 40q."""
+    def log(s): print(s, flush=True)
+    log(f"\n######## COMPOSE: budget sweep + transfer×MP2 {time.strftime('%Y-%m-%d %H:%M')} ########")
+    recs_train = [hchain_ham(4), hchain_ham(6)]; tokens = canonical_tokens(6, 12)
+    targets = [hchain_ham(10), hchain_ham(20)]                 # 20q (FCI), 40q (CCSD(T))
+    Ks = [16, 32, 48, 64, 96, 128]
+    out = {"Ks": Ks, "targets": {}}
+    models = [train_gptqe_multi(recs_train, tokens, seed=s) for s in (0, 1, 2)]
+    for t in targets:
+        nq = t["nq"]; log(f"\n== target {nq}q (ref {t['ref_kind']}={t['e_fci']:.5f}) ==")
+        pool, valid = build_realized_pool(tokens, t["ne"], t["nq"]); vids = np.where(valid)[0]
+        mp2 = mp2_determinants(t)
+        rows = {m: [] for m in ("trained", "random", "mp2", "combined")}
+        for K in Ks:
+            tr, rd, cb = [], [], []
+            for si, model in enumerate(models):
+                torch.manual_seed(9000 + si)
+                gen = _generate(model, 200, 8, 0.5, torch.tensor(~valid)).cpu().numpy()
+                rng = np.random.default_rng(si)
+                rnd = np.array([rng.choice(vids, 8) for _ in range(200)])
+                gd = gen_determinants(gen, t, tokens); rdd = gen_determinants(rnd, t, tokens)
+                tr.append(qsci_at_K(t["qop"], gd, K, t["e_fci"]))
+                rd.append(qsci_at_K(t["qop"], rdd, K, t["e_fci"]))
+                cb.append(qsci_at_K(t["qop"], _merge(gd, mp2), K, t["e_fci"]))
+            rows["trained"].append(float(np.mean(tr))); rows["random"].append(float(np.mean(rd)))
+            rows["mp2"].append(qsci_at_K(t["qop"], mp2, K, t["e_fci"]))
+            rows["combined"].append(float(np.mean(cb)))
+            log(f"  K={K:3d}: trained {rows['trained'][-1]:7.2f} | random {rows['random'][-1]:7.2f} | "
+                f"mp2 {rows['mp2'][-1]:7.2f} | combined {rows['combined'][-1]:7.2f} mHa")
+        out["targets"][str(nq)] = dict(ref_kind=t["ref_kind"], rows=rows)
+        json.dump(out, open(os.path.join(OUT, "compose_evidence.json"), "w"), indent=2)
+    # figure
+    try:
+        import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+        fig, axes = plt.subplots(1, len(targets), figsize=(6 * len(targets), 4.3), squeeze=False)
+        for ax, t in zip(axes[0], targets):
+            r = out["targets"][str(t["nq"])]["rows"]
+            for m, c in [("random", "tab:orange"), ("mp2", "tab:green"), ("trained", "tab:blue"), ("combined", "tab:red")]:
+                ax.plot(Ks, r[m], "o-", color=c, label=m)
+            ax.set_xlabel("determinant budget K"); ax.set_ylabel("QSCI error vs ref (mHa)")
+            ax.set_yscale("log"); ax.set_title(f"{t['nq']}q"); ax.legend()
+        fig.suptitle("Determinant-budget sweep: transfer × MP2 composition")
+        fig.tight_layout(); fig.savefig(os.path.join(OUT, "compose.png"), dpi=130); log("saved compose.png")
+    except Exception as e:
+        log(f"(figure skipped: {e})")
+    log("DONE")
+
+
 def main_ladder():
     """GAME-CHANGER: train one generator small (H4+H6); deploy across 16->40 qubits, zero-shot.
 
@@ -484,5 +598,7 @@ if __name__ == "__main__":
         main_large()
     elif "--ladder" in sys.argv:
         main_ladder()
+    elif "--compose" in sys.argv:
+        main_compose()
     else:
         main()
