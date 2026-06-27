@@ -1,0 +1,46 @@
+{
+  "train": "H4+H6",
+  "target": "H10_20q",
+  "eval": "QSCI",
+  "n_gen": 96,
+  "results": [
+    {
+      "seed": 0,
+      "trained_pooled_mHa": 61.05805848421664,
+      "trained_dets": 65,
+      "random_pooled_mHa": 48.87221920693019,
+      "random_dets": 125,
+      "trained_fairK_mHa": 61.058058484232625,
+      "random_fairK_mHa": 85.08545256187006
+    },
+    {
+      "seed": 1,
+      "trained_pooled_mHa": 55.64767331717402,
+      "trained_dets": 72,
+      "random_pooled_mHa": 46.725650826132004,
+      "random_dets": 121,
+      "trained_fairK_mHa": 58.36802935052088,
+      "random_fairK_mHa": 73.86490169117543
+    },
+    {
+      "seed": 2,
+      "trained_pooled_mHa": 56.173960900046005,
+      "trained_dets": 73,
+      "random_pooled_mHa": 47.743564545903894,
+      "random_dets": 129,
+      "trained_fairK_mHa": 56.68704335394548,
+      "random_fairK_mHa": 62.66034897691419
+    }
+  ],
+  "summary": {
+    "fair_metric": "QSCI at matched K=64 determinants (quality, diversity-controlled), mHa to FCI",
+    "trained_fairK": 58.70437706289966,
+    "random_fairK": 73.87023440998655,
+    "delta_fairK": 15.165857347086892,
+    "noise_fairK": 10.051286012024804,
+    "pooled_note": "pooled metric favors random via determinant DIVERSITY, not quality",
+    "trained_pooled": 57.62656423381222,
+    "random_pooled": 47.78047819298869,
+    "cross_size_transfer_success_fairK": true
+  }
+}

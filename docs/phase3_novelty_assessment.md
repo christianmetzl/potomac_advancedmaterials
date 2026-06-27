@@ -31,9 +31,12 @@ Prepared after the first conditional-encoder demonstration. Every number traces 
 > a small system's vocabulary a provable subset of a larger one (H₆/12q ⊂ H₈/16q ⊂ H₁₀/20q). A GPT-QE
 > generator trained **only on H₆ (12q)** generates zero-shot for **H₈ (16q)** and **beats random search
 > across all 3 seeds, both metrics: mean 91.8 vs 127.6 mHa, best 67.4 vs 82.9 mHa** (within-seed spread
-> ~1 mHa vs ~36 mHa gap — highly significant). **Net: cross-*size* transfer is a real, on-theme
-> contribution (primary criterion: scalability); cross-*molecule* conditioning is an honest negative.**
-> Both are in the paper.
+> ~1 mHa vs ~36 mHa gap — highly significant). It **extends to H₁₀ (20q)** (`--large`): trained on
+> H₄+H₆, it selects better determinants for H₁₀ than random at a **matched determinant budget** — QSCI
+> 58.7 vs 73.9 mHa, all 3 seeds. (A diversity-uncontrolled pooled metric favors random because random
+> samples more distinct determinants; the matched-budget control isolates determinant *quality* — both
+> reported transparently.) **Net: cross-*size* transfer is a real, on-theme contribution at 16q and 20q
+> (primary criterion: scalability); cross-*molecule* conditioning is an honest negative.** All in the paper.
 ---
 
 ---

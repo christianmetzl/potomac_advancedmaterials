@@ -68,7 +68,7 @@ Christian / Juan / Fares. Every claim below traces to those documents or to our 
 | HamLib equivalence 28/32/40q (exact) | reproducibility win | keep; cite as third-party-verifiable |
 | Noise robustness 20q | noise-aware **bonus** | re-run on qBraid; tie to a real QPU if time permits |
 | ~~Conditional encoder~~ cross-*molecule* (criterion 3) | **RESOLVED → negative** (within-noise tie vs warm-start) | reported honestly |
-| **Cross-*size* transfer** (criteria 1, 3) | **DEMONSTRATED ✅** — H₆(12q)-trained generator beats random zero-shot on H₈(16q), all seeds (mean 91.8 vs 127.6 mHa) | genuine scaling-transfer result; in paper |
+| **Cross-*size* transfer** (criteria 1, 3) | **DEMONSTRATED ✅ at 16q AND 20q** — H₆→H₈ beats random (mean 91.8 vs 127.6 mHa); H₄+H₆→H₁₀/20q beats random at matched determinant budget (QSCI 58.7 vs 73.9 mHa), all seeds | genuine scaling-transfer result; in paper |
 | **Operator-pool compression** (criterion 3/4) | **DEMONSTRATED** — MP2 ranking keeps full-pool accuracy at 25–40% of doubles vs random collapse (~22×) | done; cite in write-up |
 | **38q CrO/NiO ≤0.08 mHa claim (in finalist paper)** | **unsubstantiated, CPU-infeasible** | **substantiate on GPU OR correct — see §5** |
 | Classical baselines presented as such | partial (have FCI/CCSD(T)/DMRG refs) | **package as explicit quantum-vs-classical + wall-clock** |

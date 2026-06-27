@@ -101,9 +101,11 @@ encoded as (occupied depth below HOMO, virtual height above LUMO), independent o
 small system's token vocabulary is a provable subset of a larger one (verified: H₆/12q ⊂ H₈/16q ⊂
 H₁₀/20q). A GPT-QE generator trained **only on H₆ (12 qubits)** then generates zero-shot for **H₈ (16
 qubits)** and **beats random search on H₈ across all three seeds and both metrics — mean 91.8 vs 127.6
-mHa, best 67.4 vs 82.9 mHa** (within-seed spread ~1 mHa against a ~36 mHa gap). The learned policy
-generalizes to a larger system it was never trained on — direct evidence for scalability.
-(`src/encoder/scaling_transfer.py`.) *Honest contrast:* a same-size, cross-*molecule* conditioning
+mHa, best 67.4 vs 82.9 mHa** (within-seed spread ~1 mHa against a ~36 mHa gap). It **extends to H₁₀ (20
+qubits)**: a generator trained on H₄+H₆ selects better determinants for H₁₀ than random at a matched
+determinant budget — **QSCI 58.7 vs 73.9 mHa, all three seeds** (equal determinant count, controlling
+for sampling diversity). The learned policy generalizes to larger, unseen systems — direct evidence for
+scalability. (`src/encoder/scaling_transfer.py`; `--large` for the 20q run.) *Honest contrast:* a same-size, cross-*molecule* conditioning
 variant (FiLM on an MP2 descriptor) gave only a within-noise gain over an unconditioned warm-start
 (N₂ +2.1 mHa vs noise 3.6) — reported as a negative; the value is in cross-*size* transfer, not
 molecule conditioning.
