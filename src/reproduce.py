@@ -56,6 +56,13 @@ CHECKS = [
     ("EN-PT2 two-sided bracket", "encoder/selci_pt2.py", [], "encoder/selci_pt2_evidence.json",
      [("var_upper_bound",), ("abslt", ["results", "0", "extrap_err_mHa"], 10.0),
       ("gt", ["results", "0", "extrap_R2"], 0.99)], True),
+    # Optional checks — run only if the (CPU-installable) extra deps are present; SKIP otherwise.
+    ("CUDA-Q execution (qpp-cpu)", "cudaq_qsci.py", [], "cudaq_qsci_evidence.json",
+     [("abslt", ["results", "0", "vqe_err_mHa"], 1.6), ("abslt", ["results", "0", "qsci_err_mHa"], 1.6)],
+     True, "cudaq"),
+    ("MPS bond-dim & entanglement", "mps_bonddim_study.py", [], "mps_bonddim_evidence.json",
+     [("lt", ["study_A_error_vs_chi", "0", "chi_for_chem_acc"], 100), ("mps_entangle_grows",)],
+     True, "block2"),
 ]
 
 
@@ -90,8 +97,18 @@ def _terms(out):
     return None
 
 
-def run_check(label, script, args, out_json, asserts, workdir):
+def _importable(mod):
+    import importlib.util
+    try:
+        return importlib.util.find_spec(mod) is not None
+    except Exception:
+        return False
+
+
+def run_check(label, script, args, out_json, asserts, workdir, requires=None):
     t0 = time.time()
+    if requires and not _importable(requires):
+        return ("SKIP", label, f"optional dep '{requires}' not installed", time.time() - t0)
     try:
         p = subprocess.run([sys.executable, os.path.join(SRC, script), *args],
                            cwd=workdir, capture_output=True, text=True, timeout=1800)
@@ -144,6 +161,10 @@ def run_check(label, script, args, out_json, asserts, workdir):
             pts = [p for r in data["results"] for p in r["points"]]
             passed = all(p["var_err_mHa"] >= -0.2 for p in pts)
             details.append(f"E_var≥FCI ∀ {len(pts)} pts{'' if passed else ' ✗'}")
+        elif kind == "mps_entangle_grows":  # entanglement entropy rises from equilibrium to strong correlation
+            B = data["study_B_entanglement_vs_R"]
+            passed = B[-1]["Smax"] > B[0]["Smax"]
+            details.append(f"Smax {B[0]['Smax']:.2f}->{B[-1]['Smax']:.2f}{'' if passed else ' ✗'}")
         else:  # "eq"
             _, path, expected, tol = a
             got = _val(data, path)
@@ -158,15 +179,20 @@ def main():
     print("MATGEN-Q reproducibility driver — CPU headline results\n" + "=" * 60)
     rows = []
     with tempfile.TemporaryDirectory() as wd:
-        for label, script, args, out_json, asserts, is_slow in CHECKS:
+        for c in CHECKS:
+            label, script, args, out_json, asserts, is_slow = c[:6]
+            requires = c[6] if len(c) > 6 else None
             if quick and is_slow:
-                print(f"  SKIP   {label} (--quick)"); continue
-            status, lbl, detail, dt = run_check(label, script, args, out_json, asserts, wd)
+                print(f"  SKIP    {label} (--quick)"); continue
+            status, lbl, detail, dt = run_check(label, script, args, out_json, asserts, wd, requires)
             print(f"  {status:7s} {lbl:34s} {detail}  [{dt:.0f}s]")
             rows.append((status, lbl))
     npass = sum(1 for s, _ in rows if s == "PASS")
-    print("=" * 60 + f"\n{npass}/{len(rows)} checks PASS")
-    sys.exit(0 if npass == len(rows) else 1)
+    nskip = sum(1 for s, _ in rows if s == "SKIP")
+    ncore = len(rows) - nskip
+    extra = f" (+{nskip} optional SKIPPED — install cudaq/block2 to run them)" if nskip else ""
+    print("=" * 60 + f"\n{npass}/{ncore} checks PASS{extra}")
+    sys.exit(0 if npass == ncore else 1)
 
 
 if __name__ == "__main__":
