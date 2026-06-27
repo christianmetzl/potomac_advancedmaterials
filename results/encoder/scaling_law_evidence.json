@@ -1,0 +1,48 @@
+{
+  "title": "QSCI determinant-count scaling law",
+  "points_qubits_dets": [
+    [
+      8,
+      27
+    ],
+    [
+      12,
+      148
+    ],
+    [
+      20,
+      2401
+    ],
+    [
+      28,
+      18201
+    ]
+  ],
+  "fit": {
+    "form": "ndets ~ A*exp(b*qubits)",
+    "A": 2.5945,
+    "b_per_qubit": 0.3246,
+    "selected_growth_per_qubit": 1.383,
+    "r2_logspace": 0.9898
+  },
+  "fci_growth_per_qubit": 2.0,
+  "interpretation": "The importance-selected determinant count grows ~1.38x per qubit, vs 2.00x per qubit for the full Sz=0 FCI space \u2014 so the fraction of FCI space needed for chemical accuracy collapses with size.",
+  "fci_fraction_pct": {
+    "8": 75.0,
+    "12": 37.0,
+    "20": 3.781,
+    "28": 0.155
+  },
+  "fci_dim": {
+    "8": 36,
+    "12": 400,
+    "20": 63504,
+    "28": 11778624
+  },
+  "extrapolated_dets_for_chem_acc": {
+    "40": 1129304,
+    "48": 15155200,
+    "56": 203381873
+  },
+  "caveat": "Empirical fit on 4 points (log-space R^2 reported); extrapolation is indicative, not a guarantee, and assumes the selected-CI/QSCI selection remains effective at larger size."
+}

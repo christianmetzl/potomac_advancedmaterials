@@ -1,0 +1,156 @@
+{
+  "system": "H10",
+  "qubits": 20,
+  "R_list": [
+    0.74,
+    1.4,
+    1.8,
+    2.4
+  ],
+  "cutoffs": [
+    0.005,
+    0.001,
+    0.0003,
+    0.0001,
+    3e-05
+  ],
+  "note": "PySCF iterative selected-CI (CIPSI/SHCI-style) = classical analogue of QSCI (diagonalize H in an importance-selected determinant subspace). Reaches chemical accuracy with a small subspace across dissociation where CCSD(T) collapses non-variationally (negative error = below exact FCI). Classical on CPU; QSCI is the device-driven instantiation of the same selection principle.",
+  "results": [
+    {
+      "R": 0.74,
+      "e_fci": -5.202826400621644,
+      "ccsdt_err_mHa": 0.17,
+      "sci_points": [
+        {
+          "cutoff": 0.005,
+          "ndet": 120,
+          "err_mHa": 4.46
+        },
+        {
+          "cutoff": 0.001,
+          "ndet": 222,
+          "err_mHa": 0.556
+        },
+        {
+          "cutoff": 0.0003,
+          "ndet": 424,
+          "err_mHa": 0.023
+        },
+        {
+          "cutoff": 0.0001,
+          "ndet": 480,
+          "err_mHa": 0.001
+        },
+        {
+          "cutoff": 3e-05,
+          "ndet": 504,
+          "err_mHa": 0.0
+        }
+      ],
+      "sci_best_err_mHa": 0.0,
+      "sci_best_ndet": 504
+    },
+    {
+      "R": 1.4,
+      "e_fci": -5.1160104761694765,
+      "ccsdt_err_mHa": -10.56,
+      "sci_points": [
+        {
+          "cutoff": 0.005,
+          "ndet": 156,
+          "err_mHa": 45.316
+        },
+        {
+          "cutoff": 0.001,
+          "ndet": 442,
+          "err_mHa": 1.418
+        },
+        {
+          "cutoff": 0.0003,
+          "ndet": 504,
+          "err_mHa": 0.0
+        },
+        {
+          "cutoff": 0.0001,
+          "ndet": 504,
+          "err_mHa": 0.0
+        },
+        {
+          "cutoff": 3e-05,
+          "ndet": 504,
+          "err_mHa": 0.0
+        }
+      ],
+      "sci_best_err_mHa": 0.0,
+      "sci_best_ndet": 504
+    },
+    {
+      "R": 1.8,
+      "e_fci": -4.858523243731104,
+      "ccsdt_err_mHa": -105.8,
+      "sci_points": [
+        {
+          "cutoff": 0.005,
+          "ndet": 194,
+          "err_mHa": 114.484
+        },
+        {
+          "cutoff": 0.001,
+          "ndet": 500,
+          "err_mHa": 1.004
+        },
+        {
+          "cutoff": 0.0003,
+          "ndet": 504,
+          "err_mHa": 0.0
+        },
+        {
+          "cutoff": 0.0001,
+          "ndet": 504,
+          "err_mHa": 0.0
+        },
+        {
+          "cutoff": 3e-05,
+          "ndet": 504,
+          "err_mHa": 0.0
+        }
+      ],
+      "sci_best_err_mHa": 0.0,
+      "sci_best_ndet": 504
+    },
+    {
+      "R": 2.4,
+      "e_fci": -4.731589443230019,
+      "ccsdt_err_mHa": -217.48,
+      "sci_points": [
+        {
+          "cutoff": 0.005,
+          "ndet": 352,
+          "err_mHa": 89.66
+        },
+        {
+          "cutoff": 0.001,
+          "ndet": 504,
+          "err_mHa": -0.0
+        },
+        {
+          "cutoff": 0.0003,
+          "ndet": 504,
+          "err_mHa": -0.0
+        },
+        {
+          "cutoff": 0.0001,
+          "ndet": 504,
+          "err_mHa": -0.0
+        },
+        {
+          "cutoff": 3e-05,
+          "ndet": 504,
+          "err_mHa": -0.0
+        }
+      ],
+      "sci_best_err_mHa": -0.0,
+      "sci_best_ndet": 504
+    }
+  ]
+}
