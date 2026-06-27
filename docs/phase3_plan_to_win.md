@@ -97,6 +97,22 @@ mostly still ahead. That is exactly where criteria 1, 6, 7, 8 and all six Top Ac
 5. **[Execution + Reproducibility] qBraid-runnable repo + README + Launch button.** Judges re-run with
    zero modification. This is criteria 7 & 8 and three of the six Top Actions.
 
+## 4b. Strengthening results added 2026-06-27 (access-independent)
+
+- **(a) Determinant-budget robustness:** the train-small/deploy-large advantage holds across QSCI
+  determinant budgets K=16→96 at 20q and 40q (trained < random at essentially every K), not a small-K
+  artifact (`results/encoder/compose_evidence.json`, `compose.png`).
+- **(b) Transfer × MP2 composition — honest negative:** with a *fair* MP2 ordering (doubles-by-amplitude
+  first), target-specific **MP2 selected-CI is the strongest determinant selector**; reciprocal-rank
+  fusion of generator+MP2 does **not** beat MP2 alone (redundant signals). The transferred generator's
+  value is being **competitive at zero target-specific cost** (between random and MP2), a strong
+  zero-shot prior for screening. MP2 selected-CI also serves as the rubric-required **classical
+  baseline**. Reported honestly; no composition-win claimed.
+- **(c) DFT functional-spread (motivation):** CrO spin-state splitting spans **1.9 eV** across six
+  functionals (PBE0 +1.84 eV vs B3LYP −0.08 eV — sign flips); NiO 0.11 eV; vs chemical accuracy
+  0.044 eV (`results/dft_functional_spread_evidence.json`). Quantifies §1's DFT-unreliability claim.
+- **Paper length:** ~4.0 pages (calibrated vs Phase 2's 1817 words = 3 pages), within the 5-page limit.
+
 ## 5. The 38q ≤0.08 mHa claim — recommended resolution
 
 The finalist paper §2 states CrO/NiO at **38q, ≤0.08 mHa**. Reality (audited): only **20q** exists
