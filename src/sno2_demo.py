@@ -1,4 +1,4 @@
-"""SnO2 (16 qubits) via CASCI(8,8) with def2-ECP on Sn -> qubit Hamiltonian -> QSCI.
+"""SnO2 (20 qubits) via CASCI(10,10) with def2-ECP on Sn -> qubit Hamiltonian -> QSCI.
 Demonstrates the QSCI engine on REAL EUV-relevant Sn-oxide chemistry (not just H chains)."""
 import numpy as np, time, pickle
 from pyscf import gto, scf, mcscf, ao2mo
@@ -16,7 +16,7 @@ mol=gto.M(atom=f"O 0 0 {-R}; Sn 0 0 0; O 0 0 {R}", basis={'Sn':'def2-svp','O':'d
 mf=scf.RHF(mol).run(conv_tol=1e-10)
 print(f"SnO2: RHF={mf.e_tot:.6f} | {mol.nao} orbitals, {mol.nelectron} electrons (Sn ECP applied) | {time.time()-t0:.0f}s")
 
-# --- CAS(8,8) active space -> qubit Hamiltonian + FCI reference ---
+# --- CAS(10,10) active space -> qubit Hamiltonian + FCI reference ---
 ncas,nelecas=10,10
 mc=mcscf.CASCI(mf,ncas,nelecas); mc.verbose=0
 e_fci=mc.kernel()[0]
@@ -25,7 +25,7 @@ two_body=np.asarray(h2e.transpose(0,2,3,1),order='C')
 one_so,two_so=spinorb_from_spatial(h1e,two_body)
 qop=jordan_wigner(get_fermion_operator(InteractionOperator(ecore,one_so,0.5*two_so)))
 nq=2*ncas; ne=nelecas
-print(f"SnO2 CAS(8,8): {nq} qubits, {len(qop.terms)} Pauli terms, FCI(CASCI)={e_fci:.6f}")
+print(f"SnO2 CAS(10,10): {nq} qubits, {len(qop.terms)} Pauli terms, FCI(CASCI)={e_fci:.6f}")
 
 # --- QSCI (selected-CI) on the SnO2 Hamiltonian ---
 XM=[];ZYM=[];PH=[]

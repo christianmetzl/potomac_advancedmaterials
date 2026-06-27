@@ -46,7 +46,7 @@
   "key_finding": "Chemical accuracy at 20q (0.57 mHa, 2401 dets) and 28q (1.21 mHa, 18201 dets); method runs at the 40q ideal target. Required subspace is a vanishing fraction of full CI (3.8% at 20q, 0.15% at 28q).",
   "honest_caveats": [
     "This is selected-CI as a PROXY for QSCI; the subspace here is chosen perturbatively, not by sampling a GQE circuit.",
-    "20q reaches chemical accuracy (0.570 mHa); 28q is converging (3.1 mHa) and resumable but not yet at 1.6 mHa on available CPU; 40q not attempted (CPU-prohibitive for strict chemical accuracy).",
+    "20q reaches chemical accuracy (0.570 mHa, 2401 dets) and 28q reaches chemical accuracy (1.213 mHa, 18201 dets); 40q is operational but not yet at chemical accuracy on CPU (~39 mHa, 1601 dets, CPU-bound by the 116k-term Hamiltonian) -- strict 40q chemical accuracy is the GPU deliverable.",
     "Demonstrates the evaluation/accuracy PILLAR at scale; does not by itself demonstrate the full GQE+QSCI+MPS pipeline at 20-40q."
   ]
 }

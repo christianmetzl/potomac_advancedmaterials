@@ -94,7 +94,7 @@ import json
 json.dump({"system":"H6","qubits":nq,"FCI":e_fci,"HF":mol.hf_energy,
  "GQE_expectation":best,"GQE_err_mHa":round(abs(best-e_fci)*1000,3),
  "GQE_to_QSCI":e_q,"GQE_to_QSCI_err_mHa":round(abs(e_q-e_fci)*1000,3),
- "distinct_dets_pooled":int(len(uq)),"dets_used":int(nd),"n_gqe_circuits":int(len(gen)),"shots_per_circuit":2500,
+ "distinct_dets_pooled":int(len(uq)),"dets_used":int(nd),"n_gqe_circuits":int(len(gen)),"shots_per_circuit":3000,
  "note":"GPT-QE generated the circuit; QSCI sampled determinants from that state (qml.sample) and diagonalized. Real integrated pipeline, not perturbative selection."},
  open("gqe_qsci_evidence.json","w"),indent=2)
 print("saved gqe_qsci_evidence.json",flush=True)

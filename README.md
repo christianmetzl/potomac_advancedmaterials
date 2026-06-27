@@ -32,7 +32,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | QSCI, H₂₀ (40q) | 39 mHa | operational; converging (not yet chemical accuracy — CPU-bound) |
 | HamLib validation, 28/32/40q | exact | term counts match (27,735 / 47,489 / 116,577); coefficients agree to ~15 sig figs, differing only by a spectrum-invariant orbital-phase gauge |
 | Noise robustness, 20q | ≤3.3 mHa at 30% corrupted measurements | graceful degradation |
-| Sn-oxides (EUV target) | SnO 0.11 mHa (16q), SnO₂ 0.23 mHa (20q) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
+| Sn-oxides (EUV target) | SnO chemical accuracy (≤0.5 mHa, 16q; value PySCF-version sensitive), SnO₂ 0.23 mHa (20q) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
 
 ## Honest scope
 

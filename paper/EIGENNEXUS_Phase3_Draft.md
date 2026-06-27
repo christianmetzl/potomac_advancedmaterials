@@ -143,7 +143,7 @@ reproducible numbers, with qubit count, circuit depth, shot budget, and wall-clo
 
 | System | Qubits | Quantum (GQE/QSCI) | Classical reference | Notes |
 |---|---|---|---|---|
-| H₂ / H₄ / H₆ | 4 / 8 / 12 | 0.146 / 0.009 / 0.298 mHa | FCI (exact) | two-stage GQE, chemical accuracy |
+| H₂ / H₄ / H₆ | 4 / 8 / 12 | 0.000 / 0.009 / 0.297 mHa | FCI (exact) | two-stage GQE, chemical accuracy |
 | H₆ integrated GQE→QSCI | 12 | 1.05 mHa (raw 51 → 1.05, ~50×) | FCI | QSCI samples determinants from generated states |
 | H₁₀ / H₁₄ | 20 / 28 | 0.57 / 1.21 mHa | FCI / CCSD(T) | 2,401 / 18,201 dets = 3.8% / 0.15% of CI space |
 | CrO ⁵Π / NiO ³Σ⁻ | 20 | 0.038 / 0.197 mHa | CASCI (exact) | open-shell multireference |

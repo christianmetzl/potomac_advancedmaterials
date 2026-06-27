@@ -15,9 +15,9 @@ quantum pipeline is **GQE** (generative circuit discovery) + **QSCI** (quantum-s
 
 | Instance | Qubits | Classical ref (energy, Ha) | Classical CCSD(T)/DMRG | **Quantum (GQE/QSCI) error** | Verdict |
 |---|---|---|---|---|---|
-| H₂ | 4 | FCI −1.145940 | exact | GQE 0.146 mHa | ✓ chem acc |
+| H₂ | 4 | FCI −1.145940 | exact | two-stage GQE 0.000 mHa | ✓ chem acc |
 | H₄ | 8 | FCI −2.156857 | exact | GQE+refine 0.009 mHa; QSCI(27 det) 0.29 | ✓ |
-| H₆ | 12 | FCI −3.170505 | exact | GQE+refine 0.298; **GQE→QSCI 1.05** | ✓ |
+| H₆ | 12 | FCI −3.170505 | exact | two-stage GQE 0.297; **GQE→QSCI 1.05** | ✓ |
 | H₁₀ | 20 | FCI −5.202826 | **DMRG 0.00 mHa (=FCI)** | QSCI(2401 det) 0.57 | ✓ |
 | H₁₄ | 28 | CCSD(T) ref | — | QSCI(18201 det) 1.21 | ✓ |
 | H₂₀ | 40 | — | DMRG (bond-dim limited) | QSCI converging 39 mHa | **[run on qBraid]** → target ≤1.6 |

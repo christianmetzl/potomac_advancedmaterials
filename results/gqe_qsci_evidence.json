@@ -10,6 +10,6 @@
   "distinct_dets_pooled": 141,
   "dets_used": 141,
   "n_gqe_circuits": 161,
-  "shots_per_circuit": 2500,
+  "shots_per_circuit": 3000,
   "note": "GPT-QE generated the circuit; QSCI sampled determinants from that state (qml.sample) and diagonalized. Real integrated pipeline, not perturbative selection."
 }
