@@ -100,14 +100,28 @@ def build_realized_pool(tokens, ne, nq):
 REF_FCI = {4: -2.156857, 6: -3.170505, 8: -4.186089, 10: -5.202826}  # committed references (Ha)
 
 
+def _ccsdt_ref(n_atoms, R):
+    """CCSD(T) reference energy (Ha) via pyscf, for systems too large for FCI."""
+    from pyscf import gto, scf, cc
+    mol = gto.M(atom="; ".join(f"H 0 0 {i*R:.4f}" for i in range(n_atoms)),
+                basis="sto-6g", spin=n_atoms % 2, verbose=0)
+    mf = scf.RHF(mol).run(conv_tol=1e-10)
+    ccsd = cc.CCSD(mf).run()
+    return float(ccsd.e_tot + ccsd.ccsd_t())
+
+
 def hchain_ham(n_atoms, R=0.74):
     geom = [("H", (0.0, 0.0, i * R)) for i in range(n_atoms)]
     mol = MolecularData(geom, "sto-6g", multiplicity=1, charge=0)
     mol = run_pyscf(mol, run_scf=True, run_fci=(n_atoms <= 8))
     qop = jordan_wigner(get_fermion_operator(mol.get_molecular_hamiltonian()))
     nq = 2 * mol.n_orbitals; ne = mol.n_electrons
-    e_fci = mol.fci_energy if mol.fci_energy is not None else REF_FCI.get(n_atoms)
-    return dict(qop=qop, nq=nq, ne=ne, hf=mol.hf_energy, e_fci=float(e_fci), n_atoms=n_atoms)
+    e_ref = mol.fci_energy if mol.fci_energy is not None else REF_FCI.get(n_atoms)
+    ref_kind = "FCI"
+    if e_ref is None:
+        e_ref = _ccsdt_ref(n_atoms, R); ref_kind = "CCSD(T)"
+    return dict(qop=qop, nq=nq, ne=ne, hf=mol.hf_energy, e_fci=float(e_ref),
+                ref_kind=ref_kind, n_atoms=n_atoms)
 
 
 def energy_fn(rec):
@@ -319,6 +333,99 @@ def main_large():
     log("DONE")
 
 
+def det_space_transfer(seqs, target_rec, tokens, K=96):
+    """Determinant-space QSCI of the excitations a set of circuits proposes on the target system.
+
+    Maps each proposed token to the determinant it produces from HF (bitmask XOR) — NO statevector,
+    so this scales to 40q+ on CPU. Pools determinants over all sequences, keeps the K most-proposed
+    (HF always included), and QSCI-diagonalizes. A generator that proposes the *right* excitations
+    builds a lower-energy subspace at matched K. Returns (err_mHa, n_dets).
+    """
+    pool, _ = build_realized_pool(tokens, target_rec["ne"], target_rec["nq"])
+    hf = 0
+    for q in range(target_rec["ne"]):
+        hf |= (1 << q)
+    counts = {hf: 10**9}                                   # HF always kept
+    for s in seqs:
+        for k in s:
+            tok = pool[int(k)]
+            if tok is None:
+                continue
+            d = hf
+            for w in tok[1]:
+                d ^= (1 << w)
+            counts[d] = counts.get(d, 0) + 1
+    top = sorted(counts.items(), key=lambda kv: -kv[1])[:K]
+    dets = np.array([d for d, _ in top], dtype=np.uint64)
+    e, n = qsci_energy(target_rec["qop"], dets)
+    return abs(e - target_rec["e_fci"]) * 1000.0, int(n)
+
+
+def main_ladder():
+    """GAME-CHANGER: train one generator small (H4+H6); deploy across 16->40 qubits, zero-shot.
+
+    Determinant-space evaluation (no statevector) makes the 28q/40q targets reachable on CPU.
+    Shows whether the small-trained generator's proposed excitations beat random across the size
+    ladder -- i.e. whether GQE training can be done once at small scale and transferred to the 40q
+    target, never trained at scale.
+    """
+    def log(s): print(s, flush=True)
+    log(f"\n######## SCALING LADDER: train H4+H6 -> deploy 16..40q {time.strftime('%Y-%m-%d %H:%M')} ########")
+    recs_train = [hchain_ham(4), hchain_ham(6)]
+    tokens = canonical_tokens(6, 12)
+    log("building targets (16/20/28/40q)...")
+    targets = [hchain_ham(n) for n in (8, 10, 14, 20)]
+    for t in targets:
+        log(f"  H{t['n_atoms']} {t['nq']}q: ref({t['ref_kind']})={t['e_fci']:.5f}, terms={len(t['qop'].terms)}")
+    NGEN, K = 200, 96
+    per_size = {t["nq"]: {"trained": [], "random": []} for t in targets}
+    for seed in (0, 1, 2):
+        model = train_gptqe_multi(recs_train, tokens, seed=seed, log=log if seed == 0 else None)
+        for t in targets:
+            pool, valid = build_realized_pool(tokens, t["ne"], t["nq"])
+            torch.manual_seed(9000 + seed)
+            gen = _generate(model, NGEN, 8, 0.5, torch.tensor(~valid)).cpu().numpy()
+            rng = np.random.default_rng(seed); vids = np.where(valid)[0]
+            rnd = np.array([rng.choice(vids, 8) for _ in range(NGEN)])
+            te, _ = det_space_transfer(gen, t, tokens, K)
+            re_, _ = det_space_transfer(rnd, t, tokens, K)
+            per_size[t["nq"]]["trained"].append(te); per_size[t["nq"]]["random"].append(re_)
+            log(f"[seed {seed}] {t['nq']:2d}q: trained {te:7.2f} mHa | random {re_:7.2f} mHa | Δ={re_-te:+.2f}")
+    rows = []
+    for t in targets:
+        tr = np.array(per_size[t["nq"]]["trained"]); rd = np.array(per_size[t["nq"]]["random"])
+        rows.append(dict(qubits=t["nq"], ref_kind=t["ref_kind"],
+                         trained_mHa=float(tr.mean()), trained_sd=float(tr.std()),
+                         random_mHa=float(rd.mean()), random_sd=float(rd.std()),
+                         advantage_mHa=float(rd.mean() - tr.mean())))
+    summary = dict(claim="train-small (H4+H6) -> deploy across 16-40q; determinant-space QSCI, matched K=96",
+                   ladder=rows,
+                   advantage_persists_to_40q=bool(rows[-1]["advantage_mHa"] > 0),
+                   all_sizes_positive=bool(all(r["advantage_mHa"] > 0 for r in rows)))
+    json.dump(dict(train="H4+H6", targets_q=[t["nq"] for t in targets], n_gen=NGEN, K=K,
+                   per_size={str(k): v for k, v in per_size.items()}, summary=summary),
+              open(os.path.join(OUT, "scaling_ladder_evidence.json"), "w"), indent=2)
+    log("\n======== SCALING LADDER (train-small, deploy-large) ========")
+    for r in rows:
+        log(f"  {r['qubits']:2d}q [{r['ref_kind']:7s}]: trained {r['trained_mHa']:7.2f} vs random "
+            f"{r['random_mHa']:7.2f} mHa | advantage {r['advantage_mHa']:+.2f}")
+    log(f"  advantage at 40q: {rows[-1]['advantage_mHa']:+.2f} mHa | all sizes positive: "
+        f"{summary['all_sizes_positive']}")
+    try:
+        import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+        qs = [r["qubits"] for r in rows]
+        fig, ax = plt.subplots(figsize=(7, 4.3))
+        ax.plot(qs, [r["trained_mHa"] for r in rows], "o-", color="tab:blue", label="trained on 8q+12q")
+        ax.plot(qs, [r["random_mHa"] for r in rows], "s--", color="tab:orange", label="random search")
+        ax.set_xlabel("target system size (qubits)"); ax.set_ylabel("QSCI subspace error vs ref (mHa)")
+        ax.set_title("Train-small, deploy-large: generative transfer across the size ladder")
+        ax.legend(); fig.tight_layout(); fig.savefig(os.path.join(OUT, "scaling_ladder.png"), dpi=130)
+        log("saved scaling_ladder.png")
+    except Exception as e:
+        log(f"(figure skipped: {e})")
+    log("DONE")
+
+
 def smoke():
     print("=== smoke: canonical tokenization / realize / energy ===")
     t6 = canonical_tokens(6, 12); t8 = canonical_tokens(8, 16); t10 = canonical_tokens(10, 20)
@@ -375,5 +482,7 @@ if __name__ == "__main__":
         smoke()
     elif "--large" in sys.argv:
         main_large()
+    elif "--ladder" in sys.argv:
+        main_ladder()
     else:
         main()
