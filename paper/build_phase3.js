@@ -1,0 +1,126 @@
+// Phase 3 write-up builder (docx-js), mirroring build_phase2.js.
+// Generates EIGENNEXUS_Phase3_Content.docx from the Phase 3 draft prose.
+// [QBRAID-RUN] placeholders are styled (bold italic, dark red) so the GPU/QPU numbers
+// owed are unmistakable and easy to find-and-replace once executed.
+const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+        AlignmentType, BorderStyle, WidthType, ShadingType, ImageRun } = require('docx');
+const fs = require('fs');
+
+const FONT="Times New Roman", SZ=22; // 11pt
+const bd={style:BorderStyle.SINGLE,size:1,color:"888888"};
+const borders={top:bd,bottom:bd,left:bd,right:bd};
+const cw=9792;
+
+function P(runs,opts={}){return new Paragraph({spacing:{after:opts.after??60,line:240,lineRule:"auto"},alignment:opts.align,...opts,children:Array.isArray(runs)?runs:[runs]});}
+function T(t,o={}){return new TextRun({text:t,font:FONT,size:SZ,bold:o.b,italics:o.i});}
+function Q(t){return new TextRun({text:t,font:FONT,size:SZ,bold:true,italics:true,color:"A52A2A"});} // [QBRAID-RUN] placeholder
+function H(t){return new Paragraph({spacing:{before:90,after:40,line:240,lineRule:"auto"},children:[new TextRun({text:t,font:FONT,size:SZ,bold:true})]});}
+
+function cell(text,w,{hdr=false,bold=false,align=AlignmentType.LEFT}={}){
+  return new TableCell({borders,width:{size:w,type:WidthType.DXA},
+    shading:{fill:hdr?"D5E8F0":"FFFFFF",type:ShadingType.CLEAR},
+    margins:{top:40,bottom:40,left:90,right:90},
+    children:[new Paragraph({alignment:align,spacing:{after:0,line:240,lineRule:"auto"},
+      children:[new TextRun({text:text,font:FONT,size:21,bold:hdr||bold})]})]});
+}
+function row(cells,w,opts={}){return new TableRow({children:cells.map((c,i)=>cell(c,w[i],opts))});}
+
+// Table 1: verified results (5a) — quantum vs classical, matched instances
+const w1=[2000,1100,2900,2400,1392];
+const tbl1=new Table({width:{size:9792,type:WidthType.DXA},columnWidths:w1,rows:[
+  row(["System","Qubits","Quantum (GQE/QSCI)","Classical ref.","Notes"],w1,{hdr:true,align:AlignmentType.CENTER}),
+  row(["H₂/H₄/H₆","4/8/12","0.146 / 0.009 / 0.298 mHa","FCI (exact)","two-stage GQE"],w1,{align:AlignmentType.CENTER}),
+  row(["H₆ GQE→QSCI","12","1.05 mHa (51→1.05, ~50×)","FCI","measured pipeline"],w1,{align:AlignmentType.CENTER}),
+  row(["H₁₀/H₁₄","20/28","0.57 / 1.21 mHa","FCI / CCSD(T)","2,401 / 18,201 dets"],w1,{align:AlignmentType.CENTER}),
+  row(["CrO ⁵Π / NiO ³Σ⁻","20","0.038 / 0.197 mHa","CASCI (exact)","open-shell multiref."],w1,{align:AlignmentType.CENTER}),
+  row(["SnO / SnO₂","16/20","0.11 / 0.23 mHa","FCI","EUV target chemistry"],w1,{align:AlignmentType.CENTER}),
+  row(["Noise (H₁₀)","20","≤3.3 mHa @ 30% corrupt","—","noise-aware bonus"],w1,{align:AlignmentType.CENTER}),
+]});
+
+// Table 2: classical baseline & exact wall (5b) — timed, matched instances
+const w2=[1700,1300,2400,2300,2092];
+const tbl2=new Table({width:{size:9792,type:WidthType.DXA},columnWidths:w2,rows:[
+  row(["System","Qubits","FCI (exact) wall-clock","CCSD(T) err vs FCI","CCSD(T) wall-clock"],w2,{hdr:true,align:AlignmentType.CENTER}),
+  row(["H₆","12","0.04 s","0.026 mHa","0.08 s"],w2,{align:AlignmentType.CENTER}),
+  row(["H₁₀","20","0.33 s","0.173 mHa","0.09 s"],w2,{align:AlignmentType.CENTER}),
+  row(["H₁₂","24","7.81 s","0.282 mHa","0.14 s"],w2,{align:AlignmentType.CENTER}),
+  row(["H₁₄","28","minutes","—","~0.2 s"],w2,{align:AlignmentType.CENTER}),
+  row(["H₁₆+","32+","intractable (CPU)","—","—"],w2,{align:AlignmentType.CENTER}),
+]});
+
+const children=[
+  new Paragraph({spacing:{after:30,line:240,lineRule:"auto"},alignment:AlignmentType.CENTER,
+    children:[new TextRun({text:"MATGEN-Q: Scaling a Two-Stage Generative Quantum Eigensolver to 40 Qubits on NVIDIA CUDA-Q for EUV Photoresist Chemistry",font:FONT,size:24,bold:true})]}),
+  new Paragraph({spacing:{after:80,line:240,lineRule:"auto"},alignment:AlignmentType.CENTER,
+    children:[new TextRun({text:"Team EIGENNEXUS  —  Advanced Materials (Mitsubishi Chemical Group & AIST)  —  GIC 2026 Phase 3",font:FONT,size:21,italics:true})]}),
+
+  H("1. Focus Area and Rationale"),
+  P([T("Ground-state energy estimation governs reaction thermodynamics, redox behavior, and excited-state properties across materials chemistry, yet classical methods scale exponentially with electron correlation and the gold-standard CCSD(T) costs O(N⁷). The Generative Quantum Eigensolver (GQE; Nakaji et al. 2024, with AIST) replaces variational circuit optimization with a classical generative transformer that proposes quantum circuits, side-stepping the barren-plateau problem — but statevector GQE stayed small-scale, and QSCI-paired GQE only recently reached 32 qubits (Kemmoku, Gao et al. 2026). "),T("Scaling this generative approach to the ~40-qubit, industrially relevant regime — with executed, reproducible results — is the problem we address in Phase 3.",{b:true})]),
+  P([T("Our target is EUV semiconductor photoresist chemistry (tin-oxo clusters; Sn, Hf, Zr oxides), whose open-shell, multi-reference character is where DFT's 0.3–0.5 eV functional-dependent errors make candidate rankings unreliable, and which is the focus of an active quantum-simulation program by one of this challenge's providers (Kharazi et al., Xanadu & Mitsubishi Chemical, 2026). The MATGEN-Q pipeline — AI proposes candidate metal-oxide molecules → DFT filters → GQE refines with quantum accuracy → Bayesian optimization selects the next candidate — generalizes beyond photoresists to battery electrolytes, catalysts, and functional polymers central to Mitsubishi Chemical's portfolio and AIST's computational-materials mission. EUV photoresists grow at ~20% CAGR within an $800B+ semiconductor industry, and multi-fidelity Bayesian screening has shown up to 3× cost reduction (Fare et al., 2022) — acceleration MATGEN-Q targets through quantum-accurate pre-selection.")]),
+
+  H("2. Target System and Data Modeling Strategy"),
+  P([T("Scaling vehicle. ",{b:true}),T("The linear hydrogen-chain series Hₙ (n = 2…20; 4–40 qubits, STO-6G, Jordan–Wigner) — the canonical strong-correlation benchmark; a single bond-length parameter tunes weak (area-law) to strong (volume-law) correlation, directly stressing the simulation layer that underpins any scaling claim.")]),
+  P([T("Target chemistry. ",{b:true}),T("The same QSCI engine reaches chemical accuracy on real materials chemistry: Sn-oxide active spaces (Sn ECP-CASCI, validated on H₄ to 0.0000 mHa) — SnO 0.11 mHa (16q), SnO₂ 0.23 mHa (20q) — and genuine open-shell, multireference transition-metal oxides — "),T("CrO ⁵Π 0.038 mHa and NiO ³Σ⁻ 0.197 mHa at 20 qubits",{b:true}),T(". We report these executed 20-qubit results; the 38-qubit regime is the GPU scaling target of §5, not a pre-claimed figure.")]),
+  P([T("Data integrity. ",{b:true}),T("We adopt HamLib (Sawaya et al., Quantum 2024) and built a generation pipeline replicating its methodology (PySCF → OpenFermion → Jordan–Wigner, STO-6G). "),T("Validated against the published files: FCI reproduced to 0.00000 mHa (H₂–H₆), and at 28/32/40 qubits our Hamiltonians match HamLib exactly in term count (27,735 / 47,489 / 116,577) and to ~15 significant figures in coefficient magnitude",{b:true}),T(" (differing only by a spectrum-invariant orbital-phase convention) — third-party reproducible.")]),
+  P([T("Accuracy anchors / classical references. ",{b:true}),T("FCI exactly (≤20q), CCSD(T) near equilibrium, and DMRG — verified to reproduce FCI to 0.000 mHa at 20q — as the reference under strong correlation where CCSD(T) breaks down.")]),
+
+  H("3. GQE-Based Approach and Algorithmic Innovation"),
+  P([T("MATGEN-Q uses a two-stage GQE. Stage 1 (generative structure discovery): ",{b:true}),T("a decoder-only GPT-style transformer, trained by sequence–energy matching (Nakaji et al.), generates circuits as token sequences over a UCC single/double excitation pool. "),T("Stage 2 (continuous refinement): ",{b:true}),T("adjoint-gradient angle optimization converges to chemical accuracy. Four innovations make it scalable:")]),
+  P([T("(1) Tensor-network (MPS) simulation — primary scaling enabler. ",{b:true}),T("CUDA-Q's tensornet-mps backend's memory scales with circuit entanglement rather than 2ⁿ; near-equilibrium area-law bounds bond dimension. Exact cuStateVec validates ≤~32 qubits; MPS carries 32–40+. This tensor-network tier is what we add beyond the QSCI-only 32-qubit prior art.")],{after:30}),
+  P([T("(2) QSCI energy evaluation — accuracy and noise-aware. ",{b:true}),T("Quantum-Selected Configuration Interaction (Kanno et al. 2023): dominant configurations are sampled from the generated circuit and H is classically diagonalized in that subspace — intrinsically noise-robust (the device defines only the subspace; ≤3.3 mHa even with 30% of measurements corrupted at 20q).")],{after:30}),
+  P([T("(3) Operator-pool compression — efficiency (demonstrated). ",{b:true}),T("Ranking the O(N⁴) double-excitation pool by active-space MP2 amplitude and keeping the top fraction shrinks the transformer vocabulary with negligible accuracy loss, where random pruning collapses. Deterministic CI-subspace test (CO/N₂/SiO, 12q): "),T("N₂ retains full-pool accuracy (2.26 mHa) keeping only 25% of doubles (vocabulary 1170→430) vs 50.4 mHa for random pruning at the same size (~22×)",{b:true}),T("; CO holds 3.7 mHa at 40% kept vs 29.7 mHa random.")],{after:30}),
+  P([T("(4) Distributed hybrid workflow. ",{b:true}),T("Detailed in §4.")],{after:30}),
+  P([T("Transfer across molecular families — an honest negative. ",{b:true}),T("We also tested a chemistry-conditioned generator (FiLM on an MP2 descriptor) for cross-family transfer under a pre-registered protocol on a deliberately diverse family (polar monoxides, isoelectronic BF, homonuclear strong-correlation N₂, ionic BeO). An un-conditioned warm-start already transfers to held-out molecules about as well; conditioning gave only a within-noise improvement (N₂ +2.1 mHa vs noise 3.6). We report this negative and lead the innovation story with pillars (1)–(3).")]),
+
+  H("4. Hybrid Architecture"),
+  P([T("The classical transformer trains on GPU (PyTorch); circuit evaluations are dispatched across GPUs via CUDA-Q's mqpu in an asynchronous generate→evaluate→update loop. Quantum resources handle state preparation and energy estimation (MPS / QSCI); classical resources handle generation, optimization, and active-space selection. Stage 1 is sampling-bound and parallelizable; Stage 2 is gradient-bound and adjoint-efficient.")]),
+  new Paragraph({spacing:{before:60,after:20,line:240,lineRule:"auto"},alignment:AlignmentType.CENTER,
+    children:[new ImageRun({type:"png",data:fs.readFileSync("matgenq_arch.png"),transformation:{width:360,height:256}})]}),
+  new Paragraph({spacing:{before:0,after:60,line:240,lineRule:"auto"},alignment:AlignmentType.CENTER,
+    children:[new TextRun({text:"Figure 1. MATGEN-Q hybrid architecture: a classical generative transformer (Stage 1) and GPU-accelerated quantum simulation (MPS/QSCI) form an asynchronous loop; Stage 2 refines angles to chemical accuracy.",font:FONT,size:18,italics:true})]}),
+
+  H("5. Phase 3 Execution and Results"),
+  P([T("Verified results (CPU; reproduced from a clean checkout via ",{b:true}),T("reproduce.py",{b:true,i:true}),T(").",{b:true}),T(" All values below are reproduced against the committed result files (Table 1).")],{after:50}),
+  tbl1,
+  new Paragraph({spacing:{before:30,after:50,line:240,lineRule:"auto"},children:[new TextRun({text:"Table 1. Verified quantum results vs classical references on matched instances (CPU).",font:FONT,size:19,italics:true})]}),
+  P([T("Classical baseline and the exact wall (matched instances, timed). ",{b:true}),T("On identical STO-6G Hₙ geometries, classical FCI wall-clock grows ~24× from 20→24 qubits (0.33 s → 7.8 s) and is intractable by 32q on CPU; CCSD(T) stays cheap but its error climbs with correlation and breaks down under strong correlation (at H₂₄/48q, classical DMRG is itself 6.83 mHa off CCSD(T)). Exact quantum-state simulation needs ~16 TB at 40 qubits — the wall the MPS + QSCI tiers remove (Table 2).")],{after:50}),
+  tbl2,
+  new Paragraph({spacing:{before:30,after:50,line:240,lineRule:"auto"},children:[new TextRun({text:"Table 2. Classical reference cost on the Hₙ ladder (single-thread CPU) — the exact-method wall the quantum approach is measured against.",font:FONT,size:19,italics:true})]}),
+  P([T("Executed scaling results on qBraid GPU. ",{b:true}),
+     T("40-qubit MPS GQE/QSCI on H₂₀ (primary criterion): ",{b:true}),Q("[QBRAID-RUN: energy err vs DMRG, circuit depth, MPS bond dimension, shot budget, GPU wall-clock]"),
+     T(" (CPU baseline today: operational, converging through 39 mHa). "),
+     T("CrO/NiO near-38 qubits on GPU: ",{b:true}),Q("[QBRAID-RUN: accuracy achieved + wall-clock]"),
+     T(", presented as the scaling demonstration on real open-shell chemistry, building on the executed 20-qubit results. "),
+     T("Quantum-vs-classical wall-clock: ",{b:true}),Q("[QBRAID-RUN: MPS/QSCI vs exact statevector vs VQE]"),
+     T(". "),T("Hardware validation: ",{b:true}),Q("[QBRAID-RUN: selected circuits on IonQ/IBM at 10–16 qubits, depth + shots]"),T(".")]),
+
+  H("6. Platform Use and Resourcing"),
+  P([T("qBraid provides classical (CPU/GPU) and quantum (QPU) credits. We use "),T("NVIDIA H100/A100 (80 GB)",{b:true}),T(" with CUDA-Q: tensornet-mps for the 24–40-qubit tier and cuStateVec for exact validation to ~32 qubits. One high-memory GPU suffices for MPS; 4–8 GPUs (NVLink) enable distributed circuit evaluation (pillar 4) and the >40-qubit bonus attempt; QPU (IonQ/IBM) for 10–16-qubit validation. Per-run qubit/depth/shot/wall-clock figures: "),Q("[QBRAID-RUN: from §5]"),T(".")]),
+
+  H("7. Limitations and Honest Scope"),
+  P([T("The integrated GQE→QSCI loop is measured at 12 qubits; larger QSCI uses perturbative determinant selection as a hardware-independent proxy, validated against the 12-qubit measured pipeline — quantum-inspired at scale until executed with real sampling. At ≤28 qubits, classical FCI/DMRG already solve these instances; we demonstrate correctness and scaling, not yet a regime where quantum beats classical — the genuine-advantage target is 40q+ strong correlation where DMRG bond dimension explodes. The 40-qubit result is operational, not yet at chemical accuracy on CPU; the GPU run is the deliverable. The chemistry-conditioned encoder is a tested negative, reported as such.")]),
+
+  H("8. Conclusion and Reproducibility"),
+  P([T("MATGEN-Q is a working two-stage GQE whose tensor-network and QSCI tiers, plus MP2 operator-pool compression, target the 40-qubit regime on a single GPU, with every claim third-party reproducible. A one-command driver ("),T("reproduce.py",{i:true}),T(") and a README with a “Launch on qBraid” button let judges re-run each headline result without modification.")]),
+
+  new Paragraph({spacing:{before:120,after:40,line:240,lineRule:"auto"},pageBreakBefore:true,children:[new TextRun({text:"References",font:FONT,size:SZ,bold:true})]}),
+];
+function refP(n,txt){return new Paragraph({spacing:{after:30,line:240,lineRule:"auto"},indent:{left:360,hanging:360},children:[new TextRun({text:"["+n+"] ",font:FONT,size:20,bold:true}),new TextRun({text:txt,font:FONT,size:20})]});}
+const refs=[
+ refP(1,"K. Nakaji, et al. “The generative quantum eigensolver (GQE) and its application for ground state search.” arXiv:2401.09253 (2024). [AIST]"),
+ refP(2,"N. P. D. Sawaya, et al. “HamLib: A library of Hamiltonians for benchmarking quantum algorithms and hardware.” Quantum 8, 1559 (2024)."),
+ refP(3,"S. Minami, K. Nakaji, et al. “Generative quantum combinatorial optimization … conditional generative quantum eigensolver.” Digital Discovery 4(8) (2025)."),
+ refP(4,"K. Kanno, et al. “Quantum-selected configuration interaction … subspaces selected by quantum computers.” arXiv:2302.11320 (2023)."),
+ refP(5,"NVIDIA Corporation. CUDA-Q and cuQuantum SDK (cuStateVec, tensornet / tensornet-mps backends)."),
+ refP(6,"J. Tilly, et al. “The Variational Quantum Eigensolver: A review of methods and best practices.” Physics Reports 986 (2022)."),
+ refP(7,"P. Fare, et al. “A multi-fidelity machine learning approach to high-throughput materials screening.” npj Computational Materials 8, 257 (2022)."),
+ refP(8,"T. D. Kharazi, et al. “Quantum Simulations for Extreme Ultraviolet Photolithography.” arXiv:2602.20234 (2026). [Xanadu & Mitsubishi Chemical]"),
+ refP(9,"R. Kemmoku, Q. Gao, S. Kanno, et al. “Generative Circuit Design for Quantum-Selected Configuration Interaction.” arXiv:2604.09756 (2026). [Mitsubishi Chemical]"),
+];
+children.push(...refs);
+
+const doc=new Document({
+  styles:{default:{document:{run:{font:FONT,size:SZ}}}},
+  sections:[{properties:{page:{size:{width:12240,height:15840},margin:{top:1224,right:1224,bottom:1224,left:1224}}},children}]
+});
+Packer.toBuffer(doc).then(b=>{fs.writeFileSync("EIGENNEXUS_Phase3_Content.docx",b);console.log("Created EIGENNEXUS_Phase3_Content.docx:",b.length,"bytes");});
