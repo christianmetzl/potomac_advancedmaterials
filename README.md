@@ -38,7 +38,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 
 - The **integrated GQE→QSCI loop is demonstrated at 12 qubits**; the larger-scale QSCI results (20–28q) use **perturbative determinant selection as a hardware-independent proxy** for the measurement step, *validated against* the 12q measured pipeline.
 - The 40q result is **operational but not yet at chemical accuracy** — the GPU runs are the Phase 3 deliverable.
-- **Train-small, deploy-large (headline transfer result).** One generator trained only on 8q+12q systems, deployed zero-shot across **16→20→28→40 qubits**, beats random search at every size and every seed (advantage +9.2/+8.5/+7.4/+6.0 mHa; `src/encoder/scaling_transfer.py --ladder`). A canonical frontier-relative tokenization makes the small vocabulary a subset of the large one, and a determinant-space QSCI evaluation (no 2ⁿ statevector) makes 40q reachable on CPU. This shows GQE training can be amortized once at small scale and transferred to the 40q target rather than trained at scale. *Honest scope:* relative advantage at a small fixed determinant budget, not absolute chemical accuracy at 40q (the GPU deliverable). Cross-*molecule* conditioning (same size) was a within-noise **tie**, reported as a negative (`src/encoder/decisive_transfer.py`).
+- **Train-small, deploy-large (transfer result).** One generator trained only on 8q+12q systems, deployed zero-shot across **16→56 qubits**, proposes lower-energy determinant subspaces than random selection on the **3-seed mean** at every size (advantage +8.9/+8.3/+7.1/+5.8/+5.0/+4.4 mHa; `src/encoder/scaling_transfer.py --ladder`). A canonical frontier-relative tokenization makes the small vocabulary a subset of the large one; a determinant-space **selected-CI proxy** (Slater-Condon, validated to 0.0000 mHa vs Jordan–Wigner; no 2ⁿ statevector) makes 56q reachable on CPU. *Honest scope:* this is a mean trend that narrows into run-to-run noise beyond ~28q (not an every-seed guarantee), a relative advantage at a fixed small budget (not chemical accuracy), and a selected-CI proxy (not circuit-sampled QSCI). Cross-*chemistry* transfer works on 4/6 oxide targets but fails on SnO; target-specific MP2 beats the prior; cross-*molecule* conditioning was a within-noise tie. All reported as negatives where they are negatives.
 - Sn-oxide Hamiltonians are **our own ECP-CASCI construction** (not from the HamLib library, which contains no tin oxides).
 
 ## Repository structure
@@ -99,8 +99,9 @@ The headline scaling runs (40q MPS, near-38q transition-metal oxides, QPU valida
 qBraid with CUDA-Q + GPU credits. Step-by-step:
 
 1. **Launch:** click the **Launch on qBraid** badge above to clone this repo into your qBraid account.
-2. **Environment:** select a GPU instance; install the environment with `pip install -r
-   requirements.txt` (adds `cudaq`, `quimb`, `block2` for the GPU/MPS + DMRG paths).
+2. **Environment:** select a GPU instance; `pip install -r requirements.txt` then `pip install -r
+   requirements-gpu.txt` (the GPU-only `cudaq`, `quimb`, `block2`). On a CPU-only box install only
+   `requirements.txt` — the GPU extras will not install without CUDA.
 3. **Reproduce CPU results first:** run the commands in [Reproduce](#reproduce-cpu--verified) to confirm
    the verified numbers in the qBraid environment.
 4. **GPU scaling runs** *(scripts finalized once access is live — placeholders tracked in

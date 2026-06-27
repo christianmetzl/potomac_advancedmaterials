@@ -1,0 +1,5 @@
+# GPU / tensor-network extras for the Phase-3 qBraid runs (NVIDIA GPU required).
+# Install ONLY on a CUDA-capable machine / qBraid GPU instance, on top of requirements.txt.
+cudaq            # NVIDIA CUDA-Q: tensornet-mps + cuStateVec backends (GPU)
+quimb            # tensor-network utilities
+block2           # DMRG reference (classical tensor-network baseline)

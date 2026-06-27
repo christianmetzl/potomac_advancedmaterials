@@ -1,4 +1,5 @@
-# Core (CPU-verified results) — Python 3.11
+# CPU-verified core (Python 3.11) — installs cleanly on a CPU-only box.
+# This is all you need to reproduce every CPU headline result (see README "Reproduce").
 pyscf
 openfermion
 openfermionpyscf
@@ -10,7 +11,5 @@ scipy
 numpy
 matplotlib
 
-# GPU / tensor-network scaling (Phase 3 on qBraid)
-cudaq            # NVIDIA CUDA-Q: tensornet-mps + cuStateVec backends (GPU)
-quimb            # tensor-network utilities
-block2           # DMRG reference (classical tensor-network baseline)
+# GPU / tensor-network extras for the Phase-3 qBraid runs are in requirements-gpu.txt
+# (cudaq, quimb, block2) — do NOT install those on a CPU-only machine; they will fail.
