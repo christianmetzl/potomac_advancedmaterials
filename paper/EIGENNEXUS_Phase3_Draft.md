@@ -94,13 +94,19 @@ for random pruning at the same size** (~22×); CO holds 3.7 mHa at 40% kept vers
 
 **(4) Distributed hybrid workflow.** Detailed in §4.
 
-**Transfer learning across molecular families — an honest negative.** We also tested a
-chemistry-conditioned generator (FiLM modulation on an MP2 molecular descriptor) for cross-family
-transfer, under a pre-registered protocol on a deliberately diverse family (polar monoxides, isoelectronic
-BF, homonuclear strong-correlation N₂, ionic BeO). A single *un*-conditioned warm-start already
-transfers to held-out molecules about as well as the conditioned model — conditioning gave only a
-within-noise improvement (N₂ +2.1 mHa vs noise 3.6). We therefore report this as a clean negative and
-lead the innovation story with pillars (1)–(3), rather than overstate a marginal effect.
+**Transfer learning — generative structure transfers across system size (positive result).** A central
+scaling question is whether a generator trained on a *small* system can propose good circuits for a
+*larger* one. We answer it with a **canonical, frontier-relative tokenization**: each excitation is
+encoded as (occupied depth below HOMO, virtual height above LUMO), independent of qubit count, so a
+small system's token vocabulary is a provable subset of a larger one (verified: H₆/12q ⊂ H₈/16q ⊂
+H₁₀/20q). A GPT-QE generator trained **only on H₆ (12 qubits)** then generates zero-shot for **H₈ (16
+qubits)** and **beats random search on H₈ across all three seeds and both metrics — mean 91.8 vs 127.6
+mHa, best 67.4 vs 82.9 mHa** (within-seed spread ~1 mHa against a ~36 mHa gap). The learned policy
+generalizes to a larger system it was never trained on — direct evidence for scalability.
+(`src/encoder/scaling_transfer.py`.) *Honest contrast:* a same-size, cross-*molecule* conditioning
+variant (FiLM on an MP2 descriptor) gave only a within-noise gain over an unconditioned warm-start
+(N₂ +2.1 mHa vs noise 3.6) — reported as a negative; the value is in cross-*size* transfer, not
+molecule conditioning.
 
 ## 4. Hybrid Architecture
 

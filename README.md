@@ -38,7 +38,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 
 - The **integrated GQE→QSCI loop is demonstrated at 12 qubits**; the larger-scale QSCI results (20–28q) use **perturbative determinant selection as a hardware-independent proxy** for the measurement step, *validated against* the 12q measured pipeline.
 - The 40q result is **operational but not yet at chemical accuracy** — the GPU runs are the Phase 3 deliverable.
-- The **conditional encoder was tested and is a clean negative**: across a chemically diverse family, an un-conditioned warm-start already transfers across molecules about as well as MP2-conditioning (within-noise difference; `src/encoder/decisive_transfer.py`). We report this honestly and lead the algorithmic-innovation story with the integrated MPS + QSCI + operator-pool-compression scaling layer instead.
+- **Transfer learning, two results, reported honestly.** Cross-*size* transfer **works**: via a canonical frontier-relative tokenization, a generator trained only on H₆ (12q) beats random search zero-shot on H₈ (16q) across all seeds (mean 91.8 vs 127.6 mHa; `src/encoder/scaling_transfer.py`) — direct evidence for scalability. Cross-*molecule* conditioning (same size) was a within-noise **tie** and is reported as a negative (`src/encoder/decisive_transfer.py`). The algorithmic-innovation story leads with the integrated MPS + QSCI + operator-pool-compression scaling layer plus the cross-size transfer result.
 - Sn-oxide Hamiltonians are **our own ECP-CASCI construction** (not from the HamLib library, which contains no tin oxides).
 
 ## Repository structure

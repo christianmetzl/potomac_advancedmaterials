@@ -22,6 +22,18 @@ Prepared after the first conditional-encoder demonstration. Every number traces 
 > operator-pool-compression** scaling layer (Option B / pillars 1–3). This honest negative is itself
 > rewarded by the Phase-3 rubric (Top-Action #6: honesty > overstatement). The §4–§6 discussion below
 > is preserved as the record that led here.
+>
+> ## ✅ FOLLOW-UP 2026-06-27 — the *harder* transfer test SUCCEEDED (cross-qubit-count)
+> The same-size cross-*molecule* conditioning above tied. The genuinely novel, scaling-relevant
+> question — does a generator trained on a *small* system transfer to a *larger* one? — is answered
+> **yes** (`src/encoder/scaling_transfer.py`, `results/encoder/scaling_transfer_evidence.json`). A
+> **canonical frontier-relative tokenization** (token = excite HOMO−d → LUMO+h, size-independent) makes
+> a small system's vocabulary a provable subset of a larger one (H₆/12q ⊂ H₈/16q ⊂ H₁₀/20q). A GPT-QE
+> generator trained **only on H₆ (12q)** generates zero-shot for **H₈ (16q)** and **beats random search
+> across all 3 seeds, both metrics: mean 91.8 vs 127.6 mHa, best 67.4 vs 82.9 mHa** (within-seed spread
+> ~1 mHa vs ~36 mHa gap — highly significant). **Net: cross-*size* transfer is a real, on-theme
+> contribution (primary criterion: scalability); cross-*molecule* conditioning is an honest negative.**
+> Both are in the paper.
 ---
 
 ---
