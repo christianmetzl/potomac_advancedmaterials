@@ -13,11 +13,12 @@
     600,
     1500
   ],
+  "see_also": "selected_ci_strongcorr_evidence.json \u2014 this file uses a ONE-SHOT MP2-ranked CISD subspace (shows CISD-level selection is insufficient at strong correlation); the companion file uses ITERATIVE selected-CI (CIPSI/SHCI) which DOES reach chemical accuracy at ~500 dets. Complementary, not contradictory: proper iterative selection is required.",
   "note": "HONEST framing: CCSD(T) (single-reference) collapses NON-VARIATIONALLY at strong correlation -- it falls BELOW exact FCI (negative error, e.g. -217 mHa at R=2.4), an unphysical, untrustworthy result. The determinant-subspace method (selected-CI / QSCI-proxy) is a rigorous VARIATIONAL upper bound that decreases monotonically with budget K (systematically improvable to FCI). At feasible CPU budgets its ABSOLUTE error is still larger than |CCSD(T) error|; reaching accuracy in this multireference regime needs a large subspace -- the scale at which device-sampled determinant selection (real QSCI on GPU/QPU) is the intended tool. This experiment motivates the quantum approach and bounds the CPU proxy; it is NOT a claim that the proxy beats CCSD(T).",
   "results": [
     {
       "R": 0.74,
-      "e_fci": -5.202826400621637,
+      "e_fci": -5.202826400621641,
       "hf_weight": 0.928,
       "ccsdt_err_mHa": 0.17,
       "ccsd_err_mHa": 1.07,
@@ -39,7 +40,7 @@
     },
     {
       "R": 1.0,
-      "e_fci": -5.415393318441238,
+      "e_fci": -5.415393318441227,
       "hf_weight": 0.832,
       "ccsdt_err_mHa": 0.13,
       "ccsd_err_mHa": 2.0,
@@ -61,7 +62,7 @@
     },
     {
       "R": 1.4,
-      "e_fci": -5.116010476169482,
+      "e_fci": -5.116010476169475,
       "hf_weight": 0.537,
       "ccsdt_err_mHa": -10.56,
       "ccsd_err_mHa": -4.63,
@@ -105,7 +106,7 @@
     },
     {
       "R": 2.4,
-      "e_fci": -4.731589443230023,
+      "e_fci": -4.731589443230021,
       "hf_weight": 0.06,
       "ccsdt_err_mHa": -217.48,
       "ccsd_err_mHa": -180.85,

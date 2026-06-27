@@ -84,7 +84,7 @@ const children=[
   new Paragraph({spacing:{before:60,after:20,line:240,lineRule:"auto"},alignment:AlignmentType.CENTER,
     children:[new ImageRun({type:"png",data:fs.readFileSync("matgenq_arch.png"),transformation:{width:320,height:228}})]}),
   new Paragraph({spacing:{before:0,after:60,line:240,lineRule:"auto"},alignment:AlignmentType.CENTER,
-    children:[new TextRun({text:"Figure 1. MATGEN-Q hybrid architecture: a classical generative transformer (Stage 1) and GPU-accelerated quantum simulation (MPS/QSCI) form an asynchronous loop; Stage 2 refines angles to chemical accuracy.",font:FONT,size:18,italics:true})]}),
+    children:[new TextRun({text:"Figure 1. MATGEN-Q hybrid architecture (target design): a classical generative transformer (Stage 1) and GPU-accelerated quantum simulation (MPS/QSCI) form an asynchronous loop; Stage 2 refines angles to chemical accuracy. The MPS tier and the GPU loop are the proposed Phase-3 GPU deliverable (not yet executed, §3, §5c); executed results in this submission use CPU selected-CI/QSCI and circuit-sampled QSCI to 20q.",font:FONT,size:18,italics:true})]}),
 
   H("5. Phase 3 Execution and Results"),
   P([T("Verified results (CPU; reproduced from a clean checkout via ",{b:true}),T("reproduce.py",{b:true,i:true}),T(").",{b:true}),T(" All values below are reproduced against the committed result files (Table 1).")],{after:50}),
@@ -93,7 +93,7 @@ const children=[
   P([T("Classical baseline and the exact wall (matched instances, timed). ",{b:true}),T("On identical STO-6G Hₙ geometries, classical FCI wall-clock grows ~24× from 20→24 qubits (0.33 s → 7.8 s) and is intractable by 32q on CPU; CCSD(T) stays cheap but its error climbs with correlation and breaks down under strong correlation (at H₂₄/48q, classical DMRG is itself 6.83 mHa off CCSD(T)). Exact quantum-state simulation needs ~16 TB at 40 qubits — the wall the MPS + QSCI tiers remove (Table 2).")],{after:50}),
   tbl2,
   new Paragraph({spacing:{before:30,after:50,line:240,lineRule:"auto"},children:[new TextRun({text:"Table 2. Classical reference cost on the Hₙ ladder (single-thread CPU) — the exact-method wall the quantum approach is measured against.",font:FONT,size:19,italics:true})]}),
-  P([T("Executed scaling results on qBraid GPU. ",{b:true}),
+  P([T("Scaling results targeted on qBraid GPU (owed — not yet executed). ",{b:true}),
      T("40-qubit MPS GQE/QSCI on H₂₀ (primary criterion): ",{b:true}),Q("[QBRAID-RUN: energy err vs DMRG, circuit depth, MPS bond dimension, shot budget, GPU wall-clock]"),
      T(" (CPU baseline today: operational, converging through 39 mHa). "),
      T("CrO/NiO near-38 qubits on GPU: ",{b:true}),Q("[QBRAID-RUN: accuracy achieved + wall-clock]"),

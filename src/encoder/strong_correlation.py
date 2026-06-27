@@ -92,6 +92,11 @@ def main():
         print(f"R={R:.2f} A | HF-weight={c['hf_weight']:.3f} | CCSD(T) err {row['ccsdt_err_mHa']:+8.2f} mHa "
               f"| selected-CI(K={K_SCI[-1]}) err {sbest:7.2f} mHa | {time.time()-t0:.0f}s", flush=True)
         json.dump(dict(system=f"H{N_ATOMS}", qubits=nq, R_list=R_LIST, K_sci=K_SCI,
+                       see_also="selected_ci_strongcorr_evidence.json — this file uses a ONE-SHOT "
+                                "MP2-ranked CISD subspace (shows CISD-level selection is insufficient at "
+                                "strong correlation); the companion file uses ITERATIVE selected-CI "
+                                "(CIPSI/SHCI) which DOES reach chemical accuracy at ~500 dets. Complementary, "
+                                "not contradictory: proper iterative selection is required.",
                        note="HONEST framing: CCSD(T) (single-reference) collapses NON-VARIATIONALLY at "
                             "strong correlation -- it falls BELOW exact FCI (negative error, e.g. -217 mHa "
                             "at R=2.4), an unphysical, untrustworthy result. The determinant-subspace "

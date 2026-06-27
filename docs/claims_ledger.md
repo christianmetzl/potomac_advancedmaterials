@@ -25,7 +25,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 | 8 | Noise robustness 20q | ≤3.3 mHa @ 30% corrupt, 2×10⁶ shots | `src/noise_demo2.py` | `noise_evidence.json` | — | executed-CPU |
 | 9 | DFT functional spread | CrO 1.9 eV (sign flip), NiO 0.11 eV | `src/dft_baseline.py` | `dft_functional_spread_evidence.json` | — | executed-CPU |
 | 10 | Classical baseline + exact wall | FCI 0.33s(20q)→7.8s(24q); intractable 32q+ | `src/classical_baselines.py` | `classical_baselines_evidence.json` | PASS | executed-CPU |
-| 11 | **Strong-corr trust result** | CCSD(T) −217 mHa (below FCI); selected-CI chem-acc @ ~500 dets | `src/encoder/selected_ci_strongcorr.py` | `selected_ci_strongcorr_evidence.json` | — | executed-CPU (FCI ref) |
+| 11 | **Strong-corr trust result** | CCSD(T) −217 mHa (below FCI); selected-CI chem-acc @ ~500 dets; HF-weight 0.93→0.06 | `src/encoder/selected_ci_strongcorr.py`, `src/encoder/strong_correlation.py` | `selected_ci_strongcorr_evidence.json` (energies/dets), `strong_correlation_evidence.json` (HF-weight / multireference diagnostic) | — | executed-CPU (FCI ref) |
 | 12 | Operator-pool compression | N₂ 2.26 mHa @ 25% of doubles vs 50.4 random | `src/encoder/pool_compression.py` | `pool_compression_evidence.json` | — | executed-CPU |
 | 13 | Transfer ladder 16→56q | +8.9/+8.3/+7.1/+5.8/+5.0/+4.4 mHa (3-seed mean) | `src/encoder/scaling_transfer.py --ladder` | `scaling_ladder_evidence.json` | — | proxy; mean trend, narrows into noise beyond ~28q |
 | 14 | Cross-chemistry transfer | 4/6 oxide targets (SnO fails); MP2 strongest | `scaling_transfer.py --crosschem` | `crosschem_evidence.json` | — | proxy; honest partial |
