@@ -1,0 +1,36 @@
+{
+  "note": "REAL circuit-sampled QSCI (qml.sample shots) at 16q & 20q using the size-transferred generator; energy by Slater-Condon diagonalization; vs FCI. measured vs measured-random vs deterministic proxy at matched K.",
+  "NGEN": 160,
+  "SHOTS": 3000,
+  "K": 600,
+  "results": [
+    {
+      "system": "H8",
+      "qubits": 16,
+      "shots": 3000,
+      "n_circuits": 160,
+      "K": 600,
+      "measured_mHa": 28.07,
+      "measured_distinct": 110,
+      "measured_random_mHa": 24.04,
+      "proxy_mHa": 26.64,
+      "e_fci": -4.186089,
+      "ref_kind": "FCI",
+      "seconds": 1.0
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "shots": 3000,
+      "n_circuits": 160,
+      "K": 600,
+      "measured_mHa": 50.36,
+      "measured_distinct": 110,
+      "measured_random_mHa": 46.71,
+      "proxy_mHa": 49.27,
+      "e_fci": -5.202826,
+      "ref_kind": "FCI",
+      "seconds": 9.0
+    }
+  ]
+}
