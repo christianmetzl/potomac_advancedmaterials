@@ -27,11 +27,15 @@ CUDA-Q and qBraid hardware validation (IonQ/IBM).
 
 **What we need (per our Phase 2 cover-page platform selection):**
 
-1. **qBraid GPU compute** — NVIDIA **H100 or A100 (80 GB)** instances with the **CUDA-Q SDK** (tensornet-mps
-   and cuStateVec backends). This is the core requirement: our scaling tier runs GQE circuit simulation via
-   CUDA-Q's MPS backend, whose memory scales with entanglement rather than 2ⁿ.
-2. **qBraid classical (CPU/GPU) credits** to run and reproduce the full pipeline.
-3. **QPU access** (IonQ / IBM via qBraid) for small-scale hardware validation at 10–16 qubits.
+1. **qBraid GPU compute** — NVIDIA **H100 or A100 (80 GB)** instances with the **CUDA-Q SDK**: the
+   **tensornet-mps** backend for the 24–40-qubit tier (one high-memory GPU suffices for the MPS runs), and
+   **cuStateVec** for exact validation to ~32 qubits. This is the core requirement: our scaling tier runs GQE
+   circuit simulation via CUDA-Q's MPS backend, whose memory scales with entanglement rather than 2ⁿ.
+2. **Multi-GPU (4–8 GPUs with NVLink), if available in the allocation** — to enable distributed circuit
+   evaluation (our innovation 4) and the **>40-qubit bonus attempt**. The workflow degrades gracefully to a
+   single GPU, so this is a "nice-to-have" on top of item 1, not a blocker.
+3. **qBraid classical (CPU/GPU) credits** to run and reproduce the full pipeline.
+4. **QPU access** (IonQ / IBM via qBraid) for small-scale hardware validation at 10–16 qubits.
 
 **What we will run with it (our Phase 3 execution list):**
 - 40-qubit MPS GQE/QSCI on H₂₀ — energy error vs DMRG, circuit depth, bond dimension, shot budget, GPU
@@ -39,9 +43,11 @@ CUDA-Q and qBraid hardware validation (IonQ/IBM).
 - Near-38-qubit CrO/NiO open-shell transition-metal oxides via MPS/QSCI on GPU.
 - Quantum-vs-classical wall-clock comparison (MPS/QSCI vs exact statevector vs VQE).
 - 10–16-qubit circuit validation on IonQ/IBM QPU.
+- (Bonus, multi-GPU) >40-qubit attempt via distributed circuit evaluation across 4–8 NVLink GPUs.
 
-Estimated need: ~1–2 weeks of single high-memory GPU wall-clock (the workflow is backend-agnostic and
-degrades gracefully to a smaller allocation). Everything else in our submission is already executed and
+Estimated need: ~2 weeks of GPU wall-clock (one high-memory GPU suffices for the core MPS runs; the
+workflow is backend-agnostic and degrades gracefully to a smaller allocation). Everything else in our
+submission is already executed and
 reproducible on CPU (a one-command `reproduce.py` passes 13/13, incl. CUDA-Q qpp-cpu + MPS checks), so GPU time goes straight to the at-scale runs.
 
 **Logistics:**
