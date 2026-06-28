@@ -52,7 +52,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
   circuit-sampled pipeline.
 - **GPU-owed (row 19):** the only un-executed items; clearly marked as targets in the paper, never as
   achieved results.
-- **Judges' re-run:** `python src/reproduce.py` → **13/13 PASS** (10 core + 2 optional CUDA-Q/MPS; transcript: `docs/reproduce_transcript.txt`).
+- **Judges' re-run:** `python src/reproduce.py` → **13/13 PASS** (11 core + 2 optional CUDA-Q/MPS; transcript: `docs/reproduce_transcript.txt`).
 
 ## Known honesty caveats (also stated in the paper)
 - Transfer ladder advantage is a **3-seed mean** that narrows into run-to-run noise beyond ~28q — not an
