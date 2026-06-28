@@ -25,7 +25,7 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
 - `src/` — all source code (CPU-verified + the qBraid GPU run-list scripts).
 - `results/` — every committed evidence JSON + figures (each headline number traces here).
 - `docs/claims_ledger.md` — per-claim traceability (number -> script -> evidence -> status).
-- `docs/reproduce_transcript.txt` — captured `python src/reproduce.py` -> 12/12 PASS (10 core + 2 optional CUDA-Q/MPS).
+- `docs/reproduce_transcript.txt` — captured `python src/reproduce.py` -> 13/13 PASS (10 core + 2 optional CUDA-Q/MPS).
 - `requirements.txt` (CPU) / `requirements-gpu.txt` (cudaq/quimb/block2 for qBraid GPU).
 
 ## TWO ACTIONS REQUIRED BEFORE UPLOAD (team)
@@ -37,7 +37,7 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
    (see docs/qbraid_access_email.md). It MUST appear on the Phase 3 cover page.
 
 ## Reproducing (judges)
-`pip install -r requirements.txt` then `python src/reproduce.py` -> 12/12 PASS on CPU (10 core + 2 optional CUDA-Q/MPS).
+`pip install -r requirements.txt` then `python src/reproduce.py` -> 13/13 PASS on CPU (10 core + 2 optional CUDA-Q/MPS).
 GPU/at-scale items (40q MPS, near-38q CrO/NiO, QPU validation) are marked [QBRAID-RUN] in the write-up and
 are the qBraid GPU deliverable; everything else is executed and reproducible on CPU.
 

@@ -5,7 +5,7 @@
   "basis": "def2-SVP + def2 ECP on Sn",
   "rhf_converged": true,
   "n_pauli_terms": 789,
-  "CASCI_energy_Ha": -576.3653639075534,
+  "CASCI_energy_Ha": -576.365363907553,
   "qsci_best_err_mHa": 0.411,
   "reached_chemical_accuracy": true,
   "note": "genuine bridged Sn-O-Sn unit (not a diatomic / not linear O=Sn=O); minimal cluster fragment, not the full footballene cage. Honest scope: fixed modest CAS/basis.",

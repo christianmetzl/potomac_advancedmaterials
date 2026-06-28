@@ -9,14 +9,14 @@
       "backend": "qpp-cpu (CUDA-Q, CPU statevector)",
       "uccsd_params": 26,
       "shots": 50000,
-      "sampled_determinants": 14,
+      "sampled_determinants": 15,
       "e_fci": -2.1568572982997076,
       "e_hf": -2.1158272217230585,
-      "vqe_cudaq_Ha": -2.1568461068672278,
-      "vqe_err_mHa": 0.011,
-      "qsci_cudaq_Ha": -2.1568202924292703,
-      "qsci_err_mHa": 0.037,
-      "wall_s": 667.9
+      "vqe_cudaq_Ha": -2.156843837761193,
+      "vqe_err_mHa": 0.013,
+      "qsci_cudaq_Ha": -2.1568348347191204,
+      "qsci_err_mHa": 0.022,
+      "wall_s": 667.7
     }
   ],
   "honest_caveats": [

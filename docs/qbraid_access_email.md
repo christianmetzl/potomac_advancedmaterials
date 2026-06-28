@@ -42,7 +42,7 @@ validation (IonQ/IBM).
 
 Estimated need: ~1–2 weeks of single high-memory GPU wall-clock (the workflow is backend-agnostic and
 degrades gracefully to a smaller allocation). Everything else in our submission is already executed and
-reproducible on CPU (a one-command `reproduce.py` passes 12/12, incl. CUDA-Q qpp-cpu + MPS checks), so GPU time goes straight to the at-scale runs.
+reproducible on CPU (a one-command `reproduce.py` passes 13/13, incl. CUDA-Q qpp-cpu + MPS checks), so GPU time goes straight to the at-scale runs.
 
 **Logistics:**
 - Could you confirm our team account is provisioned and credits are loaded, and point us to the device-request
