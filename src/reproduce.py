@@ -44,6 +44,8 @@ CHECKS = [
      [("below", "final_mHa", 0.6)], False),                      # claim: chemical accuracy (~0.23 mHa)
     ("CrO/NiO (20q)", "transition_metal_oxide_qsci.py", [], "transition_metal_qsci_evidence.json",
      [("eq", ["0", "qsci_best_err_mHa"], 0.038, 0.05), ("eq", ["1", "qsci_best_err_mHa"], 0.197, 0.08)], True),
+    ("bridged tin-oxo Sn2O2 (16q)", "tin_oxo_demo.py", [], "tin_oxo_evidence.json",
+     [("lt", ["qsci_best_err_mHa"], 1.6)], False),
     ("HamLib equivalence (28q)", "hamlib_validate.py", ["14"], None,
      [("eq_terms", 27735)], True),
     ("classical baselines (Hn FCI)", "classical_baselines.py", ["6", "10", "12"], "classical_baselines_evidence.json",

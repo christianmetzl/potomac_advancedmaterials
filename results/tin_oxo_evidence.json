@@ -1,0 +1,16 @@
+{
+  "system": "Sn2O2 rhombus (bridged Sn-O-Sn tin-oxo fragment)",
+  "qubits": 16,
+  "active_space": "CAS(8,8)",
+  "basis": "def2-SVP + def2 ECP on Sn",
+  "rhf_converged": true,
+  "n_pauli_terms": 789,
+  "CASCI_energy_Ha": -576.3653639075534,
+  "qsci_best_err_mHa": 0.411,
+  "reached_chemical_accuracy": true,
+  "note": "genuine bridged Sn-O-Sn unit (not a diatomic / not linear O=Sn=O); minimal cluster fragment, not the full footballene cage. Honest scope: fixed modest CAS/basis.",
+  "honest_caveats": [
+    "Minimal Sn-O-Sn fragment, not the industrial tin-oxo cage; def2-SVP + ECP, fixed CAS(8,8).",
+    "Claim is QSCI chemical accuracy vs the CASCI reference on a real bridged tin-oxo motif."
+  ]
+}

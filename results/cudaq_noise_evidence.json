@@ -1,0 +1,48 @@
+{
+  "title": "QSCI under a real CUDA-Q depolarizing channel (density-matrix-cpu) \u2014 QPU stand-in",
+  "system": "H4",
+  "qubits": 8,
+  "backend": "density-matrix-cpu (CUDA-Q)",
+  "shots": 20000,
+  "noise_model": "1-qubit depolarizing channel on every single-qubit gate (DepolarizationChannel)",
+  "e_fci": -2.1568572982997076,
+  "vqe_err_mHa": 0.058,
+  "sweep": [
+    {
+      "depol_rate": 0.0,
+      "qsci_err_mHa": 0.067,
+      "n_physical_dets": 13
+    },
+    {
+      "depol_rate": 0.002,
+      "qsci_err_mHa": -0.0,
+      "n_physical_dets": 70
+    },
+    {
+      "depol_rate": 0.005,
+      "qsci_err_mHa": -0.0,
+      "n_physical_dets": 70
+    },
+    {
+      "depol_rate": 0.01,
+      "qsci_err_mHa": -0.0,
+      "n_physical_dets": 70
+    },
+    {
+      "depol_rate": 0.02,
+      "qsci_err_mHa": -0.0,
+      "n_physical_dets": 70
+    },
+    {
+      "depol_rate": 0.05,
+      "qsci_err_mHa": -0.0,
+      "n_physical_dets": 70
+    }
+  ],
+  "key_finding": "QSCI energy degrades gracefully with physical gate noise: because the device only selects the determinant subspace and the energy is from exact classical diagonalization in it, moderate depolarizing noise leaves the dominant determinants sampled and the energy near FCI.",
+  "honest_caveats": [
+    "density-matrix-cpu is a CUDA-Q SIMULATOR with a real noise channel; it is a hardware-representative stand-in, NOT a run on physical QPU silicon (still owed, [QBRAID-RUN]).",
+    "1-qubit depolarizing on single-qubit gates only (dominant gate count); 2-qubit-gate and readout error not modeled here \u2014 rates are illustrative.",
+    "H4/8q where exact FCI is known, so the noisy QSCI energy is fully validated."
+  ]
+}
