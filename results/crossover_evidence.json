@@ -1,0 +1,68 @@
+{
+  "title": "Quantum-vs-classical crossover (synthesis of measured data; no new claims)",
+  "wall1_memory": {
+    "exact_statevector_bytes": {
+      "8": 4096,
+      "10": 16384,
+      "12": 65536,
+      "14": 262144,
+      "16": 1048576,
+      "18": 4194304,
+      "20": 16777216,
+      "22": 67108864,
+      "24": 268435456,
+      "26": 1073741824,
+      "28": 4294967296,
+      "30": 17179869184,
+      "32": 68719476736,
+      "34": 274877906944,
+      "36": 1099511627776,
+      "38": 4398046511104,
+      "40": 17592186044416
+    },
+    "mps_bytes_from_measured_chi": {
+      "20": 1600000,
+      "28": 8960000,
+      "40": 204800000
+    },
+    "measured_chi": {
+      "20": 50,
+      "28": 100,
+      "40": 400
+    },
+    "at_40q": {
+      "statevector": "16.0 TB",
+      "mps_measured_chi400": "195 MB",
+      "reduction_x": 85899.0,
+      "fits_single_80GB_GPU": true
+    }
+  },
+  "wall2_determinants": {
+    "fci_sz0_dimension": {
+      "8": 36,
+      "12": 400,
+      "20": 63504,
+      "28": 11778624,
+      "40": 34134779536
+    },
+    "qsci_selected_measured": {
+      "8": 27,
+      "12": 148,
+      "20": 2401,
+      "28": 18201
+    },
+    "qsci_selected_projected_40q": 1129304,
+    "fci_growth_per_qubit": 2.0,
+    "qsci_growth_per_qubit": 1.383,
+    "at_40q": {
+      "fci_dim": 34134779536,
+      "qsci_selected_projected": 1129304,
+      "fraction_pct": 0.003308
+    }
+  },
+  "honest_caveats": [
+    "Pure synthesis of committed results; statevector/FCI-dim are analytic (2^n / Sz=0 formula), MPS memory uses MEASURED chi (block2), QSCI-selected dets are measured at 8-28q and the 1.38x/qubit-fit PROJECTION at 40q (not yet reached on CPU).",
+    "Memory model n*chi^2*d is the leading-order MPS tensor cost; real overhead is larger but the exponential-vs-polynomial separation is the point, not the constant.",
+    "This shows where the classical walls are removed; it is NOT a head-to-head wall-clock win (the at-scale GPU run that would measure that is still owed)."
+  ]
+}
