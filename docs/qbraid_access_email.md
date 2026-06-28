@@ -15,15 +15,15 @@ Team **EIGENNEXUS** is a Phase 3 finalist in the Advanced Materials challenge (M
 submission.
 
 **Important — device selection (please advise on remedy).** We need to flag, transparently, that our
-platform/device selection was **inadvertently omitted from our Phase 2 cover page**. We understand the rule
-that the selection must be recorded on the cover page for usage to be granted, so we want to correct this
-now, well ahead of the Phase 3 deadline. **Our intended platform selection is: qBraid GPU compute (NVIDIA
-CUDA-Q) as the primary platform, plus IonQ/IBM QPU access (via qBraid) for small-scale hardware validation.**
-Could you please advise how we can formally record this so access can be granted — e.g., confirm it via this
-email and the qBraid TypeForm, submit an updated/corrected cover page, or note it on our Phase 3 cover page?
-We are happy to follow whatever process you prefer and to provide anything you need. The selection is fully
-consistent with our Phase 2 write-up, which explicitly requests NVIDIA H100/A100 + CUDA-Q and qBraid hardware
-validation (IonQ/IBM).
+platform/device selection was **inadvertently omitted from our Phase 2 cover page**. We understand the rule —
+*"The selection of that device must be made on the Cover Page, or usage will not be granted"* — and we want to
+correct this now, well ahead of the **Phase 3 deadline (Sunday 2026-07-26, 11:59 PM EST)**. **Our intended
+platform selection is: qBraid GPU compute (NVIDIA CUDA-Q) as the primary platform, plus IonQ/IBM QPU access
+(via qBraid) for small-scale hardware validation.** Our preferred remedy is to **record this selection on our
+Phase 3 cover page** (the operative submission), and we are also stating it here and via the qBraid TypeForm
+for completeness — but please advise if you would prefer a corrected Phase 2 cover page or any other process.
+The selection is fully consistent with our Phase 2 write-up, which explicitly requests NVIDIA H100/A100 +
+CUDA-Q and qBraid hardware validation (IonQ/IBM).
 
 **What we need (per our Phase 2 cover-page platform selection):**
 
