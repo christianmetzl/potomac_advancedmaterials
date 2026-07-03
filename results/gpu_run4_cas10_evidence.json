@@ -3,13 +3,13 @@
   "system": "CrO 5-Pi",
   "active_space": "CAS(10,10)",
   "qubits": 20,
-  "E_qsci": -1117.8916405554874,
-  "e_ref": -1117.891640554922,
+  "E_qsci": -1117.8916405554803,
+  "e_ref": -1117.8916405549214,
   "ref_kind": "CASCI (exact)",
   "err_mHa": -0.0,
   "final_space": 6001,
   "peak_rss_gb": 1.55,
-  "wall_s": 70.9,
+  "wall_s": 167.9,
   "prereg": {
     "P4_chem_acc": true
   }
