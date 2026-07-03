@@ -41,7 +41,8 @@
       "prediction": "Determinant selection from >=10,000 hardware shots, followed by classical subspace diagonalization, yields |E - FCI| <= 5 mHa (looser than the noiseless 1.05 mHa because of hardware noise).",
       "basis": "results/gqe_qsci_evidence.json (12q measured, 1.05 mHa noiseless) + results/cudaq_noise_evidence.json (chemical accuracy held to 5%/gate depolarizing at 8q via density-matrix-cpu).",
       "pass_fail": "PASS if <=5 mHa; the raw hardware counts will be committed regardless.",
-      "confidence": "medium"
+      "confidence": "medium",
+      "flight_protocol": "3 pooled jobs (MP2 + 2 seeded-random angles, seed 7), >=10k shots total; see protocol_amendments"
     },
     {
       "id": "H1",
@@ -57,5 +58,13 @@
     "Predictions P1-P5 concern runs gated on qBraid access; they are commitments about FUTURE results, not claims of achieved results.",
     "If any prediction fails, the failure is reported in the final submission with the same prominence as a success.",
     "Timestamp integrity: verify via git log --follow results/preregistration_v1.json and the commit hashes on the remote."
+  ],
+  "protocol_amendments": [
+    {
+      "date": "2026-07-03",
+      "amends": "P5 flight protocol (NOT the threshold \u2014 unchanged at <=5 mHa)",
+      "what": "Pre-flight dry runs on the noiseless simulator showed a single MP2-angle submission under-covers the determinant space (~16 mHa). Flight protocol fixed BEFORE any hardware execution: three pooled submissions on the same 36-excitation wire set \u2014 MP2 angles + two reproducibly seeded random-angle jobs (seed 7) \u2014 reaching +1.5 mHa noiseless (3.4x headroom). Rationale is the committed measured-random coverage finding. Implemented in src/qpu_run_h6.py.",
+      "integrity": "Amendment committed before any QPU job; git history is the timestamp."
+    }
   ]
 }

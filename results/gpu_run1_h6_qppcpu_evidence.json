@@ -1,0 +1,26 @@
+{
+  "run": "gpu_run1",
+  "system": "H6",
+  "qubits": 12,
+  "target": "qpp-cpu",
+  "shots": 20000,
+  "top_m_excitations": 51,
+  "sampled_dets": 20,
+  "final_space": 512,
+  "E_qsci": -3.170504797437591,
+  "e_ref": -3.1705047974375766,
+  "ref_kind": "FCI (exact)",
+  "err_mHa": -0.0,
+  "peak_rss_gb": 0.89,
+  "wall_s": {
+    "build": 7.7,
+    "sample": 119.9,
+    "qsci": 10.3,
+    "total": 137.9
+  },
+  "prereg": {
+    "P1_chem_acc": true,
+    "P2_det_band": null,
+    "P3_mem_lt_8gb": true
+  }
+}

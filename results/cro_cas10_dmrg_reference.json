@@ -1,0 +1,10 @@
+{
+  "system": "CrO 5-Pi",
+  "active_space": "CAS(10,10)",
+  "qubits": 20,
+  "dmrg_chi": 200,
+  "E_dmrg": -1117.8916405261184,
+  "rohf_converged": true,
+  "wall_s": 15.6,
+  "note": "block2 DMRG reference in the SAME CAS; committed BEFORE the GPU QSCI run (prereg P4)."
+}
