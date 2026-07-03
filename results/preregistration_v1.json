@@ -1,0 +1,61 @@
+{
+  "title": "Pre-registered predictions for all owed GPU/QPU runs + blind holdout (EIGENNEXUS, GIC 2026 Phase 3)",
+  "committed": "2026-07-03 (git history of this file is the tamper-evident timestamp; commit precedes any qBraid GPU/QPU access and precedes the first execution of the blind-holdout script)",
+  "discipline": "Clinical-trial-style pre-registration applied to the owed at-scale runs: every prediction below is derived ONLY from already-committed measured data (cited per entry). Each has an explicit pass/fail threshold. Outcomes will be reported as-is, pass or fail; no threshold will be moved after execution.",
+  "predictions": [
+    {
+      "id": "P1",
+      "run": "40q CUDA-Q tensornet-mps GQE/QSCI on H20 (GPU)",
+      "prediction": "With bond dimension chi=400, the MPS-evaluated pipeline reaches |E - E_DMRG(chi=400)| <= 1.6 mHa (chemical accuracy vs the classical MPS reference in the same basis/geometry).",
+      "basis": "results/mps_bonddim_evidence.json: measured chi_for_chem_acc = 400 at 40q (block2 DMRG, classical analogue of tensornet-mps).",
+      "pass_fail": "PASS if <=1.6 mHa; FAIL otherwise (reported either way).",
+      "confidence": "high"
+    },
+    {
+      "id": "P2",
+      "run": "40q QSCI determinant budget (GPU-sampled or proxy at scale)",
+      "prediction": "Determinants needed for chemical accuracy at 40q lie in [3e5, 4e6] (point estimate 1.13e6).",
+      "basis": "results/encoder/scaling_law_evidence.json: 1.383x/qubit fit, log-space R2=0.99, measured 8-28q; band = roughly half a decade around the extrapolation.",
+      "pass_fail": "PASS if the converged budget falls inside the band.",
+      "confidence": "medium-high (explicit extrapolation)"
+    },
+    {
+      "id": "P3",
+      "run": "40q MPS memory footprint (GPU)",
+      "prediction": "Peak MPS tensor storage for the chi=400 run stays under 8 GB device memory (leading-order estimate 0.2 GB; 40x engineering margin for workspace/copies).",
+      "basis": "results/crossover_evidence.json: n*chi^2*d*16B = 195 MB at 40q, chi=400.",
+      "pass_fail": "PASS if peak device memory < 8 GB.",
+      "confidence": "high"
+    },
+    {
+      "id": "P4",
+      "run": "CrO/NiO near-38q (CAS(19,19)) QSCI on GPU",
+      "prediction": "QSCI reaches <= 1.6 mHa vs a block2 DMRG reference computed in the SAME active space.",
+      "basis": "EXTRAPOLATION: executed 20q CrO/NiO (0.038/0.197 mHa, transition_metal_qsci_evidence.json) + determinant scaling law. No committed 38q TM-oxide data exists; this is the least-grounded prediction and is labeled as such.",
+      "pass_fail": "PASS if <=1.6 mHa vs same-CAS DMRG; partial results reported as-is.",
+      "confidence": "medium (honest reach)"
+    },
+    {
+      "id": "P5",
+      "run": "Real QPU validation (IonQ/IBM via qBraid), 12q H6 QSCI",
+      "prediction": "Determinant selection from >=10,000 hardware shots, followed by classical subspace diagonalization, yields |E - FCI| <= 5 mHa (looser than the noiseless 1.05 mHa because of hardware noise).",
+      "basis": "results/gqe_qsci_evidence.json (12q measured, 1.05 mHa noiseless) + results/cudaq_noise_evidence.json (chemical accuracy held to 5%/gate depolarizing at 8q via density-matrix-cpu).",
+      "pass_fail": "PASS if <=5 mHa; the raw hardware counts will be committed regardless.",
+      "confidence": "medium"
+    },
+    {
+      "id": "H1",
+      "run": "BLIND ONE-SHOT HOLDOUT: VO quartet-vs-doublet (executable now on CPU; frozen before first run)",
+      "prediction": "(a) QSCI reproduces CASCI to <=1.6 mHa for both spin states; (b) CASCI(11,10)/def2-SVP orders the quartet below the doublet, matching the experimental X4Sigma- ground term.",
+      "basis": "Method identical to committed CrO pipeline (cro_spin_gap.py); VO appears NOWHERE in this repository before this file. (b) is genuinely blind: a modest CAS may fail it, and that outcome will be committed unedited.",
+      "script_sha256": "b6437d00a527085231cfca52ed3f4cbf109aca91c6a59a1815a4d638f57143bc",
+      "pass_fail": "Reported as-is after exactly one execution of src/blind_holdout_vo.py.",
+      "confidence": "solver (a): high; chemistry (b): genuinely uncertain"
+    }
+  ],
+  "honest_notes": [
+    "Predictions P1-P5 concern runs gated on qBraid access; they are commitments about FUTURE results, not claims of achieved results.",
+    "If any prediction fails, the failure is reported in the final submission with the same prominence as a success.",
+    "Timestamp integrity: verify via git log --follow results/preregistration_v1.json and the commit hashes on the remote."
+  ]
+}

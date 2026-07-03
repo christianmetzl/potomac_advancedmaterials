@@ -24,7 +24,8 @@ from openfermion.chem.molecular_data import spinorb_from_spatial
 import scipy.optimize as opt
 import scipy.sparse as sp, scipy.sparse.linalg as sla
 
-cudaq.set_target("qpp-cpu")   # CPU statevector backend — no GPU needed
+# Backend: CPU default; on qBraid GPU set CUDAQ_TARGET=nvidia (cuStateVec) or tensornet-mps.
+cudaq.set_target(os.environ.get("CUDAQ_TARGET", "qpp-cpu"))
 _RES = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results")
 _PC = np.array([bin(i).count("1") for i in range(256)], dtype=np.uint8)
 def parity(x): b = x.view(np.uint8).reshape(-1, 8); return (_PC[b].sum(1) & 1).astype(np.int8)

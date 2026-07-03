@@ -37,12 +37,12 @@ def main():
     qop, nelec, nq, e_fci, e_hf = hchain(4)
     H = cudaq_spinop(qop); npar = uccsd_num_parameters(nelec, nq)
     # 1) optimize UCCSD on the noiseless CPU statevector backend
-    cudaq.set_target("qpp-cpu")
+    cudaq.set_target(os.environ.get("CUDAQ_TARGET_SV", "qpp-cpu"))
     cost = lambda th: cudaq.observe(uccsd_ansatz, H, list(th), nelec, nq).expectation()
     res = opt.minimize(cost, np.zeros(npar), method="COBYLA", options={"maxiter": 300, "tol": 1e-6})
     print(f"VQE (qpp-cpu) done: {(res.fun-e_fci)*1000:+.3f} mHa vs FCI | {time.time()-t0:.0f}s", flush=True)
     # 2) sample QSCI under a physical depolarizing channel on the density-matrix backend
-    cudaq.set_target("density-matrix-cpu")
+    cudaq.set_target(os.environ.get("CUDAQ_TARGET_DM", "density-matrix-cpu"))
     rows = []
     for p in RATES:
         nm = noise_model(p)

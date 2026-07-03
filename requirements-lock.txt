@@ -1,0 +1,17 @@
+# Exact environment used for the committed evidence + 13/13 reproduce transcript (Python 3.11).
+# SnO/SnO2 and sampling-based values are version/run sensitive (disclosed in the paper/ledger);
+# install these pins to reproduce the committed numbers as closely as possible.
+block2==0.5.3
+cuda-quantum-cu13==0.14.2
+cudaq==0.14.2
+h5py==3.16.0
+matplotlib==3.11.0
+numpy==2.4.6
+openfermion==1.7.1
+openfermionpyscf==0.5
+pennylane==0.45.0
+pennylane_lightning==0.45.0
+pyscf==2.13.1
+scipy==1.17.1
+scipy-openblas32==0.3.33.112.0
+torch==2.12.1

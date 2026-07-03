@@ -32,13 +32,13 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | QSCI, H₂₀ (40q) | 39 mHa | operational; converging (not yet chemical accuracy — CPU-bound) |
 | HamLib validation, 28/32/40q | exact | term counts match (27,735 / 47,489 / 116,577); coefficients agree to ~15 sig figs, differing only by a spectrum-invariant orbital-phase gauge |
 | Noise robustness, 20q | ≤3.3 mHa at 30% corrupted measurements | graceful degradation |
-| Sn-oxides (EUV target) | SnO chemical accuracy (≤0.5 mHa, 16q; value PySCF-version sensitive), SnO₂ 0.23 mHa (20q) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
+| Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.45 / 0.18–0.23 across environments) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
 | **CrO ⁵Π / NiO ³Σ⁻ (20q)** | **0.038 / 0.197 mHa** | open-shell multireference oxides vs CASCI (`transition_metal_oxide_qsci.py`) |
 | **CrO spin-state decision** | DFT spans 1.9 eV, B3LYP flips the sign; CASCI/QSCI **+1.89 eV quintet = experimental X⁵Π** | turns "DFT mis-ranks the candidate" into a worked decision (`cro_spin_gap.py`) |
 | **CrO dissociation trust (real oxide)** | in-active-space CCSD(T) erratic / non-convergent (to ~140 mHa vs CASCI); QSCI variational ≤2.8 mHa | the strong-correlation trust story on a real Cr–O bond, not toy H₁₀ (`cro_dissociation.py`) |
-| EN-PT2 two-sided bracket | E_var (upper bound) + E_var+PT2 (estimate); equilibrium extrapolation → FCI +4.1 mHa (R²=0.999) | certifies the gap, CIPSI standard (`encoder/selci_pt2.py`) |
+| EN-PT2 error certificate | E_var (rigorous upper bound) + E_var+PT2 (estimate, converges to FCI from above); equilibrium extrapolation → FCI +4.1 mHa (R²=0.999) | certifies convergence, CIPSI standard (`encoder/selci_pt2.py`) |
 | Generator learned MP2 hierarchy | Spearman ρ=0.31 (p<0.002), 4/8 top-double overlap | energy-trained generator (blind to MP2) recovers the MP2 amplitude ordering (`encoder/generator_mp2.py`) |
-| **CUDA-Q execution (qpp-cpu)** | H₄ VQE **+0.012 mHa**; QSCI within chemical accuracy (sampling-based) vs FCI | GQE/QSCI pipeline runs through the CUDA-Q SDK on CPU (`cudaq.observe`/`cudaq.sample`); `src/cudaq_qsci.py` |
+| **CUDA-Q execution (qpp-cpu)** | H₄ VQE **within 0.02 mHa** of FCI (0.011–0.013 across runs); QSCI within chemical accuracy (sampling-based) | GQE/QSCI pipeline runs through the CUDA-Q SDK on CPU (`cudaq.observe`/`cudaq.sample`); `src/cudaq_qsci.py` |
 | **MPS bond-dim / entanglement (pillar 1)** | χ for chem-acc ≈50/100/400 @20/28/40q; Sₘₐₓ 0.39→4.43 | bond dimension grows slowly with size; area-law near equilibrium → strong correlation; `src/mps_bonddim_study.py` (block2 DMRG) |
 | **Quantum-vs-classical crossover** | 40q: 16 TB statevector → 195 MB MPS (measured χ=400); FCI 3.4×10¹⁰ dets → ~1.1×10⁶ QSCI (0.003%) | the two classical walls removed, synthesized from measured χ + determinant scaling; `src/crossover_study.py` |
 | **Bridged tin-oxo (real EUV motif)** | Sn₂O₂ rhombus (Sn–O–Sn) **0.41 mHa** vs CASCI (16q) | genuine bridged tin-oxo unit, not a diatomic/linear O=Sn=O; `src/tin_oxo_demo.py` |
@@ -48,8 +48,40 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 
 - The **integrated GQE→QSCI loop is demonstrated at 12 qubits**; the larger-scale QSCI results (20–28q) use **perturbative determinant selection as a hardware-independent proxy** for the measurement step, *validated against* the 12q measured pipeline.
 - The 40q result is **operational but not yet at chemical accuracy** — the at-scale GPU runs are the Phase 3 deliverable. We *have* executed the supporting evidence on CPU: the GQE/QSCI circuits run through **CUDA-Q's qpp-cpu backend** (H₄ to exact FCI), and a **block2 MPS bond-dimension study** quantifies the χ the 40q GPU run needs (≈400) and the entanglement growth that justifies the tensor-network tier. The owed piece is the GPU `tensornet-mps`/`cuStateVec` run at 40q, not the platform's viability.
-- **Train-small, deploy-large (transfer result).** One generator trained only on 8q+12q systems, deployed zero-shot across **16→56 qubits**, proposes lower-energy determinant subspaces than random selection (`src/encoder/scaling_transfer.py --ladder`). The robust signals are statistical: **~3.7× tighter across-seed selection spread** (≈2.0 vs ≈7.4 mHa) and **13/18 size×seed paired wins** (binomial p≈0.05); the per-size mean advantage is all-seeds-positive at 16q and positive in the mean through 28q (+8.9/+8.3/+7.1 mHa), then narrows into noise at 40–56q. That the policy captures real chemistry is corroborated by interpretability (the learned token distribution recovers the MP2 amplitude hierarchy, ρ=0.31, p<0.002). A canonical frontier-relative tokenization makes the small vocabulary a subset of the large one; a determinant-space **selected-CI proxy** (Slater-Condon, validated to 0.0000 mHa vs Jordan–Wigner; no 2ⁿ statevector) makes 56q reachable on CPU. *Honest scope:* a mean trend that narrows into run-to-run noise beyond ~28q (not an every-seed guarantee), a relative advantage at a fixed small budget (not chemical accuracy), and a selected-CI proxy (not circuit-sampled QSCI). Cross-*chemistry* transfer works on 4/6 oxide targets but fails on SnO; target-specific MP2 beats the prior; cross-*molecule* conditioning was a within-noise tie. All reported as negatives where they are negatives.
+- **Train-small, deploy-large (transfer result).** One generator trained only on 8q+12q systems, deployed zero-shot across **16→56 qubits**, proposes lower-energy determinant subspaces than random selection (`src/encoder/scaling_transfer.py --ladder`). The robust signals are statistical: **~3.7× tighter across-seed selection spread** (≈2.0 vs ≈7.4 mHa) and **13/18 size×seed paired wins** (binomial p≈0.05); the per-size mean advantage is all-seeds-positive at 16q and positive in the mean through 28q (+8.9/+8.3/+7.1 mHa), then narrows into noise at 40–56q. That the policy captures real chemistry is corroborated by interpretability (the learned token distribution recovers the MP2 amplitude hierarchy, ρ=0.31, p<0.002). A canonical frontier-relative tokenization makes the small vocabulary a subset of the large one; a determinant-space **selected-CI proxy** (Slater-Condon, validated to 0.0000 mHa vs Jordan–Wigner; no 2ⁿ statevector) makes 56q reachable on CPU. *Honest scope:* a mean trend that narrows into run-to-run noise beyond ~28q (not an every-seed guarantee), a relative advantage at a fixed small budget (not chemical accuracy), and a selected-CI proxy (not circuit-sampled QSCI). Cross-*chemistry* transfer wins clearly on 3/6 oxide targets (BeO a within-noise tie) and fails on SnO; target-specific MP2 beats the prior; cross-*molecule* conditioning was a within-noise tie. All reported as negatives where they are negatives.
 - Sn-oxide Hamiltonians are **our own ECP-CASCI construction** (not from the HamLib library, which contains no tin oxides).
+
+## Pre-registered predictions (GPU/QPU) and blind holdout
+
+Every owed at-scale run is **pre-registered**: `results/preregistration_v1.json` commits quantitative
+pass/fail predictions (P1–P5) derived *only* from already-committed measured data — bond-dimension
+χ=400 at 40q, the determinant-budget band, memory footprint, and QPU accuracy thresholds — **before**
+qBraid access, with git history as the tamper-evident timestamp. Outcomes will be reported as-is,
+pass or fail. The launch-ready command list is `src/GPU_RUNLIST.md` (CUDA-Q backends switch via
+`CUDAQ_TARGET` env vars — no code edits between the CPU-verified and GPU runs).
+
+The same discipline applied to something executable today: **a blind one-shot holdout** (entry H1) —
+`src/blind_holdout_vo.py` was frozen (SHA-256 in the pre-registration) before its first and only
+execution, predicting VO's quartet/doublet ordering with untouched code on a molecule appearing
+nowhere else in this repository. Result: `results/blind_holdout_vo_result.json`, committed unedited.
+
+## Third-party HamLib re-verification
+
+`hamlib_validate.py` checks our Hamiltonians against reference constants extracted from the published
+HamLib files. To re-verify end-to-end against the third party: download the chemistry `ES_*_ham`
+HDF5 files from the HamLib archive (`https://portal.nersc.gov/cfs/m888/dcamps/hamlib/`, Sawaya et al.,
+Quantum 8, 1559, 2024), then run `python src/hamlib_validate.py <n_atoms>` — term counts and one-norms
+must match to ~1e-13 (27,735 / 47,489 / 116,577 terms at 28/32/40q).
+
+## Strongest objections, and where they stand
+
+| Objection | Where it stands |
+|---|---|
+| "No real GPU/QPU execution" | True — the one open gap; every such item is `[QBRAID-RUN]`-marked and now pre-registered (above) rather than merely promised. |
+| "Large-scale numbers are a proxy, not circuit-sampled" | True and disclosed; proxy validated against measured QSCI at 12/16/20q, incl. an unflattering measured-random result we published anyway. |
+| "CASCI in a modest CAS ≠ physical truth" | Correct — our accuracy claims are vs the in-CAS reference; the spin-state *ordering* claim additionally matches the experimental X⁵Π term (and is hedged to sign, not magnitude). |
+| "Transfer statistics are thin (3 seeds, p≈0.05)" | Disclosed verbatim in the paper; the robust claims are the variance reduction and paired-wins count, not the mean curve. |
+| "The noise study saturates a small system" | Qualified in the paper as a selection-principle check, not a hardware forecast; real-QPU validation is pre-registered (P5). |
 
 ## Repository structure
 
@@ -69,6 +101,8 @@ Setup (Python 3.11):
 pip install pyscf openfermion openfermionpyscf h5py pennylane pennylane-lightning \
             torch scipy numpy matplotlib
 ```
+
+**Pinned environment:** `requirements-lock.txt` records the exact package versions behind the committed evidence and transcript (numerics like SnO drift across PySCF versions — disclosed in the ledger; the pins reproduce the committed values most closely).
 
 **One command** runs the verified CPU suite and checks each headline number against the committed
 `results/*.json`, printing a PASS/FAIL table (`--quick` skips the slower scripts):
@@ -102,7 +136,7 @@ headline value. Runtimes are seconds–minutes on CPU through 28q.
 CUDA-Q + an NVIDIA GPU on qBraid (see below).
 
 > Note: exact statevector Hamiltonian expectation is the CPU bottleneck beyond ~12–16 qubits — exactly
-the cost the QSCI step and the GPU/MPS backend remove. FCI wall-clock itself jumps ~5× from 20→24
+the cost the QSCI step and the GPU/MPS backend remove. FCI wall-clock itself jumps ~6× from 20→24
 qubits (`results/classical_baselines_evidence.json`).
 
 ## Running on qBraid (Phase 3)
