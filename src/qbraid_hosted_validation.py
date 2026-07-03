@@ -82,7 +82,7 @@ def main():
     a = ap.parse_args()
 
     t0 = time.time()
-    P = L.hchain_problem(a.atoms, do_fci=(a.atoms <= 10))
+    P = L.hchain_problem(a.atoms, do_fci=(a.atoms <= 12))
     nq, ne = P["nq"], P["ne"]
     verify = nq <= 24
     print(f"HOSTED VALIDATION: H{a.atoms} ({nq}q) on {a.device} | 3 jobs x {a.shots_per_job} shots | "

@@ -1,0 +1,23 @@
+{
+  "run": "qbraid_hosted_validation",
+  "system": "H10",
+  "qubits": 20,
+  "device": "qbraid:qbraid:sim:qir-sv",
+  "shots_per_job": 2000,
+  "top_m": 64,
+  "job_ids": [
+    "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a483c0ec024b34f95b41e0c",
+    "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a483cfec024b34f95b41e9f",
+    "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a483e0dc024b34f95b41ee5"
+  ],
+  "pooled_dets": 492,
+  "export_exact_verified": true,
+  "E_sampled": -5.163406007503939,
+  "E_grown": -5.202632148046234,
+  "e_fci": -5.202826400621641,
+  "err_sampled_mHa": 39.42,
+  "err_grown_mHa": 0.194,
+  "grown_dets": 4492,
+  "wall_s": 876.0,
+  "note": "executed through the qBraid hosted runtime (free tier). Sampled-subspace = pure device-selected QSCI; grown = device-seeded selected-CI (the committed GQE->QSCI narrative). 2000-shot/job free-tier cap limits coverage at this scale \u2014 honest scope."
+}
