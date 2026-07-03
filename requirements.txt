@@ -17,6 +17,9 @@ matplotlib
 # These run WITHOUT a GPU. reproduce.py auto-detects them and runs the extra checks if present.
 cudaq
 block2
+qbraid
+qiskit
+pennylane-qiskit
 
 # GPU is required only for the AT-SCALE Phase-3 runs (40q tensornet-mps / cuStateVec); see
 # requirements-gpu.txt. The packages themselves (cudaq, block2) install and run on CPU.
