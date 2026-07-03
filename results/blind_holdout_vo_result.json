@@ -1,0 +1,28 @@
+{
+  "system": "VO (blind one-shot holdout)",
+  "R_ang": 1.589,
+  "active_space": "CAS(11,10) = 20 qubits",
+  "basis": "def2-SVP (all-electron)",
+  "experimental_ground_term": "X 4-Sigma- (quartet)",
+  "states": {
+    "quartet": {
+      "rohf_converged": true,
+      "CASCI_Ha": -1017.5127885074763,
+      "QSCI_Ha": -1017.5126218052156,
+      "qsci_err_mHa": 0.167,
+      "prediction_a_solver_chemacc": true
+    },
+    "doublet": {
+      "rohf_converged": true,
+      "CASCI_Ha": -1017.4727125851372,
+      "QSCI_Ha": -1017.4725796426997,
+      "qsci_err_mHa": 0.133,
+      "prediction_a_solver_chemacc": true
+    }
+  },
+  "run_once": true,
+  "gap_doublet_minus_quartet_eV": 1.091,
+  "predicted_ground_state": "quartet",
+  "prediction_b_matches_experiment": true,
+  "wall_s": 8.4
+}

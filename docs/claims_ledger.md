@@ -43,6 +43,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 | 21 | **CrO spin-gap decision** | DFT spans 1.9 eV, B3LYP wrong sign; CASCI/QSCI +1.89 eV quintet = experimental X⁵Π | `src/cro_spin_gap.py` | `cro_spin_gap_evidence.json` | PASS | executed-CPU (CASCI ref) |
 | 22 | EN-PT2 error certificate | E_var rigorous upper bound; E_var+PT2 estimate converges to FCI FROM ABOVE (both above FCI at our budgets; gap shrinks); equilibrium extrapolation → FCI +4.1 mHa (R²=0.999) | `src/encoder/selci_pt2.py` | `selci_pt2_evidence.json` | PASS | executed-CPU (FCI ref) |
 | 23 | Generator learned MP2 hierarchy | Spearman ρ=0.31 (p<0.002); 4/8 top-double overlap | `src/encoder/generator_mp2.py` | `generator_mp2_evidence.json` | — | executed-CPU |
+| H1 | **Blind one-shot holdout (VO)** | pre-registered predictions HELD on the single frozen-code run: QSCI 0.167/0.133 mHa vs CASCI; quartet 1.09 eV below doublet = experimental X⁴Σ⁻ | `src/blind_holdout_vo.py` (SHA-256 in `preregistration_v1.json`, committed pre-run) | `blind_holdout_vo_result.json` | — (one-shot by design) | executed-CPU, single pre-registered run |
 | 19 | 40q MPS run / CrO·NiO near-38q / QPU validation | — | — | — | — | **GPU-owed** `[QBRAID-RUN]` |
 
 ## Honest status summary

@@ -42,6 +42,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | **MPS bond-dim / entanglement (pillar 1)** | χ for chem-acc ≈50/100/400 @20/28/40q; Sₘₐₓ 0.39→4.43 | bond dimension grows slowly with size; area-law near equilibrium → strong correlation; `src/mps_bonddim_study.py` (block2 DMRG) |
 | **Quantum-vs-classical crossover** | 40q: 16 TB statevector → 195 MB MPS (measured χ=400); FCI 3.4×10¹⁰ dets → ~1.1×10⁶ QSCI (0.003%) | the two classical walls removed, synthesized from measured χ + determinant scaling; `src/crossover_study.py` |
 | **Bridged tin-oxo (real EUV motif)** | Sn₂O₂ rhombus (Sn–O–Sn) **0.41 mHa** vs CASCI (16q) | genuine bridged tin-oxo unit, not a diatomic/linear O=Sn=O; `src/tin_oxo_demo.py` |
+| **Blind one-shot holdout (VO)** | pre-registered predictions **held**: QSCI 0.167/0.133 mHa; quartet ground = experimental X⁴Σ⁻ | frozen code (SHA pre-committed), untouched molecule, single run reported as-is; `src/blind_holdout_vo.py` |
 | **QSCI under real CUDA-Q noise channel** | H₄ holds chemical accuracy to **5% per-gate depolarizing** (density-matrix-cpu) | physical noise channel via the CUDA-Q SDK — hardware-representative QPU stand-in; `src/cudaq_noise.py` |
 
 ## Honest scope
@@ -63,7 +64,7 @@ pass or fail. The launch-ready command list is `src/GPU_RUNLIST.md` (CUDA-Q back
 The same discipline applied to something executable today: **a blind one-shot holdout** (entry H1) —
 `src/blind_holdout_vo.py` was frozen (SHA-256 in the pre-registration) before its first and only
 execution, predicting VO's quartet/doublet ordering with untouched code on a molecule appearing
-nowhere else in this repository. Result: `results/blind_holdout_vo_result.json`, committed unedited.
+nowhere else in this repository. Result: `results/blind_holdout_vo_result.json`, committed unedited — **both predictions held** (QSCI 0.167/0.133 mHa vs CASCI; quartet 1.09 eV below doublet, matching the experimental X⁴Σ⁻ ground term).
 
 ## Third-party HamLib re-verification
 
