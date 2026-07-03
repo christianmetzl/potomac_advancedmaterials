@@ -18,12 +18,21 @@ python src/run_gpu_phase3.py              # PRODUCTION, priority order (GPU day)
 | 4 | Real QPU 12q H₆ QSCI (P5) | `python src/qpu_run_h6.py --target ionq --machine <per qBraid catalogue> --shots 10000` | FCI (exact) | ≤5 mHa; raw counts committed regardless | ✅ flight protocol (3 pooled jobs: MP2 + 2 seeded-random) passes pre-flight at **+1.05 mHa noiseless**; single-job design measured at ~16 mHa and **rejected before hardware** |
 | 5 | Quantum-vs-classical wall-clock | timings logged automatically by runs 1–2; compare `classical_baselines.py` / DMRG walls | — | reported as measured |  ✅ per-stage wall-clock in every evidence JSON |
 
+## Noisy rehearsal status (honest scope)
+- The 3-job flight protocol was rehearsed under a physical depolarizing channel (density-matrix-cpu)
+  at 8q: chemical accuracy holds at 0%/1%/3% per-gate noise (+0.10 / −0.00 / −0.00 mHa; pooled
+  coverage even grows under noise, consistent with the committed measured-random finding).
+- A full 12q noisy rehearsal exceeds this CPU's density-matrix budget (>58 min for ~470 noisy gates
+  x 3 jobs; two attempts timed out) — stated plainly rather than approximated. The 12q pre-flight
+  evidence is therefore: noiseless 12q protocol runs (+1.05 / +1.52 mHa, 3.3–4.8x headroom under the
+  5 mHa threshold) + the 8q noisy protocol rehearsal above + the committed 8q 5%-depol sweep.
+
 ## What is already DONE before access (no GPU needed)
 - All five scripts written, argument-complete, and smoke-tested green (`--dry-run` driver).
 - The **38q DMRG reference** (P4's judge) is computed on CPU and committed — the GPU run will be scored
   against a reference that provably predates it.
-- The **QPU flight protocol** was tuned and frozen on simulators (incl. a density-matrix noisy
-  rehearsal); the P5 threshold was never moved (see `protocol_amendments` in the pre-registration).
+- The **QPU flight protocol** was tuned and frozen on simulators, incl. the noisy protocol rehearsal
+  above; the P5 threshold was never moved (see `protocol_amendments` in the pre-registration).
 - Shared engine (`src/qsci_lib.py`): compressed MP2 circuit via CUDA-Q's own excitation sub-kernels
   (interleaved convention validated against exact FCI), sampling → number-conserving post-selection,
   vectorized bitmask QSCI with device-seeded CIPSI growth, peak-memory logging for P3.
