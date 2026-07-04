@@ -15,6 +15,12 @@ import numpy as np
 import scipy.sparse as sp, scipy.sparse.linalg as sla
 from sci_integrals import SCI, _occ
 
+_PC = np.array([bin(i).count("1") for i in range(256)], dtype=np.uint8)
+def _poppar(x):
+    """Parity of popcount of each uint64 in array x."""
+    b = np.ascontiguousarray(x, dtype=np.uint64).view(np.uint8).reshape(-1, 8)
+    return (_PC[b].sum(1) & 1).astype(np.int64)
+
 
 class IntEngine:
     """Determinant-subspace QSCI on MO integrals (Slater-Condon), spin-orbital interleaved."""
@@ -22,6 +28,73 @@ class IntEngine:
     def __init__(self, h1, eri, ecore, nq):
         self.sci = SCI(h1, eri, ecore)
         self.nq = nq
+        self.eri = np.asarray(eri)
+        self.spin = np.array([q & 1 for q in range(nq)], dtype=np.int64)   # spin of each spin-orbital
+
+    # ---- vectorized phase for a double excitation (i,j removed; a,b added) from source det I -----
+    @staticmethod
+    def _pcount_below(D, x):
+        """popcount of bits of D (uint64 array) strictly below bit position x (int array), parity."""
+        mask = (np.uint64(1) << x.astype(np.uint64)) - np.uint64(1)
+        return _poppar(D & mask)
+
+    def _double_phase(self, I, i, j, a, b):
+        """(-1)^(...) sign for a†_a a†_b a_j a_i on |I>, matching sci_integrals._phase_double.
+        i<j are removed (occupied in I), a<b added (virtual)."""
+        one = np.uint64(1)
+        s1 = self._pcount_below(I, i)
+        Ip = I ^ (one << i.astype(np.uint64))
+        s2 = self._pcount_below(Ip, j)
+        J = I ^ (one << i.astype(np.uint64)) ^ (one << j.astype(np.uint64)) \
+              ^ (one << a.astype(np.uint64)) ^ (one << b.astype(np.uint64))
+        s3 = self._pcount_below(J, a)
+        Jr = J ^ (one << a.astype(np.uint64))
+        s4 = self._pcount_below(Jr, b)
+        return 1.0 - 2.0 * ((s1 + s2 + s3 + s4) & 1)
+
+    def _doubles_vec(self, d):
+        """All spin-conserving double excitations from det d: (candidate dets, matrix elements)."""
+        occ = np.array(_occ(d), dtype=np.int64)
+        virt = np.array([a for a in range(self.nq) if not (d >> a) & 1], dtype=np.int64)
+        oi_i, oj_i = np.triu_indices(len(occ), 1)
+        va_i, vb_i = np.triu_indices(len(virt), 1)
+        oi = occ[oi_i]; oj = occ[oj_i]; va = virt[va_i]; vb = virt[vb_i]
+        # cross product occ-pairs x virt-pairs
+        OI = np.repeat(oi, len(va)); OJ = np.repeat(oj, len(va))
+        VA = np.tile(va, len(oi)); VB = np.tile(vb, len(oi))
+        sp = self.spin
+        keep = (sp[OI] + sp[OJ]) == (sp[VA] + sp[VB])          # spin-conserving
+        OI, OJ, VA, VB = OI[keep], OJ[keep], VA[keep], VB[keep]
+        if len(OI) == 0:
+            return np.empty(0, dtype=np.uint64), np.empty(0)
+        one = np.uint64(1)
+        cand = (np.uint64(d) ^ (one << OI.astype(np.uint64)) ^ (one << OJ.astype(np.uint64))
+                ^ (one << VA.astype(np.uint64)) ^ (one << VB.astype(np.uint64)))
+        e = self.eri; h = OI // 2; hj = OJ // 2; ha = VA // 2; hb = VB // 2
+        # aphys(i,j,a,b) = <ij|ab> - <ij|ba> ; phys(p,q,r,s)=eri[p//2,r//2,q//2,s//2] with spin checks
+        d1 = ((sp[OI] == sp[VA]) & (sp[OJ] == sp[VB])) * e[h, ha, hj, hb]
+        d2 = ((sp[OI] == sp[VB]) & (sp[OJ] == sp[VA])) * e[h, hb, hj, ha]
+        elem = (d1 - d2) * self._double_phase(np.uint64(d) * np.ones(len(OI), dtype=np.uint64),
+                                              OI, OJ, VA, VB)
+        return cand, elem
+
+    def _singles_vec(self, d):
+        """All same-spin single excitations from det d: (candidate dets, matrix elements)."""
+        occ = np.array(_occ(d), dtype=np.int64)
+        virt = np.array([a for a in range(self.nq) if not (d >> a) & 1], dtype=np.int64)
+        out_c, out_e = [], []
+        for i in occ.tolist():
+            for a in virt.tolist():
+                if (i & 1) == (a & 1):
+                    out_c.append(d ^ (1 << i) ^ (1 << a))
+                    out_e.append(self.sci.element(d, d ^ (1 << i) ^ (1 << a)))
+        return (np.array(out_c, dtype=np.uint64) if out_c else np.empty(0, dtype=np.uint64),
+                np.array(out_e) if out_e else np.empty(0))
+
+    def connections_elem(self, d):
+        """All connected dets (single+double) and their <d|H|cand> elements (vectorized doubles)."""
+        cs, es = self._singles_vec(d); cd, ed = self._doubles_vec(d)
+        return np.concatenate([cs, cd]), np.concatenate([es, ed])
 
     # ---- diagonal energies (vectorized per-batch over the same SCI.diag formula) -------------
     def diag_many(self, dets):
@@ -58,23 +131,23 @@ class IntEngine:
                             out.append(dij ^ (1 << a) ^ (1 << b))
         return np.array(out, dtype=np.uint64) if out else np.empty(0, dtype=np.uint64)
 
-    # ---- subspace Hamiltonian (sparse) via Slater-Condon on connected pairs ------------------
+    # ---- subspace Hamiltonian (sparse) via Slater-Condon on connected pairs (vectorized) ------
     def build_H(self, space):
-        sci = self.sci
-        idx = {int(d): k for k, d in enumerate(space)}
         n = len(space)
-        R, C, V = [], [], []
+        sc = np.sort(space); order = np.argsort(space)
+        R = [np.arange(n)]; C = [np.arange(n)]; V = [self.diag_many(space)]   # diagonal
         for k, d in enumerate(space):
-            di = int(d)
-            R.append(k); C.append(k); V.append(sci.element(di, di))     # diagonal
-            conn = self._connections(di)
-            for u in conn.tolist():
-                j = idx.get(u)
-                if j is not None and j > k:                              # upper triangle once
-                    v = sci.element(di, u)
-                    if v != 0.0:
-                        R += [k, j]; C += [j, k]; V += [v, v]
-        return sp.csr_matrix((V, (R, C)), shape=(n, n))
+            cand, elem = self.connections_elem(int(d))
+            if len(cand) == 0: continue
+            pos = np.clip(np.searchsorted(sc, cand), 0, n - 1)
+            ins = sc[pos] == cand
+            j = order[pos[ins]]; v = elem[ins]
+            up = j > k                                                   # upper triangle once
+            jj = j[up]; vv = v[up]
+            if len(jj):
+                R += [np.full(len(jj), k), jj]; C += [jj, np.full(len(jj), k)]; V += [vv, vv]
+        return sp.csr_matrix((np.concatenate(V), (np.concatenate(R), np.concatenate(C))),
+                             shape=(n, n))
 
     def ground(self, space, warm=None):
         H = self.build_H(space)
@@ -94,17 +167,21 @@ class IntEngine:
         if log: log(f"  QSCI# seed |space|={len(space)}  E={E:.6f}  [{time.time()-t0:.0f}s]")
         for it in range(grow_iters):
             if len(space) >= kcap or time.time() - t0 > tcap: break
-            sset = set(space.tolist())
-            contrib = {}
-            for ci in np.where(np.abs(cvec) > 1e-4)[0]:
-                di = int(space[ci]); c = cvec[ci]
-                conn = self._connections(di)
-                for u in conn.tolist():
-                    if u not in sset:
-                        contrib[u] = contrib.get(u, 0.0) + self.sci.element(di, u) * c
-            if not contrib: break
-            cand = np.fromiter(contrib.keys(), dtype=np.uint64, count=len(contrib))
-            num = np.fromiter(contrib.values(), dtype=float, count=len(contrib))
+            sc = np.sort(space)
+            cand = np.empty(0, dtype=np.uint64); num = np.empty(0)      # compacted, memory-bounded
+            sig = np.where(np.abs(cvec) > 1e-4)[0]
+            BATCH = 400
+            for b0 in range(0, len(sig), BATCH):
+                us, as_ = [cand], [num]
+                for ci in sig[b0:b0 + BATCH]:
+                    conn, elem = self.connections_elem(int(space[ci]))
+                    pos = np.clip(np.searchsorted(sc, conn), 0, len(space) - 1)
+                    ext = sc[pos] != conn
+                    us.append(conn[ext]); as_.append(elem[ext] * cvec[ci])
+                allu = np.concatenate(us); alla = np.concatenate(as_)
+                cand, inv = np.unique(allu, return_inverse=True)
+                num = np.zeros(len(cand)); np.add.at(num, inv, alla)
+            if len(cand) == 0: break
             den = E - self.diag_many(cand); den[np.abs(den) < 1e-9] = -1e-9
             keep = cand[np.argsort(num ** 2 / np.abs(den))[::-1][:grow_per_iter]]
             newd = np.setdiff1d(keep, space)
