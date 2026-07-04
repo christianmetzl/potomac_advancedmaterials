@@ -45,15 +45,20 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 | 23 | Generator learned MP2 hierarchy | Spearman ρ=0.31 (p<0.002); 4/8 top-double overlap | `src/encoder/generator_mp2.py` | `generator_mp2_evidence.json` | — | executed-CPU |
 | H1 | **Blind one-shot holdout (VO)** | pre-registered predictions HELD on the single frozen-code run: QSCI 0.167/0.133 mHa vs CASCI; quartet 1.09 eV below doublet = experimental X⁴Σ⁻ | `src/blind_holdout_vo.py` (SHA-256 in `preregistration_v1.json`, committed pre-run) | `blind_holdout_vo_result.json` | — (one-shot by design) | executed-CPU, single pre-registered run |
 | 10g | **qBraid cloud-runtime chain validation** | P5 protocol executed end-to-end through qBraid's hosted runtime (free qir-sv tier): +2.0 mHa vs FCI, PASS; job IDs recorded | `src/qbraid_submit.py` | `qbraid_P5_qbraid_qbraid_sim_qir-sv_evidence.json` | — (needs qBraid API key) | executed-cloud (qBraid runtime, simulator tier); real QPU silicon still owed |
-| 19 | 40q MPS run / CrO·NiO near-38q / QPU validation | — | — | — | — | **GPU-owed** `[QBRAID-RUN]` |
+| 19a | **20q GPU exact anchor (executed)** | +0.000 mHa vs FCI; cuStateVec, 0.44 GB device memory; P1 PASS, P3 PASS | `src/gpu_run1_h20_mps.py` (qsci_fast) | `gpu_run1_h10_nvidia_evidence.json` | — (GPU) | **executed-GPU** (NVIDIA cuStateVec via qBraid) |
+| 19b | **28q GPU converged QSCI (executed)** | +0.395 mHa vs committed block2 DMRG(χ=400); device-sampled seed (cuStateVec), grown to 64,212 dets; 2.82 GB device memory; P1 PASS, P3 PASS | `src/gpu_run1_h20_mps.py` (qsci_fast) | `gpu_run1_h14_nvidia_evidence.json` | — (GPU) | **executed-GPU** (NVIDIA cuStateVec via qBraid) |
+| 19c | 40q MPS headline / 38q CrO / real-QPU silicon | attempt-1 40q compute-limited (+14.8 mHa, non-converged, honest); fast engine now validated; frontier + QPU runs in progress | `src/gpu_run1_h20_mps.py`, `src/gpu_run4_cro38q.py`, `src/qpu_run_h6.py` | `gpu_run1_h20_mps_CHECKPOINT_evidence.json` | — | **owed / in-progress** `[QBRAID-RUN]` (40q pass, 38q, real QPU) |
 
 ## Honest status summary
 - **Executed (CPU or circuit-sampled):** rows 1–12 (incl. 5b, 10b–10f), 16–18, and 20–23 — the bulk of the submission is run and recorded.
 - **Proxy (validated against real measurement at 16q & 20q, row 3b):** rows 6, 13–15 — the large-scale
   scaling/transfer numbers use the determinant-space selected-CI proxy, which row 3b shows tracks the
   circuit-sampled pipeline.
-- **GPU-owed (row 19):** the only un-executed items; clearly marked as targets in the paper, never as
-  achieved results.
+- **Executed on GPU (rows 19a–19b):** 20q exact (+0.000 mHa) and 28q converged (+0.395 mHa vs committed
+  DMRG) both run end-to-end on NVIDIA GPU via qBraid, meeting their pre-registered P1/P3 criteria.
+- **Owed / in-progress (row 19c):** the 40q converged pass, the 38q CrO oxide, and real-QPU silicon —
+  clearly marked as targets/frontier in the paper, never as achieved results (40q attempt-1 is reported
+  honestly as compute-limited, +14.8 mHa non-converged).
 - **Judges' re-run:** `python src/reproduce.py` → **13/13 PASS** (11 core + 2 optional CUDA-Q/MPS; transcript: `docs/reproduce_transcript.txt`).
 
 ## Known honesty caveats (also stated in the paper)

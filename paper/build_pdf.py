@@ -109,11 +109,11 @@ def main():
         elif el.tag == f"{W}tbl":
             parts.append(table_html(el))
     css = """
-    @page { size: Letter; margin: 0.85in; }
-    body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.05; color:#000; }
-    h1 { font-size: 13pt; margin: 0 0 3px 0; }
-    h3 { font-size: 11pt; margin: 6px 0 2px 0; }
-    p { orphans: 2; widows: 2; margin: 0 0 4px 0; }
+    @page { size: Letter; margin: 0.8in; }
+    body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.02; color:#000; }
+    h1 { font-size: 13pt; margin: 0 0 2px 0; }
+    h3 { font-size: 11pt; margin: 4px 0 2px 0; }
+    p { orphans: 2; widows: 2; margin: 0 0 3px 0; }
     table { border-collapse: collapse; width: 100%; font-size: 10pt; margin: 3px 0 6px 0; }
     th, td { border: 1px solid #888; padding: 1px 5px; text-align: center; }
     th { background: #D5E8F0; }
