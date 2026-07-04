@@ -32,12 +32,14 @@ DO THIS, IN ORDER (driver runs them in priority order 5 -> 3 -> 1 -> 4)
 2. Run 5 — exact anchor (quick): `CUDAQ_TARGET=nvidia python src/gpu_run1_h20_mps.py --atoms 10
    --shots 100000 --topm 128 --grow-iters 12 --grow-per-iter 4000 --kcap 60000`. Expect ~0.000 mHa
    vs FCI (this reproduces attempt-1 Run 2, the exactness proof). Commit the evidence JSON, push.
-3. Run 3 — the new headline: converged 28q vs committed DMRG(chi=400):
-   `CUDAQ_TARGET=tensornet-mps python src/gpu_run1_h20_mps.py --atoms 14 --shots 150000 --topm 256
-   --grow-iters 40 --grow-per-iter 8000 --kcap 400000`
+3. Run 3 — the new headline: converged 28q vs committed DMRG(chi=400). Use cuStateVec (nvidia):
+   at 28q the statevector is 4 GB and fits the 24 GB card, so sampling is EXACT and fast (tensornet-mps
+   is reserved for 40q where the statevector is intractable):
+   `CUDAQ_TARGET=nvidia python src/gpu_run1_h20_mps.py --atoms 14 --shots 150000 --topm 256
+   --grow-iters 8 --grow-per-iter 8000 --kcap 400000`
    - This is the genuine chemical-accuracy PASS ABOVE 20q. CPU pre-validation reached chemical
-     accuracy; the GPU run should confirm it faster. Watch nvidia-smi for the P3 device number.
-   - Commit + push immediately.
+     accuracy by ~iter 3; the GPU run confirms it with a device-sampled seed. Watch nvidia-smi for P3.
+   - Commit + push immediately. STOP here and report before the 40q run (which is ~hours).
 4. Run 1 — 40q honest at-scale attempt with the fast engine:
    `CUDAQ_TARGET=tensornet-mps python src/gpu_run1_h20_mps.py --atoms 20 --shots 200000 --topm 256
    --grow-iters 40 --grow-per-iter 50000 --kcap 1500000`
