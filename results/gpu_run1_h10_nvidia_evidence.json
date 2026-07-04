@@ -5,22 +5,25 @@
   "target": "nvidia",
   "shots": 100000,
   "top_m_excitations": 128,
-  "sampled_dets": 101,
-  "final_space": 32101,
-  "E_qsci": -5.202826386597851,
-  "e_ref": -5.202826400621637,
+  "sampled_dets": 103,
+  "final_space": 48103,
+  "E_qsci": -5.202826386597856,
+  "e_ref": -5.202826400621641,
   "ref_kind": "FCI (exact)",
   "err_mHa": 0.0,
-  "peak_rss_gb": 9.09,
+  "peak_host_rss_gb": 16.98,
+  "peak_device_mem_gb": 0.44,
+  "p3_metric": "device",
+  "engine": "qsci_fast (incremental Hamiltonian, Option C)",
   "wall_s": {
-    "build": 14.6,
-    "sample": 1.5,
-    "qsci": 853.8,
-    "total": 869.9
+    "build": 14.7,
+    "sample": 1.0,
+    "qsci": 175.4,
+    "total": 191.2
   },
   "prereg": {
     "P1_chem_acc": true,
     "P2_det_band": null,
-    "P3_mem_lt_8gb": false
+    "P3_mem_lt_8gb": true
   }
 }
