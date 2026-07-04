@@ -1,0 +1,32 @@
+{
+  "run": "gpu_run1_mp2seed",
+  "system": "H20",
+  "qubits": 40,
+  "seed": "MP2 (top-256 doubles + HF), no circuit sampling",
+  "engine": "qsci_fast (incremental Hamiltonian, Option C)",
+  "reference": "block2 DMRG(chi=400) [committed results/mps_bonddim_evidence.json, predates access]",
+  "status": "PARTIAL — stopped at growth iter 2 per the pre-agreed 15-min/iteration stop rule; latest COMPLETED iteration is iter 1. NOT a converged run, NOT a pass.",
+  "why_stopped": "MP2-seed path was chosen after measuring that the 40q tensornet-mps CIRCUIT sampler has a large fixed MPS-contraction cost (~independent of shots: 200k->9549s; 2k still sampling at 22 min) that starves the growth phase. Growth is seed-source-independent (committed 28q CPU pre-validation used the same MP2 seed; GPU sampler already proven exact at 20q/28q). Growth iter 1 (seed 257 -> 30257 dets) took 551s; iter 2 (30257 -> ~60257 dets) exceeded 15 min and was stopped per the agreed rule. The durable per-iteration checkpoint preserves iter 1 exactly.",
+  "result_at_stop": {
+    "iter": 1,
+    "final_dets": 30257,
+    "E_qsci": -10.283253316948718,
+    "e_ref": -10.29219417780498,
+    "err_mHa": 8.941
+  },
+  "growth_trace": [
+    {"iter": 0, "label": "MP2 seed", "dets": 257, "E": -10.192153, "err_mHa": 100.04},
+    {"iter": 1, "dets": 30257, "E": -10.283253316948718, "err_mHa": 8.941, "cum_qsci_s": 550.9}
+  ],
+  "prereg_status": {
+    "P1_chem_acc_le_1p6_mHa": {"result": "NOT REACHED (partial)", "value_mHa_at_stop": 8.941, "note": "Improving fast (seed +100 mHa -> iter1 +8.94 mHa); not converged, not a pass. Reported as-is."},
+    "P2_det_band_3e5_4e6": {"result": "NOT REACHED (partial)", "value_at_stop": 30257, "note": "Below the [3e5,4e6] band at the stop point; the schedule targets it (30k/iter, kcap 1.5M) but was stopped by the 15-min/iter wall before reaching it."},
+    "P3_mem_lt_8gb_device": {"result": "NOT TESTED", "note": "This MP2-seed path performs no MPS sampling, so there is no tensornet-mps device footprint to judge. (Attempt-1's true tensornet-mps device peak was 12.06 GB > 8 GB; that P3 question is unchanged and separate.)"}
+  },
+  "comparison_to_attempt1": {
+    "attempt1_old_engine_circuit_seed": {"dets": 6108, "err_mHa": 14.817, "note": "old O(N^2) engine, iter 6/60, checkpointed"},
+    "this_mp2seed_fast_engine": {"dets": 30257, "err_mHa": 8.941, "note": "iter 1/60, stopped by 15-min/iter rule"},
+    "improvement": "~5x the determinants (30257 vs 6108) at ~0.60x the error (8.94 vs 14.82 mHa) — a much-improved partial, as expected. Still not a pass."
+  },
+  "honesty_statement": "Reported exactly as measured from the durable per-iteration checkpoint. No threshold moved; nothing tuned after seeing results. This is a substantially improved 40q partial (fast incremental engine + MP2 seed), not a converged chemical-accuracy result. The remaining barrier is now the per-iteration eigensolve cost at large subspace size (iter 2 at ~6e4 dets exceeded 15 min), which bounds how many determinants are reachable in a GPU day even with the incremental Hamiltonian."
+}

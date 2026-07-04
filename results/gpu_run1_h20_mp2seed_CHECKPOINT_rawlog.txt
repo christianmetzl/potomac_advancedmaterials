@@ -1,0 +1,5 @@
+RUN1-MP2SEED: H20 (40q) | seed=MP2(top256) | grow 60x30000 kcap 1500000
+  MP2 seed |space|=257 (HF + 256 doubles) | build 80.0s
+  reference: block2 DMRG(chi=400) [committed evidence, predates access] E=-10.292194
+  QSCI* seed |space|=257  E=-10.192153  [0s]
+  QSCI* grow it1 |space|=30257  E=-10.283253  [551s]
