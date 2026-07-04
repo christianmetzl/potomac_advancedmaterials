@@ -251,30 +251,38 @@ class PauliEngine:
             pos = np.clip(np.searchsorted(sd, ncf), 0, len(sd) - 1)
             found = sd[pos] == ncf
             r = rows[found]; cols = sid[pos[found]]; vals = ampf[found]
+            if getattr(self, "_real", False):            # molecular H is real: store real parts (exact,
+                vals = vals.real                          # since <I|H|J> = real(sum of term amps)); half memory
             self._Hr.append(r); self._Hc.append(cols); self._Hv.append(vals)
             old = cols < first_new                       # old rows miss these new columns -> transpose
             if old.any():
-                self._Hr.append(cols[old]); self._Hc.append(r[old]); self._Hv.append(np.conj(vals[old]))
+                tv = vals[old] if getattr(self, "_real", False) else np.conj(vals[old])
+                self._Hr.append(cols[old]); self._Hc.append(r[old]); self._Hv.append(tv)
 
     def _cache_solve(self, warm=None):
         n = len(self._id2det)
+        dt = float if getattr(self, "_real", False) else complex
         H = sp.csr_matrix((np.concatenate(self._Hv),
                            (np.concatenate(self._Hr), np.concatenate(self._Hc))),
-                          shape=(n, n), dtype=complex)
+                          shape=(n, n), dtype=dt)
         if n < 6:
             w, v = np.linalg.eigh(H.toarray()); return float(w[0]), np.asarray(v[:, 0]).ravel()
         v0 = None
         if warm is not None:
-            v0 = np.zeros(n, dtype=complex); v0[:len(warm)] = warm
+            v0 = np.zeros(n, dtype=dt); v0[:len(warm)] = np.real(warm) if dt is float else warm
         w, v = sla.eigsh(H, k=1, which="SA", v0=v0)
         return float(w[0]), np.asarray(v[:, 0]).ravel()
 
-    def qsci_fast(self, seed_dets, grow_iters=0, grow_per_iter=400, kcap=6000, tcap=1e9, log=None, ckpt=None):
+    def qsci_fast(self, seed_dets, grow_iters=0, grow_per_iter=400, kcap=6000, tcap=1e9, log=None,
+                  ckpt=None, real=True):
         """Incremental-Hamiltonian equivalent of qsci(); identical energies, O(delta)/iter instead of
         O(|space|). Space/id order mirrors qsci() exactly (sorted seed, then sorted new dets appended),
         so the eigenvector indexing and hence the CIPSI selection are the same at every step.
         ckpt(it, E, n_dets, wall_s): optional per-iteration callback for durable intermediate evidence
-        (the instance is ephemeral — a checkpoint each iteration survives a kill/timeout)."""
+        (the instance is ephemeral — a checkpoint each iteration survives a kill/timeout).
+        real=True: store the (real, for molecular Hamiltonians) subspace H in float64 — exact, halves
+        memory and speeds the eigensolver at the 1e6-determinant scale (the overnight 40q run)."""
+        self._real = bool(real)
         space = np.array(sorted(set(int(d) for d in seed_dets)), dtype=np.uint64)
         self._cache_reset(); self._cache_add(space)
         t0 = time.time(); E, cvec = self._cache_solve()
