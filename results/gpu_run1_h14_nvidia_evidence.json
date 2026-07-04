@@ -1,0 +1,29 @@
+{
+  "run": "gpu_run1",
+  "system": "H14",
+  "qubits": 28,
+  "target": "nvidia",
+  "shots": 150000,
+  "top_m_excitations": 256,
+  "sampled_dets": 212,
+  "final_space": 64212,
+  "E_qsci": -7.237783318856816,
+  "e_ref": -7.238178807866625,
+  "ref_kind": "block2 DMRG(chi=400) [committed evidence, predates access]",
+  "err_mHa": 0.395,
+  "peak_host_rss_gb": 14.81,
+  "peak_device_mem_gb": 2.82,
+  "p3_metric": "device",
+  "engine": "qsci_fast (incremental Hamiltonian, Option C)",
+  "wall_s": {
+    "build": 21.6,
+    "sample": 31.5,
+    "qsci": 2332.8,
+    "total": 2386.0
+  },
+  "prereg": {
+    "P1_chem_acc": true,
+    "P2_det_band": null,
+    "P3_mem_lt_8gb": true
+  }
+}
