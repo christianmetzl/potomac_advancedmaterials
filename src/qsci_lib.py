@@ -228,7 +228,9 @@ class PauliEngine:
         self._Hr, self._Hc, self._Hv = [], [], []   # accumulated COO triplets (never recomputed)
 
     def _cache_add(self, dets):
-        """Append new determinants and emit their Hamiltonian rows (+ transpose into old columns)."""
+        """Append new determinants and emit their Hamiltonian rows (+ transpose into old columns).
+        Hon is vectorized across a CHUNK of new determinants at once (numpy over the (chunk x terms)
+        block), so building rows for 1e4-1e5 new dets is not a Python per-det loop."""
         first_new = len(self._id2det)
         for d in (int(x) for x in dets):
             if d in self._det2id:
@@ -236,16 +238,23 @@ class PauliEngine:
             self._det2id[d] = len(self._id2det); self._id2det.append(d)
         alld = np.array(self._id2det, dtype=np.uint64)
         order = np.argsort(alld); sd = alld[order]; sid = order.astype(np.int64)
-        for k in range(first_new, len(self._id2det)):
-            nc, amp = self.Hon(int(self._id2det[k]))
-            pos = np.clip(np.searchsorted(sd, nc), 0, len(sd) - 1)
-            found = sd[pos] == nc
-            cols = sid[pos[found]]; vals = amp[found]
-            self._Hr.append(np.full(cols.shape, k, dtype=np.int64)); self._Hc.append(cols); self._Hv.append(vals)
-            old = cols < first_new                       # old rows are missing this new column -> add transpose
+        newk = np.arange(first_new, len(self._id2det), dtype=np.int64)
+        Dnew = alld[first_new:]
+        CH = 200                                           # dets/chunk: peak mem ~ CH*n_terms
+        for c0 in range(0, len(Dnew), CH):
+            d = Dnew[c0:c0 + CH]; ks = newk[c0:c0 + CH]                          # (b,)
+            nc = np.bitwise_xor(d[:, None], self.XM[None, :])                     # (b, T)
+            par = _parity((d[:, None] & self.ZYM[None, :]).reshape(-1)).reshape(nc.shape)
+            amp = self.PH[None, :] * (1 - 2 * par.astype(np.int64))               # (b, T)
+            rows = np.repeat(ks, self.XM.shape[0])                                # (b*T,)
+            ncf = nc.reshape(-1); ampf = amp.reshape(-1)
+            pos = np.clip(np.searchsorted(sd, ncf), 0, len(sd) - 1)
+            found = sd[pos] == ncf
+            r = rows[found]; cols = sid[pos[found]]; vals = ampf[found]
+            self._Hr.append(r); self._Hc.append(cols); self._Hv.append(vals)
+            old = cols < first_new                       # old rows miss these new columns -> transpose
             if old.any():
-                self._Hr.append(cols[old]); self._Hc.append(np.full(int(old.sum()), k, dtype=np.int64))
-                self._Hv.append(np.conj(vals[old]))
+                self._Hr.append(cols[old]); self._Hc.append(r[old]); self._Hv.append(np.conj(vals[old]))
 
     def _cache_solve(self, warm=None):
         n = len(self._id2det)
