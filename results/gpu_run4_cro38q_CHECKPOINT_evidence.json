@@ -1,0 +1,43 @@
+{
+  "run": "gpu_run4",
+  "system": "CrO 5-Pi (quintet)",
+  "active_space": "CAS(18,19)",
+  "qubits": 38,
+  "nelecas": [11, 7],
+  "target": "qpp-cpu (classical QSCI growth; no GPU sampling in this invocation)",
+  "grow_iters_requested": 80,
+  "grow_per_iter": 600,
+  "kcap": 500000,
+  "status": "NON-CONVERGED CHECKPOINT — run stopped at growth iter 8 of 80; NOT a completed run",
+  "why_stopped": "Verdict already determined and per-iter cost rising steeply (deltas 2s -> 517s). The QSCI energy is monotonically decreasing but decelerating and plateaus well above the 1.6 mHa threshold; reaching iter 80 is computationally infeasible on this instance and the script writes its JSON only at the end. Checkpoint constructed by hand from the live log + /proc.",
+  "rohf_converged": true,
+  "pauli_terms": 48890,
+  "growth_trace": [
+    {"iter": 0, "label": "seed", "space": 1, "E": -1117.859865},
+    {"iter": 1, "space": 601, "E": -1118.001742, "cum_s": 2},
+    {"iter": 2, "space": 1201, "E": -1118.025215, "cum_s": 104},
+    {"iter": 3, "space": 1801, "E": -1118.030933, "cum_s": 285},
+    {"iter": 4, "space": 2401, "E": -1118.033659, "cum_s": 538},
+    {"iter": 5, "space": 3001, "E": -1118.035440, "cum_s": 869},
+    {"iter": 6, "space": 3601, "E": -1118.036757, "cum_s": 1267},
+    {"iter": 7, "space": 4201, "E": -1118.037774, "cum_s": 1718},
+    {"iter": 8, "space": 4801, "E": -1118.038598, "cum_s": 2235}
+  ],
+  "E_qsci_at_stop": -1118.038598,
+  "final_space_at_stop": 4801,
+  "e_ref": -1118.0456262251828,
+  "ref_kind": "block2 DMRG(chi=400), SAME CAS [committed reference results/cro_cas19_dmrg_reference.json, predates access]",
+  "err_mHa_at_stop": 7.028,
+  "energy_convergence_note": "Monotone descent, decelerating (per-iter improvement mHa: 23.47, 5.72, 2.73, 1.78, 1.32, 1.02, 0.82; late-iter ratio ~0.8). Geometric-tail extrapolation from iter 8 gives ~3.3 mHa of remaining descent, asymptote near E~-1118.0419 (residual gap ~+3.7 mHa). Determinant budget at stop is 4801; the schedule caps at ~4.8e4 dets (80x600), consistent with QSCI needing far more determinants at 38q than this schedule provides.",
+  "peak_host_rss_gb": 3.14,
+  "wall_s": {"build": 42, "growth_to_iter8": 2235, "total_approx": 2277},
+  "prereg_verdict": {
+    "P4_chem_acc_le_1p6_mHa": {
+      "result": "FAIL",
+      "value_mHa_at_stop": 7.028,
+      "extrapolated_asymptote_mHa": "~3.7",
+      "reason": "|E_QSCI - E_DMRG(same CAS)| = 7.03 mHa at stop, ~4x above the 1.6 mHa threshold; converging to ~+3.7 mHa, still >1.6. P4 was pre-registered as the least-grounded, lowest-confidence prediction (an honest extrapolation from 20q CrO); it fails at 38q."
+    }
+  },
+  "honesty_statement": "P4 FAILS as executed and is reported with the same prominence as a success, per the pre-registration. No threshold was moved; no tuning after seeing results. This mirrors the 40q headline (Run 1): at these active-space sizes the pre-registered QSCI growth schedules do not reach the determinant counts required for chemical accuracy within feasible compute, so the energy plateaus a few mHa above the same-CAS DMRG reference."
+}

@@ -1,0 +1,12 @@
+RUN4: CrO CAS(18,19) = 38q, nelecas=(11, 7)
+  ROHF conv=True | 48890 Pauli terms [42s]
+  QSCI seed |space|=1  E=-1117.859865  [0s]
+  QSCI grow it1 |space|=601  E=-1118.001742  [2s]
+  QSCI grow it2 |space|=1201  E=-1118.025215  [104s]
+  QSCI grow it3 |space|=1801  E=-1118.030933  [285s]
+  QSCI grow it4 |space|=2401  E=-1118.033659  [538s]
+  QSCI grow it5 |space|=3001  E=-1118.035440  [869s]
+  QSCI grow it6 |space|=3601  E=-1118.036757  [1267s]
+  QSCI grow it7 |space|=4201  E=-1118.037774  [1718s]
+  QSCI grow it8 |space|=4801  E=-1118.038598  [2235s]
+Terminated
