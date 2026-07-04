@@ -100,6 +100,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--device", default="qbraid:qbraid:sim:qir-sv")
     ap.add_argument("--shots-per-job", type=int, default=2000)
+    ap.add_argument("--topm", type=int, default=TOPM,
+                    help="excitations kept = circuit depth. Real QPU: use 6-8 (~13x fewer 2q gates) "
+                         "so the shallow circuit survives hardware noise. Simulator: 36 (full).")
+    ap.add_argument("--jobs", type=int, default=3, help="pooled jobs (1-3). Use 1 on a paid QPU to cut cost.")
     ap.add_argument("--estimate", action="store_true", help="price check only; no submission")
     ap.add_argument("--yes", action="store_true", help="required to submit to any nonzero-cost device")
     a = ap.parse_args()
@@ -110,19 +114,22 @@ def main():
     pricing = dev.profile.get("pricing")
     per_task = float(getattr(pricing, "perTask", 0) or 0)
     per_shot = float(getattr(pricing, "perShot", 0) or 0)
-    total_credits = 3 * per_task + 3 * a.shots_per_job * per_shot
+    total_credits = a.jobs * per_task + a.jobs * a.shots_per_job * per_shot
+    P = L.hchain_problem(6)
+    exc = L.mp2_excitation_lists(P["t2"], P["nocc"], P["nq"], top_m=a.topm)
+    n2q = 13 * len(exc["th"])
     print(f"device {a.device} | status {dev.status()} | pricing perTask={per_task} perShot={per_shot} credits")
-    print(f"job plan: 3 jobs x {a.shots_per_job} shots -> estimated {total_credits:,.0f} credits (~${total_credits/100:,.2f})")
+    print(f"circuit: 12q H6, topm={a.topm} -> {len(exc['th'])} excitations (~{n2q} two-qubit gates)")
+    print(f"job plan: {a.jobs} job(s) x {a.shots_per_job} shots -> estimated {total_credits:,.0f} credits "
+          f"(~${total_credits/100:,.2f})")
     if a.estimate:
         return
     if total_credits > 0 and not a.yes:
         raise SystemExit("nonzero cost: re-run with --yes to confirm spending credits")
 
     t0 = time.time()
-    P = L.hchain_problem(6)
-    exc = L.mp2_excitation_lists(P["t2"], P["nocc"], P["nq"], top_m=TOPM)
     pool, job_ids, raw = {}, [], {}
-    for jn, angles in enumerate(flight_angle_sets(exc), 1):
+    for jn, angles in enumerate(flight_angle_sets(exc)[:a.jobs], 1):
         qasm, l1 = to_qasm_verified(exc, angles)
         job = dev.run(qasm, shots=a.shots_per_job)
         job_ids.append(job.id)
@@ -141,18 +148,23 @@ def main():
     if dom != hf:
         print(f"WARNING: dominant determinant {dom:012b} != HF {hf:012b} — decode/noise anomaly; reporting as-is")
     eng = L.PauliEngine(P["qop"].terms)
-    E, _ = eng.qsci(set(pool) | {hf})
-    err = 1000 * (E - P["e_fci"])
+    E, _ = eng.qsci(set(pool) | {hf})                                   # pure device-sampled subspace
+    Eg, spg = eng.qsci_fast(set(pool) | {hf}, grow_iters=8, grow_per_iter=400, kcap=6000)  # device-seeded grown
+    err = 1000 * (E - P["e_fci"]); errg = 1000 * (Eg - P["e_fci"])
     p5 = abs(err) <= 5.0
     out = dict(run="qbraid_submit_P5", device=a.device, shots_per_job=a.shots_per_job,
-               protocol=f"3 pooled jobs (MP2 + 2 seeded-random, seed {SEED}, top-{TOPM} excitations)",
+               protocol=f"{a.jobs} pooled job(s) (MP2 + seeded-random, seed {SEED}, top-{a.topm} excitations, "
+                        f"~{n2q} two-qubit gates)",
                job_ids=job_ids, pooled_dets=len(pool), dominant_is_hf=bool(dom == hf),
-               E_qsci=E, e_fci=P["e_fci"], err_mHa=round(err, 3),
+               E_qsci_sampled=E, E_qsci_grown=Eg, grown_dets=int(len(spg)),
+               e_fci=P["e_fci"], err_sampled_mHa=round(err, 3), err_grown_mHa=round(errg, 3),
                prereg=dict(P5_within_5mHa=bool(p5)),
                estimated_credits=total_credits, wall_s=round(time.time() - t0, 1),
                raw_counts=raw,
-               note="raw counts committed regardless of outcome (prereg P5); decode mapping proven by "
-                    "binary probe circuits; export verified per-artifact (L1<0.01) before submission.")
+               note="raw counts committed regardless of outcome; decode mapping proven by binary probe "
+                    "circuits; export verified per-artifact (L1<0.01) before submission. sampled = pure "
+                    "device subspace; grown = device-seeded selected-CI (noise-robust QSCI: a shallow "
+                    "hardware circuit seeds the selection, classical growth refines).")
     tag = a.device.replace(":", "_")
     fn = f"qbraid_P5_{tag}_evidence.json"
     json.dump(out, open(os.path.join(_RES, fn), "w"), indent=2)
