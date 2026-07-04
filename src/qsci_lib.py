@@ -269,14 +269,17 @@ class PauliEngine:
         w, v = sla.eigsh(H, k=1, which="SA", v0=v0)
         return float(w[0]), np.asarray(v[:, 0]).ravel()
 
-    def qsci_fast(self, seed_dets, grow_iters=0, grow_per_iter=400, kcap=6000, tcap=1e9, log=None):
+    def qsci_fast(self, seed_dets, grow_iters=0, grow_per_iter=400, kcap=6000, tcap=1e9, log=None, ckpt=None):
         """Incremental-Hamiltonian equivalent of qsci(); identical energies, O(delta)/iter instead of
         O(|space|). Space/id order mirrors qsci() exactly (sorted seed, then sorted new dets appended),
-        so the eigenvector indexing and hence the CIPSI selection are the same at every step."""
+        so the eigenvector indexing and hence the CIPSI selection are the same at every step.
+        ckpt(it, E, n_dets, wall_s): optional per-iteration callback for durable intermediate evidence
+        (the instance is ephemeral — a checkpoint each iteration survives a kill/timeout)."""
         space = np.array(sorted(set(int(d) for d in seed_dets)), dtype=np.uint64)
         self._cache_reset(); self._cache_add(space)
         t0 = time.time(); E, cvec = self._cache_solve()
         if log: log(f"  QSCI* seed |space|={len(space)}  E={E:.6f}  [{time.time()-t0:.0f}s]")
+        if ckpt: ckpt(0, E, len(space), time.time() - t0)
         for it in range(grow_iters):
             if len(space) >= kcap or time.time() - t0 > tcap: break
             sc = np.sort(space)
@@ -305,6 +308,7 @@ class PauliEngine:
             self._cache_add(newd); space = np.concatenate([space, newd])
             E, cvec = self._cache_solve(warm=cvec)
             if log: log(f"  QSCI* grow it{it+1} |space|={len(space)}  E={E:.6f}  [{time.time()-t0:.0f}s]")
+            if ckpt: ckpt(it + 1, E, len(space), time.time() - t0)
         return E, space
 
 

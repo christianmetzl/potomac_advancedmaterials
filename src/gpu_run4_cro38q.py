@@ -91,10 +91,19 @@ def main():
 
     eng = L.PauliEngine(P["qop"].terms)
     devmon = L.DeviceMemMonitor().start()
+    ckpt_fn = os.path.join(_RES, f"gpu_run4_cas{a.ncas}_PARTIAL.json")
+    def _ckpt(it, Ei, nd, ws):                  # durable per-iteration artifact (ephemeral instance)
+        er = (Ei - e_ref) * 1000
+        json.dump(dict(status=f"IN-PROGRESS iter {it}/{a.grow_iters} (partial, not final)",
+                       active_space=f"CAS({sum(nel)},{a.ncas})", qubits=2 * a.ncas, iter=it,
+                       dets=int(nd), E_qsci=Ei, e_ref=e_ref, err_mHa=round(er, 3),
+                       P4_at_iter=bool(abs(er) <= CHEM), qsci_wall_s=round(ws, 1)),
+                  open(ckpt_fn, "w"), indent=2)
     E, space = eng.qsci_fast({L.hf_det(P["na"], P["nb"])}, grow_iters=a.grow_iters,
                              grow_per_iter=a.grow_per_iter, kcap=a.kcap,
-                             log=lambda m: print(m, flush=True))
+                             log=lambda m: print(m, flush=True), ckpt=_ckpt)
     devmon.stop()
+    if os.path.exists(ckpt_fn): os.remove(ckpt_fn)
     err = (E - e_ref) * 1000
     p4 = abs(err) <= CHEM
     dev_mem = devmon.gb()

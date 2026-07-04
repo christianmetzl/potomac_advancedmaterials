@@ -75,9 +75,17 @@ def main():
     t2 = time.time()
     eng = L.PauliEngine(P["qop"].terms)
     seed = set(dets) | {L.hf_det(P["ne"])}
+    ckpt_fn = os.path.join(_RES, f"gpu_run1_h{a.atoms}_{a.target.replace('-','')}_PARTIAL.json")
+    def _ckpt(it, Ei, nd, ws):                  # durable per-iteration artifact (ephemeral instance)
+        er = (Ei - e_ref) * 1000
+        json.dump(dict(status=f"IN-PROGRESS iter {it}/{a.grow_iters} (partial, not final)",
+                       system=f"H{a.atoms}", qubits=P["nq"], target=a.target, iter=it, dets=int(nd),
+                       E_qsci=Ei, e_ref=e_ref, err_mHa=round(er, 3), P1_at_iter=bool(abs(er) <= CHEM),
+                       qsci_wall_s=round(ws, 1)), open(ckpt_fn, "w"), indent=2)
     E, space = eng.qsci_fast(seed, grow_iters=a.grow_iters, grow_per_iter=a.grow_per_iter,
-                             kcap=a.kcap, log=lambda m: print(m, flush=True))
+                             kcap=a.kcap, log=lambda m: print(m, flush=True), ckpt=_ckpt)
     t_qsci = time.time() - t2
+    if os.path.exists(ckpt_fn): os.remove(ckpt_fn)   # completed cleanly -> final JSON supersedes partial
     devmon.stop()
     err = (E - e_ref) * 1000
     host_mem = L.peak_rss_gb()
