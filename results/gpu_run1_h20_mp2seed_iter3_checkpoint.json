@@ -1,0 +1,14 @@
+{
+  "status": "IN-PROGRESS iter 3/60 (partial, not final)",
+  "run": "gpu_run1_mp2seed",
+  "system": "H20",
+  "qubits": 40,
+  "seed": "MP2",
+  "iter": 3,
+  "dets": 90257,
+  "E_qsci": -10.28763629107663,
+  "e_ref": -10.29219417780498,
+  "err_mHa": 4.558,
+  "P1_at_iter": false,
+  "qsci_wall_s": 26215.4
+}
