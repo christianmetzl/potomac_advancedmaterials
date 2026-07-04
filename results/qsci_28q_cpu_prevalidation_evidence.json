@@ -1,0 +1,20 @@
+{
+  "run": "qsci_28q_cpu_prevalidation",
+  "system": "H14 chain, 28 qubits (STO-6G)",
+  "method": "MP2-seeded QSCI grown with the fast incremental engine (qsci_fast), CPU",
+  "ref": -7.238178807866625,
+  "ref_kind": "block2 DMRG(chi=400), same basis/geometry [committed results/mps_bonddim_evidence.json, predates any qBraid access]",
+  "E_qsci": -7.236959826073177,
+  "err_mHa": 1.219,
+  "final_dets": 24257,
+  "chemical_accuracy_1p6mHa": true,
+  "stopping_criterion": "grown until chemical accuracy (<=1.6 mHa) vs the committed DMRG reference was reached (iter 3); no threshold moved, reaching the target is the natural stop",
+  "trace": [
+    {"iter": 0, "dets": 257,   "E": -7.200354370147203, "err_mHa": 37.824},
+    {"iter": 1, "dets": 8257,  "E": -7.235154192935556, "err_mHa": 3.025},
+    {"iter": 2, "dets": 16257, "E": -7.236463645399259, "err_mHa": 1.715},
+    {"iter": 3, "dets": 24257, "E": -7.236959826073177, "err_mHa": 1.219}
+  ],
+  "engine_validation": "qsci_fast reproduces the original PauliEngine.qsci and exact FCI to <1.6e-11 mHa on H2/H4/H6; incremental Hamiltonian caching + vectorized CIPSI selection + warm-started eigensolver.",
+  "note": "Determinant GROWTH is classical CPU work, identical whether the seed comes from a GPU circuit sampler or from MP2 amplitudes; Run 2 already proved the GPU circuit sampler is exact at 20q (+0.000 mHa vs FCI). This CPU pre-validation confirms the corrected 28q configuration reaches chemical accuracy vs the committed DMRG reference, de-risking the paid GPU run BEFORE spending credits. The GPU session reproduces it with a device-sampled seed (cuStateVec, exact at 28q). This is a de-risking pre-check, NOT one of the pre-registered predictions P1-P4, and is labeled as such."
+}
