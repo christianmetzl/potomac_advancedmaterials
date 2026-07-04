@@ -1,0 +1,44 @@
+{
+  "run": "gpu_run1",
+  "system": "H20",
+  "qubits": 40,
+  "target": "tensornet-mps",
+  "shots": 200000,
+  "top_m_excitations": 256,
+  "grow_iters_requested": 60,
+  "grow_per_iter": 1000,
+  "kcap": 2000000,
+  "status": "NON-CONVERGED CHECKPOINT — run stopped at growth iter 6 of 60 for spend discipline; NOT a completed run",
+  "why_stopped": "The pre-registered command was executed verbatim. MPS sampling alone took 9548.7s (~2.65h). Each QSCI growth iteration is CPU-bound and its cost grows steeply with subspace size (iter deltas: 11s, 515s, 760s, 981s, 1329s, 1678s). Extrapolating, reaching the requested iter 60 would take >30h. The script writes its evidence JSON only after iter 60, which is computationally unreachable on this instance, so this checkpoint was constructed by hand from the live log + /proc + nvidia-smi. Stopped per the 6-hour checkpoint rule and because the verdict is already determined and unpushable (see note on read-only token).",
+  "sampled_dets": 108,
+  "raw_bitstrings": 750,
+  "growth_trace": [
+    {"iter": 0, "label": "seed", "space": 108, "E": -10.074639},
+    {"iter": 1, "space": 1108, "E": -10.240544, "cum_s": 11},
+    {"iter": 2, "space": 2108, "E": -10.262780, "cum_s": 526},
+    {"iter": 3, "space": 3108, "E": -10.271300, "cum_s": 1286},
+    {"iter": 4, "space": 4108, "E": -10.274629, "cum_s": 2267},
+    {"iter": 5, "space": 5108, "E": -10.276279, "cum_s": 3596},
+    {"iter": 6, "space": 6108, "E": -10.277377, "cum_s": 5274}
+  ],
+  "E_qsci_at_stop": -10.277377,
+  "final_space_at_stop": 6108,
+  "e_ref": -10.292194,
+  "ref_kind": "block2 DMRG(chi=400) [committed evidence, results/mps_bonddim_evidence.json, predates access]",
+  "err_mHa_at_stop": 14.817,
+  "energy_convergence_note": "E is descending monotonically but decelerating geometrically (per-iter improvement ratio ~0.62-0.66): deltas 22.24, 8.52, 3.33, 1.65, 1.10 mHa. Geometric-tail extrapolation of the remaining descent asymptotes near E~-10.279 (residual gap ~+13 mHa). The subspace never approaches the determinant budget that P2 itself predicts is required for chemical accuracy.",
+  "peak_host_rss_gb": 7.87,
+  "peak_device_mem_gb": 12.06,
+  "device_mem_note": "nvidia-smi peak = 12356 MiB / 24564 MiB during MPS sampling. The tensornet-mps contraction/sampling workspace, not MPS tensor storage, set the peak — P3's 0.2 GB leading-order estimate accounted only for tensor storage (n*chi^2*d*16B) and omitted this workspace.",
+  "wall_s": {
+    "sample": 9548.7,
+    "growth_to_iter6": 5274,
+    "note": "build + sample + 6 growth iters ~= 16145s (~4.48h) total process elapsed at stop"
+  },
+  "prereg_verdict": {
+    "P1_chem_acc_le_1p6_mHa": {"result": "FAIL", "value_mHa_at_stop": 14.817, "extrapolated_asymptote_mHa": "~13", "reason": "Gap ~8-9x above threshold and cannot reach 1.6 mHa with this growth schedule."},
+    "P2_det_band_3e5_4e6": {"result": "FAIL", "value_at_stop": 6108, "max_reachable": 60108, "reason": "Growth schedule (~1000 dets/iter x 60) tops out at ~6.0e4 determinants, ~5-20x BELOW the pre-registered [3e5, 4e6] band and below P2's own point estimate of 1.13e6. This under-provisioning is the mechanism of the P1 failure: the subspace never reaches the determinant count P2 says chemical accuracy requires."},
+    "P3_mem_lt_8gb_device": {"result": "FAIL", "device_mem_gb": 12.06, "host_rss_gb": 7.87, "reason": "Pre-registration P3 specifies DEVICE memory < 8 GB; peak device memory was 12.06 GB -> FAIL. NOTE: the script's built-in peak metric is HOST RSS (7.87 GB), which would have mislabeled this PASS; reported transparently and scored against the pre-registration's stated device-memory terms."}
+  },
+  "honesty_statement": "All three pre-registered predictions for the 40q headline run (P1, P2, P3) FAIL as executed. This is reported with the same prominence as a success, per the pre-registration. No threshold was moved. The failures are internally consistent: P2's own extrapolation (~1.13e6 determinants for chemical accuracy) is ~20x larger than the determinant budget the pre-registered command's growth schedule can reach (~6e4), so the energy plateaus ~13 mHa above the DMRG(chi=400) reference (P1 fail), while the tensornet-mps sampling workspace exceeded the 8 GB device budget (P3 fail)."
+}

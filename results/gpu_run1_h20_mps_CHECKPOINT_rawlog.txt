@@ -1,0 +1,12 @@
+RUN1: H20 (40q) | target=tensornet-mps shots=200000 topM=256
+  sampled 108 number-conserving dets (750 raw bitstrings) in 9548.7s
+  QSCI seed |space|=108  E=-10.074639  [1s]
+  QSCI grow it1 |space|=1108  E=-10.240544  [11s]
+  QSCI grow it2 |space|=2108  E=-10.262780  [526s]
+  QSCI grow it3 |space|=3108  E=-10.271300  [1286s]
+  QSCI grow it4 |space|=4108  E=-10.274629  [2267s]
+  QSCI grow it5 |space|=5108  E=-10.276279  [3596s]
+  QSCI grow it6 |space|=6108  E=-10.277377  [5274s]
+/bin/bash: line 3: 35836 Segmentation fault      (core dumped) CUDAQ_TARGET=tensornet-mps python src/gpu_run1_h20_mps.py --atoms 20 --shots 200000 --topm 256 --grow-iters 60 --grow-per-iter 1000 --kcap 2000000 2>&1
+
+[process exited while detached; exit code unknown]
