@@ -272,18 +272,20 @@ class PauliEngine:
             if len(space) >= kcap or time.time() - t0 > tcap: break
             sc = np.sort(space)
             sig = np.where(np.abs(cvec) > 1e-4)[0]
-            # CIPSI candidate scan, chunked + compacted so memory stays bounded at large scale: the
-            # (candidate, amplitude) buffer is unique-reduced after every batch instead of concatenating
-            # every connection first (which balloons to GBs at 28q+). Per-candidate sum is identical.
+            # CIPSI candidate scan: Hon vectorized across a CHUNK of source determinants at once
+            # (numpy over the whole (chunk x terms) block, no Python per-det loop), then unique-reduced
+            # after each chunk so memory stays bounded (chunk size caps peak). Per-candidate sum matches.
+            D = space[sig]; C = cvec[sig]
             cand = np.empty(0, dtype=np.uint64); num = np.empty(0, dtype=complex)
-            BATCH = 300
-            for b0 in range(0, len(sig), BATCH):
-                us, as_ = [cand], [num]
-                for ci in sig[b0:b0 + BATCH]:
-                    nc, amp = self.Hon(int(space[ci]))
-                    pos = np.clip(np.searchsorted(sc, nc), 0, len(space) - 1); ext = sc[pos] != nc
-                    us.append(nc[ext]); as_.append(amp[ext] * cvec[ci])
-                allu = np.concatenate(us); alla = np.concatenate(as_)
+            CH = 200                                           # dets/chunk: peak mem ~ CH*n_terms
+            for c0 in range(0, len(D), CH):
+                d = D[c0:c0 + CH]; cc = C[c0:c0 + CH]
+                new = np.bitwise_xor(d[:, None], self.XM[None, :])                      # (b, T)
+                par = _parity((d[:, None] & self.ZYM[None, :]).reshape(-1)).reshape(new.shape)
+                amp = (self.PH[None, :] * (1 - 2 * par.astype(np.int64))) * cc[:, None]  # (b, T)
+                u = new.reshape(-1); a = amp.reshape(-1)
+                pos = np.clip(np.searchsorted(sc, u), 0, len(space) - 1); ext = sc[pos] != u
+                allu = np.concatenate([cand, u[ext]]); alla = np.concatenate([num, a[ext]])
                 cand, inv = np.unique(allu, return_inverse=True)
                 num = np.zeros(len(cand), dtype=complex); np.add.at(num, inv, alla)
             if len(cand) == 0: break
