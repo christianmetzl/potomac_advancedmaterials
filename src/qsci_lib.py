@@ -162,9 +162,19 @@ class PauliEngine:
         return np.bitwise_xor(cc, self.XM), self.PH * (1 - 2 * _parity(np.bitwise_and(cc, self.ZYM)))
 
     def diag(self, dets):
-        out = np.empty(len(dets))
-        for i, c in enumerate(dets):
-            out[i] = np.sum(self.PHd * (1 - 2 * _parity(np.bitwise_and(np.uint64(int(c)), self.ZYMd)))).real
+        """Diagonal Hamiltonian energy of each determinant. Vectorized + chunked (identical values to
+        the per-det formula) so it scales to 1e6 candidates without a Python loop."""
+        d = np.asarray([int(x) for x in dets], dtype=np.uint64)
+        if len(d) == 0:
+            return np.empty(0)
+        phd = self.PHd.real                                    # diagonal coeffs are real
+        out = np.empty(len(d))
+        step = max(1, 4_000_000 // max(1, len(phd)))           # cap block memory (~few hundred MB)
+        for s in range(0, len(d), step):
+            blk = d[s:s + step]
+            A = np.bitwise_and(blk[:, None], self.ZYMd[None, :])   # (nblk, ndiag) uint64
+            par = _parity(A.reshape(-1)).reshape(A.shape)          # 0/1 per entry
+            out[s:s + step] = ((1 - 2 * par.astype(np.int64)) * phd[None, :]).sum(axis=1)
         return out
 
     def build_H(self, space):
@@ -207,8 +217,130 @@ class PauliEngine:
             if log: log(f"  QSCI grow it{it+1} |space|={len(space)}  E={E:.6f}  [{time.time()-t0:.0f}s]")
         return E, space
 
+    # ---- fast incremental path (Option C) -------------------------------------------------------
+    # Identical determinant SELECTION as qsci() above (character-for-character), so energies match
+    # bit-for-bit; the only change is the Hamiltonian is built INCREMENTALLY (matrix elements for a
+    # newly added determinant are computed once and cached, never recomputed) and the eigensolver is
+    # warm-started. This turns the O(|space|) per-iteration rebuild (the 40q wall) into O(delta).
+    def _cache_reset(self):
+        self._id2det = []                 # insertion-order determinant list (id == index)
+        self._det2id = {}
+        self._Hr, self._Hc, self._Hv = [], [], []   # accumulated COO triplets (never recomputed)
+
+    def _cache_add(self, dets):
+        """Append new determinants and emit their Hamiltonian rows (+ transpose into old columns)."""
+        first_new = len(self._id2det)
+        for d in (int(x) for x in dets):
+            if d in self._det2id:
+                continue
+            self._det2id[d] = len(self._id2det); self._id2det.append(d)
+        alld = np.array(self._id2det, dtype=np.uint64)
+        order = np.argsort(alld); sd = alld[order]; sid = order.astype(np.int64)
+        for k in range(first_new, len(self._id2det)):
+            nc, amp = self.Hon(int(self._id2det[k]))
+            pos = np.clip(np.searchsorted(sd, nc), 0, len(sd) - 1)
+            found = sd[pos] == nc
+            cols = sid[pos[found]]; vals = amp[found]
+            self._Hr.append(np.full(cols.shape, k, dtype=np.int64)); self._Hc.append(cols); self._Hv.append(vals)
+            old = cols < first_new                       # old rows are missing this new column -> add transpose
+            if old.any():
+                self._Hr.append(cols[old]); self._Hc.append(np.full(int(old.sum()), k, dtype=np.int64))
+                self._Hv.append(np.conj(vals[old]))
+
+    def _cache_solve(self, warm=None):
+        n = len(self._id2det)
+        H = sp.csr_matrix((np.concatenate(self._Hv),
+                           (np.concatenate(self._Hr), np.concatenate(self._Hc))),
+                          shape=(n, n), dtype=complex)
+        if n < 6:
+            w, v = np.linalg.eigh(H.toarray()); return float(w[0]), np.asarray(v[:, 0]).ravel()
+        v0 = None
+        if warm is not None:
+            v0 = np.zeros(n, dtype=complex); v0[:len(warm)] = warm
+        w, v = sla.eigsh(H, k=1, which="SA", v0=v0)
+        return float(w[0]), np.asarray(v[:, 0]).ravel()
+
+    def qsci_fast(self, seed_dets, grow_iters=0, grow_per_iter=400, kcap=6000, tcap=1e9, log=None):
+        """Incremental-Hamiltonian equivalent of qsci(); identical energies, O(delta)/iter instead of
+        O(|space|). Space/id order mirrors qsci() exactly (sorted seed, then sorted new dets appended),
+        so the eigenvector indexing and hence the CIPSI selection are the same at every step."""
+        space = np.array(sorted(set(int(d) for d in seed_dets)), dtype=np.uint64)
+        self._cache_reset(); self._cache_add(space)
+        t0 = time.time(); E, cvec = self._cache_solve()
+        if log: log(f"  QSCI* seed |space|={len(space)}  E={E:.6f}  [{time.time()-t0:.0f}s]")
+        for it in range(grow_iters):
+            if len(space) >= kcap or time.time() - t0 > tcap: break
+            sc = np.sort(space)
+            sig = np.where(np.abs(cvec) > 1e-4)[0]
+            # CIPSI candidate scan, chunked + compacted so memory stays bounded at large scale: the
+            # (candidate, amplitude) buffer is unique-reduced after every batch instead of concatenating
+            # every connection first (which balloons to GBs at 28q+). Per-candidate sum is identical.
+            cand = np.empty(0, dtype=np.uint64); num = np.empty(0, dtype=complex)
+            BATCH = 300
+            for b0 in range(0, len(sig), BATCH):
+                us, as_ = [cand], [num]
+                for ci in sig[b0:b0 + BATCH]:
+                    nc, amp = self.Hon(int(space[ci]))
+                    pos = np.clip(np.searchsorted(sc, nc), 0, len(space) - 1); ext = sc[pos] != nc
+                    us.append(nc[ext]); as_.append(amp[ext] * cvec[ci])
+                allu = np.concatenate(us); alla = np.concatenate(as_)
+                cand, inv = np.unique(allu, return_inverse=True)
+                num = np.zeros(len(cand), dtype=complex); np.add.at(num, inv, alla)
+            if len(cand) == 0: break
+            den = E - self.diag(cand); den[np.abs(den) < 1e-9] = -1e-9
+            keep = cand[np.argsort(np.abs(num) ** 2 / np.abs(den))[::-1][:grow_per_iter]]
+            newd = np.setdiff1d(keep, space)
+            if len(newd) == 0: break
+            self._cache_add(newd); space = np.concatenate([space, newd])
+            E, cvec = self._cache_solve(warm=cvec)
+            if log: log(f"  QSCI* grow it{it+1} |space|={len(space)}  E={E:.6f}  [{time.time()-t0:.0f}s]")
+        return E, space
+
 
 def peak_rss_gb():
-    """Peak resident memory of this process (GB) — the P3 footprint log."""
+    """Peak resident HOST memory of this process (GB). NOT the P3 metric on GPU runs (P3 is DEVICE
+    memory); use DeviceMemMonitor for that. Kept for CPU runs and transparency."""
     import resource
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / (1024 ** 2)
+
+
+class DeviceMemMonitor:
+    """Poll nvidia-smi in a background thread and record PEAK GPU device memory (GB) for the P3
+    criterion. On a dedicated instance the job is the sole consumer, so device-wide 'used' == our
+    peak. On a box without a GPU (CPU smoke), nvidia-smi is absent and .gb() returns None so the
+    caller falls back to host RSS with an explicit note. Usage:  with DeviceMemMonitor() as m: ...  """
+    def __init__(self, interval=0.5):
+        self.interval = interval; self.peak_mb = 0.0; self._stop = False; self._t = None; self._ok = False
+
+    def _poll(self):
+        import subprocess
+        while not self._stop:
+            try:
+                out = subprocess.check_output(
+                    ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"],
+                    stderr=subprocess.DEVNULL, timeout=5).decode()
+                self.peak_mb = max([self.peak_mb] + [float(x) for x in out.strip().splitlines() if x.strip()])
+                self._ok = True
+            except Exception:
+                pass
+            _t0 = time.time()
+            while not self._stop and time.time() - _t0 < self.interval:
+                time.sleep(0.05)
+
+    def start(self):
+        import threading
+        self._t = threading.Thread(target=self._poll, daemon=True); self._t.start(); return self
+
+    def stop(self):
+        self._stop = True
+        if self._t: self._t.join(timeout=2)
+
+    def __enter__(self):
+        return self.start()
+
+    def __exit__(self, *exc):
+        self.stop()
+
+    def gb(self):
+        """Peak device memory in GB, or None if no GPU was observed (CPU run)."""
+        return round(self.peak_mb / 1024.0, 2) if self._ok else None

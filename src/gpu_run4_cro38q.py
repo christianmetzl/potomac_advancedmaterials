@@ -67,8 +67,8 @@ def main():
     ap.add_argument("--chi", type=int, default=400)
     ap.add_argument("--solve-casci", action="store_true", help="exact CASCI ref (small CAS smoke only)")
     ap.add_argument("--grow-iters", type=int, default=40)
-    ap.add_argument("--grow-per-iter", type=int, default=600)
-    ap.add_argument("--kcap", type=int, default=100000)
+    ap.add_argument("--grow-per-iter", type=int, default=40000)   # Option C: big batches (fast engine)
+    ap.add_argument("--kcap", type=int, default=800000)
     a = ap.parse_args()
 
     if a.make_ref:
@@ -90,14 +90,18 @@ def main():
         d = json.load(open(fn)); e_ref, ref_kind = d["E_dmrg"], f"block2 DMRG(chi={d['dmrg_chi']}), same CAS"
 
     eng = L.PauliEngine(P["qop"].terms)
-    E, space = eng.qsci({L.hf_det(P["na"], P["nb"])}, grow_iters=a.grow_iters,
-                        grow_per_iter=a.grow_per_iter, kcap=a.kcap,
-                        log=lambda m: print(m, flush=True))
+    devmon = L.DeviceMemMonitor().start()
+    E, space = eng.qsci_fast({L.hf_det(P["na"], P["nb"])}, grow_iters=a.grow_iters,
+                             grow_per_iter=a.grow_per_iter, kcap=a.kcap,
+                             log=lambda m: print(m, flush=True))
+    devmon.stop()
     err = (E - e_ref) * 1000
     p4 = abs(err) <= CHEM
+    dev_mem = devmon.gb()
     out = dict(run="gpu_run4", system="CrO 5-Pi", active_space=f"CAS({sum(nel)},{a.ncas})",
                qubits=2 * a.ncas, E_qsci=E, e_ref=e_ref, ref_kind=ref_kind, err_mHa=round(err, 3),
-               final_space=int(len(space)), peak_rss_gb=round(L.peak_rss_gb(), 2),
+               final_space=int(len(space)), peak_host_rss_gb=round(L.peak_rss_gb(), 2),
+               peak_device_mem_gb=dev_mem, engine="qsci_fast (incremental Hamiltonian, Option C)",
                wall_s=round(time.time() - t0, 1), prereg=dict(P4_chem_acc=bool(p4)))
     fn = f"gpu_run4_cas{a.ncas}_evidence.json"
     json.dump(out, open(os.path.join(_RES, fn), "w"), indent=2)
