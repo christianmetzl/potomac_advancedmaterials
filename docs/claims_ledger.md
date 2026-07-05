@@ -60,7 +60,10 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 - **Owed / in-progress (row 19c):** the 40q converged pass, the 38q CrO oxide, and real-QPU silicon —
   clearly marked as targets/frontier in the paper, never as achieved results (40q attempt-1 is reported
   honestly as compute-limited, +14.8 mHa non-converged).
-- **Judges' re-run:** `python src/reproduce.py` → **13/13 PASS** (11 core + 2 optional CUDA-Q/MPS; transcript: `docs/reproduce_transcript.txt`).
+- **Judges' re-run:** `python src/reproduce.py` → **24/24 PASS** (16 re-execution — incl. the frozen blind-holdout
+  script and both engine-equivalence gates — + 8 evidence audits that verify the committed GPU/cloud/one-shot
+  artifacts' internal arithmetic, stated pass criteria, and the pre-registration SHA-256; audits are labeled
+  distinctly and never counted as re-runs. Transcript: `docs/reproduce_transcript.txt`).
 
 ## Known honesty caveats (also stated in the paper)
 - Transfer ladder advantage is a **3-seed mean** that narrows into run-to-run noise beyond ~28q — not an
