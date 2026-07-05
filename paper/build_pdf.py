@@ -110,7 +110,7 @@ def main():
             parts.append(table_html(el))
     css = """
     @page { size: Letter; margin: 0.8in; }
-    body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.02; color:#000; }
+    body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.0; color:#000; }
     h1 { font-size: 13pt; margin: 0 0 2px 0; }
     h3 { font-size: 11pt; margin: 4px 0 2px 0; }
     p { orphans: 2; widows: 2; margin: 0 0 3px 0; }
