@@ -9,8 +9,13 @@ Usage:
     python src/reproduce.py            # run the full CPU suite
     python src/reproduce.py --quick    # skip the slower scripts (transition-metal, hamlib-40q)
 
-Scope: the CPU-reproducible headline numbers (the same set verified in
-docs/reproducibility_audit_2026-06-21.md). GPU/qBraid scaling runs are out of scope here.
+Scope — two honest check families, labeled distinctly in the output:
+  * RE-EXECUTION (16): CPU-reproducible headline scripts re-run from a clean workdir and asserted
+    against committed values (4 of these need the optional cudaq/block2 CPU deps and SKIP otherwise).
+  * AUDIT (8): committed GPU/cloud/one-shot evidence JSONs verified for internal arithmetic
+    (err == (E - ref)*1000), stated pass criteria, and pre-registration integrity (the blind-holdout
+    script's SHA-256 must still match the hash committed before its one-shot run). Audits are NOT
+    re-runs — a CPU judge box cannot re-execute GPU/QPU jobs — and are never counted as such.
 
 EIGENNEXUS - GIC 2026 Phase 3.
 """
@@ -58,6 +63,9 @@ CHECKS = [
     ("EN-PT2 two-sided bracket", "encoder/selci_pt2.py", [], "encoder/selci_pt2_evidence.json",
      [("var_upper_bound",), ("abslt", ["results", "0", "extrap_err_mHa"], 10.0),
       ("gt", ["results", "0", "extrap_R2"], 0.99)], True),
+    ("blind holdout VO re-run (frozen script)", "blind_holdout_vo.py", [], "blind_holdout_vo_result.json",
+     [("lt", ["states", "quartet", "qsci_err_mHa"], 1.6), ("lt", ["states", "doublet", "qsci_err_mHa"], 1.6),
+      ("eqi", ["prediction_b_matches_experiment"], 1)], True),
     # Optional checks — run only if the (CPU-installable) extra deps are present; SKIP otherwise.
     ("CUDA-Q execution (qpp-cpu)", "cudaq_qsci.py", [], "cudaq_qsci_evidence.json",
      [("abslt", ["results", "0", "vqe_err_mHa"], 1.6), ("abslt", ["results", "0", "qsci_err_mHa"], 1.6)],
@@ -65,6 +73,35 @@ CHECKS = [
     ("MPS bond-dim & entanglement", "mps_bonddim_study.py", [], "mps_bonddim_evidence.json",
      [("lt", ["study_A_error_vs_chi", "0", "chi_for_chem_acc"], 100), ("mps_entangle_grows",)],
      True, "block2"),
+    ("integral engine selftest (SC vs JW + FCI)", "qsci_int.py", [], None,
+     [("stdout_has", "INTEGRAL ENGINE VALID")], False, "cudaq"),
+    ("engine equivalence (fast vs orig vs FCI)", "engine_equivalence.py", [], "engine_equivalence_evidence.json",
+     [("lt", ["max_engine_dev_mHa"], 1e-4), ("lt", ["max_fci_err_mHa"], 1.6)], False, "cudaq"),
+    # Evidence audits — no re-execution: verify the committed evidence JSON's internal arithmetic and
+    # pass criteria (for runs a CPU judge box cannot re-execute: GPU / cloud / one-shot artifacts).
+    # Labeled AUDIT in the output; never presented as a re-run.
+    ("AUDIT: 20q GPU exact anchor (cuStateVec)", None, [], "gpu_run1_h10_nvidia_evidence.json",
+     [("consistent_err", ["E_qsci"], ["e_ref"], ["err_mHa"], 0.01), ("abslt", ["err_mHa"], 1.6),
+      ("lt", ["peak_device_mem_gb"], 8.0)], False),
+    ("AUDIT: 28q GPU converged (cuStateVec)", None, [], "gpu_run1_h14_nvidia_evidence.json",
+     [("consistent_err", ["E_qsci"], ["e_ref"], ["err_mHa"], 0.01), ("abslt", ["err_mHa"], 1.6),
+      ("lt", ["peak_device_mem_gb"], 8.0), ("gt", ["final_space"], 30000)], False),
+    ("AUDIT: 40q frontier checkpoint (iter5)", None, [], "gpu_run1_h20_mp2seed_iter5_checkpoint.json",
+     [("consistent_err", ["E_qsci"], ["e_ref"], ["err_mHa"], 0.01), ("eq", ["err_mHa"], 3.222, 0.001),
+      ("gt", ["dets"], 100000)], False),
+    ("AUDIT: 28q CPU pre-validation", None, [], "qsci_28q_cpu_prevalidation_evidence.json",
+     [("eq", ["err_mHa"], 1.219, 0.001), ("eqi", ["chemical_accuracy_1p6mHa"], 1)], False),
+    ("AUDIT: pre-registration integrity", None, [], "preregistration_v1.json",
+     [("len_eq", ["predictions"], 6),
+      ("sha256_frozen", ["predictions", "5", "script_sha256"], "blind_holdout_vo.py")], False),
+    ("AUDIT: qBraid cloud-runtime P5 chain", None, [], "qbraid_P5_qbraid_qbraid_sim_qir-sv_evidence.json",
+     [("abslt", ["err_mHa"], 5.0), ("len_eq", ["job_ids"], 3), ("eqi", ["dominant_is_hf"], 1)], False),
+    ("AUDIT: qBraid hosted 20q validation", None, [], "qbraid_hosted_h10_evidence.json",
+     [("abslt", ["err_grown_mHa"], 1.6), ("eqi", ["export_exact_verified"], 1)], False),
+    ("AUDIT: crossover walls (memory + dets)", None, [], "crossover_evidence.json",
+     [("gt", ["wall1_memory", "exact_statevector_bytes", "40"], 1e13),
+      ("lt", ["wall2_determinants", "qsci_growth_per_qubit"], 1.5),
+      ("eq", ["wall2_determinants", "fci_growth_per_qubit"], 2.0, 0.01)], False),
 ]
 
 
@@ -111,20 +148,29 @@ def run_check(label, script, args, out_json, asserts, workdir, requires=None):
     t0 = time.time()
     if requires and not _importable(requires):
         return ("SKIP", label, f"optional dep '{requires}' not installed", time.time() - t0)
-    try:
-        p = subprocess.run([sys.executable, os.path.join(SRC, script), *args],
-                           cwd=workdir, capture_output=True, text=True, timeout=1800)
-    except subprocess.TimeoutExpired:
-        return ("TIMEOUT", label, "exceeded 30 min", time.time() - t0)
-    if p.returncode != 0:
-        return ("ERROR", label, (p.stderr.strip().splitlines() or ["(no stderr)"])[-1], time.time() - t0)
-    out = p.stdout
-    data = None
-    if out_json:
-        jp = _find_json(out_json, workdir)
-        if jp is None:
-            return ("ERROR", label, f"{out_json} not produced", time.time() - t0)
+    out = ""
+    if script is None:
+        # AUDIT mode: no re-execution — load the committed evidence JSON and verify its internal
+        # arithmetic / pass criteria (for GPU/cloud/one-shot artifacts a CPU judge box cannot re-run).
+        jp = os.path.join(REPO, "results", out_json)
+        if not os.path.exists(jp):
+            return ("ERROR", label, f"committed evidence {out_json} missing", time.time() - t0)
         data = json.load(open(jp))
+    else:
+        try:
+            p = subprocess.run([sys.executable, os.path.join(SRC, script), *args],
+                               cwd=workdir, capture_output=True, text=True, timeout=1800)
+        except subprocess.TimeoutExpired:
+            return ("TIMEOUT", label, "exceeded 30 min", time.time() - t0)
+        if p.returncode != 0:
+            return ("ERROR", label, (p.stderr.strip().splitlines() or ["(no stderr)"])[-1], time.time() - t0)
+        out = p.stdout
+        data = None
+        if out_json:
+            jp = _find_json(out_json, workdir)
+            if jp is None:
+                return ("ERROR", label, f"{out_json} not produced", time.time() - t0)
+            data = json.load(open(jp))
 
     details = []
     ok = True
@@ -167,6 +213,27 @@ def run_check(label, script, args, out_json, asserts, workdir, requires=None):
             B = data["study_B_entanglement_vs_R"]
             passed = B[-1]["Smax"] > B[0]["Smax"]
             details.append(f"Smax {B[0]['Smax']:.2f}->{B[-1]['Smax']:.2f}{'' if passed else ' ✗'}")
+        elif kind == "stdout_has":  # required marker line printed by the script's own selftest
+            _, marker = a
+            passed = marker in out
+            details.append(f"'{marker}' printed{'' if passed else ' ✗'}")
+        elif kind == "consistent_err":  # committed err_mHa must equal (E - ref) * 1000 (arithmetic audit)
+            _, ep, rp, xp, tol = a
+            got = abs((_val(data, ep) - _val(data, rp)) * 1000 - _val(data, xp))
+            passed = got <= tol
+            details.append(f"err consistent (Δ={got:.4f} mHa){'' if passed else ' ✗'}")
+        elif kind == "len_eq":
+            _, path, expected = a
+            got = len(_val(data, path))
+            passed = got == expected
+            details.append(f"len={got}=={expected}{'' if passed else ' ✗'}")
+        elif kind == "sha256_frozen":  # committed hash must match the frozen script ON DISK today
+            import hashlib
+            _, path, fname = a
+            committed = _val(data, path)
+            actual = hashlib.sha256(open(os.path.join(SRC, fname), "rb").read()).hexdigest()
+            passed = committed == actual
+            details.append(f"sha256({fname}) matches prereg{'' if passed else ' ✗ TAMPERED'}")
         else:  # "eq"
             _, path, expected, tol = a
             got = _val(data, path)
@@ -192,8 +259,11 @@ def main():
     npass = sum(1 for s, _ in rows if s == "PASS")
     nskip = sum(1 for s, _ in rows if s == "SKIP")
     ncore = len(rows) - nskip
+    naudit = sum(1 for _, l in rows if l.startswith("AUDIT"))
     extra = f" (+{nskip} optional SKIPPED — install cudaq/block2 to run them)" if nskip else ""
-    print("=" * 60 + f"\n{npass}/{ncore} checks PASS{extra}")
+    print("=" * 60 + f"\n{npass}/{ncore} checks PASS{extra}"
+          f"\n  [{ncore - naudit} re-execution + {naudit} evidence audits;"
+          f" audits verify committed GPU/cloud/one-shot artifacts, not re-runs]")
     sys.exit(0 if npass == ncore else 1)
 
 
