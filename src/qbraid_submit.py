@@ -105,6 +105,9 @@ def main():
                          "so the shallow circuit survives hardware noise. Simulator: 36 (full).")
     ap.add_argument("--jobs", type=int, default=3, help="pooled jobs (1-3). Use 1 on a paid QPU to cut cost.")
     ap.add_argument("--estimate", action="store_true", help="price check only; no submission")
+    ap.add_argument("--probe", action="store_true",
+                    help="submit ONE cheap deterministic circuit (X on qubit 0) to pin the backend's "
+                         "count-key bit order before the physics job")
     ap.add_argument("--yes", action="store_true", help="required to submit to any nonzero-cost device")
     a = ap.parse_args()
 
@@ -122,18 +125,67 @@ def main():
     print(f"circuit: 12q H6, topm={a.topm} -> {len(exc['th'])} excitations (~{n2q} two-qubit gates)")
     print(f"job plan: {a.jobs} job(s) x {a.shots_per_job} shots -> estimated {total_credits:,.0f} credits "
           f"(~${total_credits/100:,.2f})")
+    if a.device.startswith("openquantum:"):
+        print("NOTE: openquantum:* devices bill from the OpenQuantum credit pool (their dashboard), "
+              "NOT qBraid credits — the qBraid-side pricing above reads 0 for them. Check the "
+              "OpenQuantum calculator for the real cost before submitting.", flush=True)
     if a.estimate:
         return
-    if total_credits > 0 and not a.yes:
-        raise SystemExit("nonzero cost: re-run with --yes to confirm spending credits")
+    if (total_credits > 0 or a.device.startswith("openquantum:")) and not a.yes:
+        raise SystemExit("cost is nonzero (or billed via the OpenQuantum pool): re-run with --yes to confirm")
 
     t0 = time.time()
+
+    def fetch_counts(job):
+        """QPU-hardened result fetch: wait for a final state, then retry get_counts with a fresh job
+        handle if the first snapshot is empty (counts can propagate seconds after completion)."""
+        try:
+            job.wait_for_final_state()
+        except Exception:
+            while str(getattr(job, "status", lambda: "")()).upper().split(".")[-1] not in \
+                    ("COMPLETED", "FAILED", "CANCELLED"):
+                time.sleep(10)
+        for attempt in range(6):
+            try:
+                counts = job.result().data.get_counts()
+                if counts:
+                    return counts
+            except Exception as e:
+                print(f"    counts fetch attempt {attempt+1}: {type(e).__name__}: {str(e)[:80]}", flush=True)
+            time.sleep(10)
+            try:                                              # fresh handle — cached-empty workaround
+                from qbraid.runtime.native import QbraidJob
+                job = QbraidJob(job.id, client=prov.client)
+            except Exception:
+                pass
+        raise RuntimeError(f"no counts after retries for job {job.id} (status={job.status()})")
+
+    if a.probe:
+        # One cheap deterministic circuit: X on qubit 0 only. Exactly one count-key position flips
+        # vs all-zeros -> pins this backend's bit order for the decoder BEFORE the physics job.
+        from qiskit import QuantumCircuit, qasm2
+        qc = QuantumCircuit(NQ, NQ); qc.x(0)
+        for i in range(NQ): qc.measure(i, i)
+        job = dev.run(qasm2.dumps(qc), shots=min(100, a.shots_per_job))
+        print(f"probe job {job.id} submitted (X on qubit 0, {min(100, a.shots_per_job)} shots)...", flush=True)
+        counts = fetch_counts(job)
+        top = max(counts, key=counts.get)
+        pos = [k for k, ch in enumerate(top) if ch == "1"]
+        lex_expected = LEX.index(0)
+        print(f"dominant bitstring: {top} | '1' at key position(s) {pos} | "
+              f"LEX decode expects position {lex_expected} for qubit 0", flush=True)
+        print(("LEX convention CONFIRMED for this backend" if pos == [lex_expected] else
+               f"DIFFERENT convention — qubit 0 maps to key position {pos}; adjust decode before the physics job"),
+              flush=True)
+        return
+
     pool, job_ids, raw = {}, [], {}
     for jn, angles in enumerate(flight_angle_sets(exc)[:a.jobs], 1):
         qasm, l1 = to_qasm_verified(exc, angles)
         job = dev.run(qasm, shots=a.shots_per_job)
         job_ids.append(job.id)
-        counts = job.result().data.get_counts()
+        print(f"  job {jn} {job.id} submitted; waiting for completion...", flush=True)
+        counts = fetch_counts(job)
         raw[f"job{jn}"] = counts
         add = 0
         for bits, c in counts.items():
