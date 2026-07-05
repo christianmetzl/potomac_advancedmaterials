@@ -203,13 +203,17 @@ class IntEngine:
         return int(sum(len(a) for a in self._iV))
 
     def qsci_inc(self, seed_dets, grow_iters=0, grow_per_iter=400, kcap=6000, hij_floor=1e-5,
-                 tcap=1e9, log=None, ckpt=None):
-        """Incremental + heat-bath-screened QSCI growth. Memory-bounded (|H_ij|<hij_floor dropped) and
-        O(delta)/iter. Selection is the same CIPSI top-k as qsci()."""
+                 eps1=0.0, tcap=1e9, log=None, ckpt=None):
+        """Incremental QSCI growth. eps1>0 turns on heat-bath candidate screening: a connection is
+        only considered when |H_iu * c_i| > eps1 — the standard HCI criterion. This caps the candidate
+        pool BEFORE the expensive dedup (the actual at-scale bottleneck), and does NOT change the
+        top-k selected set as long as eps1 sits below the selection cutoff (validated: same energy).
+        hij_floor screens |H_ij| in the stored matrix (kept for completeness; ~no memory win at 20q+)."""
         space = np.array(sorted(set(int(d) for d in seed_dets)), dtype=np.uint64)
         self._icache_reset(); self._icache_add(space, hij_floor)
         t0 = time.time(); E, cvec = self._icache_solve()
         if log: log(f"  QSCI+ seed |space|={len(space)} nnz={self.nnz()} E={E:.6f} [{time.time()-t0:.0f}s]")
+        self._last_pool = 0
         for it in range(grow_iters):
             if len(space) >= kcap or time.time() - t0 > tcap: break
             sc = np.sort(space); contrib = {}
@@ -217,8 +221,12 @@ class IntEngine:
                 cand, elem = self.connections_elem(int(space[ci]))
                 pos = np.clip(np.searchsorted(sc, cand), 0, len(space) - 1)
                 ext = sc[pos] != cand
-                for u, a in zip(cand[ext].tolist(), (elem[ext] * cvec[ci]).tolist()):
+                ce = cand[ext]; ae = elem[ext] * cvec[ci]
+                if eps1 > 0.0:                               # heat-bath candidate screen (pool cap)
+                    big = np.abs(ae) > eps1; ce = ce[big]; ae = ae[big]
+                for u, a in zip(ce.tolist(), ae.tolist()):
                     contrib[u] = contrib.get(u, 0.0) + a
+            self._last_pool = len(contrib)
             if not contrib: break
             cnd = np.fromiter(contrib.keys(), dtype=np.uint64, count=len(contrib))
             num = np.fromiter(contrib.values(), dtype=float, count=len(contrib))
