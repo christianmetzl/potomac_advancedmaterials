@@ -1,74 +1,78 @@
-# qBraid / GPU access request email (GIC 2026 Phase 3) — send-ready
+# qBraid access email — FINAL SENT VERSION (2026-07-06)
 
-> Copy everything between the rules below into your mail client. Fill the three bracketed fields
-> ([…]) with your real addresses, and actually submit the qBraid form (link in the body) before/with
-> sending. Nothing else needs changing — every claim in the body is verified true.
+Facts verified at send time: 24/24 reproduce checks; GPU runs 20q +0.000 / 28q +0.395 mHa executed
+self-funded on qBraid RTX 4090; H100-sxm 8.95 cr/min and QPU rates per docs.qbraid.com/v2/home/pricing;
+QPU catalog = IonQ Forte-1 / AQT IBEX Q1 / IQM (not IBM); deadline Sun 26 July 2026 11:59 PM EST.
 
 ---
 
-**To:** quantum@connecteddmv.org
-**Cc:** [your EIGENNEXUS teammates]
-**From:** [your registered EIGENNEXUS team contact email]
-**Subject:** EIGENNEXUS (Advanced Materials — Mitsubishi/AIST): Phase 3 qBraid GPU/QPU access + device selection
+To: quantum@connecteddmv.org
+Subject: EIGENNEXUS (Advanced Materials — Mitsubishi/AIST): Phase 3 qBraid GPU/QPU access + device selection
 
 Dear GIC 2026 Organizing Committee,
 
-Team **EIGENNEXUS** is a Phase 3 finalist in the Advanced Materials challenge (Mitsubishi Chemical & AIST —
-"Scaling the Generative Quantum Eigensolver with NVIDIA CUDA-Q"). I'm writing to activate our qBraid team
-account and credit allocation, and to put our device selection clearly on record, so we can run the
-on-platform results for our Phase 3 submission.
+Team EIGENNEXUS is a Phase 3 finalist in the Advanced Materials challenge (Mitsubishi Chemical & AIST
+— "Scaling the Generative Quantum Eigensolver with NVIDIA CUDA-Q"). I'm writing to activate our qBraid
+team credit allocation and to put our device selection clearly on record, so we can complete the
+at-scale on-platform results for our Phase 3 submission.
 
-**Device selection.** To remove any ambiguity at judging, I want to confirm our platform/device selection in
-writing: our selection was not captured on our Phase 2 cover page, so I'm setting it on record now, well ahead
-of the Phase 3 deadline (Sunday, 26 July 2026, 11:59 PM EST). **Our selection is: qBraid GPU compute (NVIDIA
-CUDA-Q) as the primary platform, plus IonQ/IBM QPU access via qBraid for small-scale hardware validation.**
-This is exactly what our Phase 2 write-up justifies (it requests NVIDIA H100/A100 (80 GB) + CUDA-Q and qBraid
-hardware validation at 10–16 qubits). We will record this selection on our Phase 3 cover page; please let me
-know if you also need a corrected Phase 2 cover page or any other step to release access.
+Device selection. To remove any ambiguity at judging: our selection was not captured on our Phase 2
+cover page, so I'm setting it on record now, well ahead of the Phase 3 deadline (Sunday, 26 July 2026,
+11:59 PM EST). Our selection is: qBraid GPU compute (NVIDIA CUDA-Q) as the primary platform, plus QPU
+access via qBraid (IonQ Forte-1 / AQT / IQM, per the current qBraid device catalog) for small-scale
+hardware validation. This is exactly what our Phase 2 write-up justifies (NVIDIA H100/A100 (80 GB) +
+CUDA-Q, and qBraid hardware validation at 10-16 qubits). We will record this selection on our Phase 3
+cover page; please let me know if you also need a corrected Phase 2 cover page or any other step to
+release access.
 
-**What we are requesting (matching our Phase 2 §6, "Platform Justification and Resource Needs"):**
+Progress to date — we did not wait. Our qBraid team account is already active: we self-funded initial
+GPU runs on a qBraid RTX 4090 instance and executed our GQE->QSCI pipeline on NVIDIA hardware with
+CUDA-Q (cuStateVec), reproducing exact full CI at 20 qubits (+0.000 mHa) and reaching chemical accuracy
+at 28 qubits (+0.395 mHa vs a DMRG reference committed before access), plus an honest, converging
+40-qubit frontier. The full pipeline is validated end-to-end through the qBraid cloud runtime,
+including the QPU submission chain. Organizer credits therefore go directly to the remaining at-scale
+runs, not to setup.
 
-1. **qBraid GPU compute** — NVIDIA H100 or A100 (80 GB) with the CUDA-Q SDK: the **tensornet-mps** backend for
-   the 24–40-qubit tier (one high-memory GPU is sufficient for the core runs), and **cuStateVec** for exact
-   validation to ~32 qubits.
-2. **Multi-GPU (4–8 GPUs, NVLink), where available** — for distributed circuit evaluation and our >40-qubit
-   bonus attempt. The workflow degrades gracefully to a single GPU, so this is additive, not a blocker.
-3. **qBraid classical (CPU/GPU) credits** to run and reproduce the full pipeline.
-4. **QPU access** (IonQ/IBM via qBraid) for hardware validation at 10–16 qubits.
+What we are requesting (matching our Phase 2 §6, "Platform Justification and Resource Needs"):
 
-**What we will run:** the 40-qubit MPS GQE/QSCI scalability result on H₂₀ (energy vs DMRG, circuit depth, bond
-dimension, shot budget, wall-clock); near-38-qubit CrO/NiO open-shell transition-metal oxides on GPU; a
-quantum-vs-classical wall-clock comparison; 10–16-qubit circuit validation on QPU; and, with multi-GPU, the
->40-qubit bonus attempt. Estimated need ~2 weeks of GPU wall-clock; the workflow is backend-agnostic and
-flexible to whatever allocation you provide. Everything else in our submission is already executed and
-reproducible on CPU — a one-command `reproduce.py` passes 13/13 — so GPU time goes straight to the at-scale runs.
+- qBraid GPU compute — NVIDIA H100 or A100 (80 GB) with the CUDA-Q SDK: the tensornet-mps backend for
+  the 24-40-qubit tier (one high-memory GPU is sufficient for the core runs), and cuStateVec for exact
+  validation to ~32 qubits.
+- Multi-GPU (4-8 GPUs, NVLink), where available — for distributed circuit evaluation and our >40-qubit
+  bonus attempt. The workflow degrades gracefully to a single GPU, so this is additive, not a blocker.
+- qBraid classical (CPU/GPU) credits to run and reproduce the full pipeline.
+- QPU credits (IonQ / AQT / IQM via qBraid) for hardware validation at 10-16 qubits — our verified
+  12-qubit circuits are already submission-ready (SHA-pinned, export-verified against the native
+  statevector).
 
-**A few quick logistics:**
-- Could you confirm our qBraid team account is provisioned and our credits are loaded?
-- I am completing the qBraid request form (https://qbraid.typeform.com/to/vTxsKddw) alongside this note —
-  please let me know if anything further is needed from us to release access.
-- We are ready to launch on qBraid from our Aqora submission as soon as credits are live.
+What we will run: completion of the 40-qubit MPS GQE/QSCI scalability result on H20 (energy vs DMRG to
+chemical accuracy, circuit depth, bond dimension, shot budget, wall-clock); near-38-qubit CrO
+open-shell transition-metal oxide on GPU; a quantum-vs-classical wall-clock comparison; 10-16-qubit
+validation on real QPU hardware; and, with multi-GPU, the >40-qubit bonus attempt. Everything else in
+our submission is already executed and reproducible — a one-command reproduce.py passes 24/24
+automated checks (16 clean-checkout re-executions + 8 committed-evidence audits) — so platform credits
+go straight to the at-scale runs.
+
+Estimated allocation (rates per docs.qbraid.com/v2/home/pricing): our core program needs ~35,000
+qBraid credits — ~38-72 H100-hours (gpu-h100-sxm, 8.95 credits/min) for the 40-qubit completion, the
+38-qubit CrO run, and the wall-clock comparison, including a 2x rerun buffer, plus ~10,000 credits of
+trapped-ion QPU validation (AQT/IonQ at catalog rates). The full program including the >40-qubit
+multi-GPU bonus attempt (4x H100) and our pre-registered 10,000-shot QPU protocol comes to
+~75,000-115,000 credits. These estimates extrapolate from measured runs we have already executed on a
+self-funded qBraid RTX 4090 instance. Our workflow checkpoints every run, pre-verifies every circuit
+before submission, and degrades gracefully — a smaller allocation reduces scope rather than blocking
+results.
+
+A few quick logistics:
+
+- Could you confirm our qBraid team credit allocation is provisioned and loaded?
+- I am completing the qBraid request form (https://qbraid.typeform.com/to/vTxsKddw) alongside this
+  note — please let me know if anything further is needed from us to release access.
+- We are ready to launch from our Aqora submission as soon as credits are live.
 
 Thank you — we're looking forward to running the final at-scale results on the platform.
 
 Best regards,
 Christian Metzl
 Team Lead, EIGENNEXUS
-[your registered EIGENNEXUS team contact email] · https://aqora.io/eigennexus
-
----
-
-## Before you hit send (3 things — none change the body wording)
-1. **From / signature email:** use the address the organizers have on file for your team (your Aqora/
-   registration contact). Replace both `[…]` email fields with it.
-2. **Cc:** add your teammates' addresses (or delete the Cc line if you'd rather send solo).
-3. **qBraid form:** actually submit https://qbraid.typeform.com/to/vTxsKddw — the body says you're doing it
-   "alongside this note," so do it the same day to keep that true.
-
-## Why this is credibility-safe
-- Every factual claim is verified: recipient address, the deadline, the cover-page rule, the §6 resource list,
-  the TypeForm URL, and the 13/13 `reproduce.py` result all match the committed spec and our submission.
-- The device-selection note is framed as a proactive correction ("setting it on record now"), not an apology —
-  honest and constructive, which strengthens rather than weakens standing. (It is also required: per the rule,
-  access is not granted unless the device is selected on the cover page.)
-- No over-claims: GPU/QPU at-scale results are described as what we *will run*, never as done.
+[registered team contact email] · https://aqora.io/eigennexus
