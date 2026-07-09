@@ -1,4 +1,4 @@
-# qBraid access email — FINAL SENT VERSION (2026-07-06)
+# qBraid access email — FINAL SENT VERSION (2026-07-06, rev 2 — stress-tested allocation)
 
 Facts verified at send time: 24/24 reproduce checks; GPU runs 20q +0.000 / 28q +0.395 mHa executed
 self-funded on qBraid RTX 4090; H100-sxm 8.95 cr/min and QPU rates per docs.qbraid.com/v2/home/pricing;
@@ -53,15 +53,15 @@ our submission is already executed and reproducible — a one-command reproduce.
 automated checks (16 clean-checkout re-executions + 8 committed-evidence audits) — so platform credits
 go straight to the at-scale runs.
 
-Estimated allocation (rates per docs.qbraid.com/v2/home/pricing): our core program needs ~35,000
-qBraid credits — ~38-72 H100-hours (gpu-h100-sxm, 8.95 credits/min) for the 40-qubit completion, the
-38-qubit CrO run, and the wall-clock comparison, including a 2x rerun buffer, plus ~10,000 credits of
-trapped-ion QPU validation (AQT/IonQ at catalog rates). The full program including the >40-qubit
-multi-GPU bonus attempt (4x H100) and our pre-registered 10,000-shot QPU protocol comes to
-~75,000-115,000 credits. These estimates extrapolate from measured runs we have already executed on a
-self-funded qBraid RTX 4090 instance. Our workflow checkpoints every run, pre-verifies every circuit
-before submission, and degrades gracefully — a smaller allocation reduces scope rather than blocking
-results.
+Estimated allocation (rates per docs.qbraid.com/v2/home/pricing): our core program needs ~50,000
+qBraid credits — the 40-qubit completion, the 38-qubit CrO run, and the wall-clock comparison on
+gpu-h100-sxm (8.95 credits/min), including realistic retry margins calibrated from our self-funded
+runs, plus trapped-ion QPU validation (AQT/IonQ) with one resubmission cycle. The full program —
+adding the >40-qubit multi-GPU bonus attempt (4x H100) and our pre-registered 10,000-shot QPU
+protocol — comes to ~100,000-150,000 credits. These figures use the overhead multiplier we measured
+on our own self-funded qBraid GPU runs rather than ideal-path estimates; failed QPU jobs bill
+nothing on the platform, every run checkpoints durable evidence, and the workflow degrades
+gracefully — a smaller allocation reduces scope rather than blocking results.
 
 A few quick logistics:
 
