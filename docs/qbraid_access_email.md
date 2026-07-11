@@ -1,4 +1,4 @@
-# qBraid access email — FINAL SENT VERSION (2026-07-06, rev 2 — stress-tested allocation)
+# qBraid access email — FINAL SENT VERSION (2026-07-06, rev 3 — as sent by C. Metzl)
 
 Facts verified at send time: 24/24 reproduce checks; GPU runs 20q +0.000 / 28q +0.395 mHa executed
 self-funded on qBraid RTX 4090; H100-sxm 8.95 cr/min and QPU rates per docs.qbraid.com/v2/home/pricing;
@@ -12,7 +12,7 @@ Subject: EIGENNEXUS (Advanced Materials — Mitsubishi/AIST): Phase 3 qBraid GPU
 Dear GIC 2026 Organizing Committee,
 
 Team EIGENNEXUS is a Phase 3 finalist in the Advanced Materials challenge (Mitsubishi Chemical & AIST
-— "Scaling the Generative Quantum Eigensolver with NVIDIA CUDA-Q"). I'm writing to activate our qBraid
+— "Harnessing the Generative Quantum Eigensolver for Next-Generation Materials Design"). I'm writing to activate our qBraid
 team credit allocation and to put our device selection clearly on record, so we can complete the
 at-scale on-platform results for our Phase 3 submission.
 
@@ -25,7 +25,7 @@ CUDA-Q, and qBraid hardware validation at 10-16 qubits). We will record this sel
 cover page; please let me know if you also need a corrected Phase 2 cover page or any other step to
 release access.
 
-Progress to date — we did not wait. Our qBraid team account is already active: we self-funded initial
+Progress to date. We did not wait for credits to progress our work. Our qBraid team account is already active: we self-funded initial
 GPU runs on a qBraid RTX 4090 instance and executed our GQE->QSCI pipeline on NVIDIA hardware with
 CUDA-Q (cuStateVec), reproducing exact full CI at 20 qubits (+0.000 mHa) and reaching chemical accuracy
 at 28 qubits (+0.395 mHa vs a DMRG reference committed before access), plus an honest, converging
@@ -45,7 +45,7 @@ What we are requesting (matching our Phase 2 §6, "Platform Justification and Re
   12-qubit circuits are already submission-ready (SHA-pinned, export-verified against the native
   statevector).
 
-What we will run: completion of the 40-qubit MPS GQE/QSCI scalability result on H20 (energy vs DMRG to
+What we plan to run: completion of the 40-qubit MPS GQE/QSCI scalability result on H20 (energy vs DMRG to
 chemical accuracy, circuit depth, bond dimension, shot budget, wall-clock); near-38-qubit CrO
 open-shell transition-metal oxide on GPU; a quantum-vs-classical wall-clock comparison; 10-16-qubit
 validation on real QPU hardware; and, with multi-GPU, the >40-qubit bonus attempt. Everything else in
@@ -74,5 +74,5 @@ Thank you — we're looking forward to running the final at-scale results on the
 
 Best regards,
 Christian Metzl
-Team Lead, EIGENNEXUS
-[registered team contact email] · https://aqora.io/eigennexus
+Team EIGENNEXUS (C. Metzl, F. Eldibani, J. M. Aguiar Hualde)
+connect@christianmetzl.com · https://aqora.io/christianmetzl · https://aqora.io/eigennexus
