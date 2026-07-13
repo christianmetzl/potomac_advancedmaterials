@@ -250,14 +250,15 @@ class PauliEngine:
             ncf = nc.reshape(-1); ampf = amp.reshape(-1)
             pos = np.clip(np.searchsorted(sd, ncf), 0, len(sd) - 1)
             found = sd[pos] == ncf
-            r = rows[found]; cols = sid[pos[found]]; vals = ampf[found]
+            r = rows[found].astype(np.int32); cols = sid[pos[found]].astype(np.int32)   # n < 2^31 always
+            vals = ampf[found]
             if getattr(self, "_real", False):            # molecular H is real: store real parts (exact,
                 vals = vals.real                          # since <I|H|J> = real(sum of term amps)); half memory
             self._Hr.append(r); self._Hc.append(cols); self._Hv.append(vals)
             old = cols < first_new                       # old rows miss these new columns -> transpose
             if old.any():
                 tv = vals[old] if getattr(self, "_real", False) else np.conj(vals[old])
-                self._Hr.append(cols[old]); self._Hc.append(r[old]); self._Hv.append(tv)
+                self._Hr.append(cols[old]); self._Hc.append(r[old].astype(np.int32)); self._Hv.append(tv)
 
     def _cache_solve(self, warm=None):
         n = len(self._id2det)
@@ -274,21 +275,46 @@ class PauliEngine:
         return float(w[0]), np.asarray(v[:, 0]).ravel()
 
     def qsci_fast(self, seed_dets, grow_iters=0, grow_per_iter=400, kcap=6000, tcap=1e9, log=None,
-                  ckpt=None, real=True):
+                  ckpt=None, real=True, state_file=None):
         """Incremental-Hamiltonian equivalent of qsci(); identical energies, O(delta)/iter instead of
         O(|space|). Space/id order mirrors qsci() exactly (sorted seed, then sorted new dets appended),
         so the eigenvector indexing and hence the CIPSI selection are the same at every step.
         ckpt(it, E, n_dets, wall_s): optional per-iteration callback for durable intermediate evidence
         (the instance is ephemeral — a checkpoint each iteration survives a kill/timeout).
         real=True: store the (real, for molecular Hamiltonians) subspace H in float64 — exact, halves
-        memory and speeds the eigensolver at the 1e6-determinant scale (the overnight 40q run)."""
+        memory and speeds the eigensolver at the 1e6-determinant scale (the overnight 40q run).
+        state_file: full RESUME support — after every iteration the exact engine state (space in
+        insertion order, cached H triplets, E, eigenvector) is serialized; on start, an existing
+        state file is loaded and growth CONTINUES from that iteration instead of restarting from the
+        seed. Bit-exact: the resumed trajectory is the same one the uninterrupted run would take.
+        A crash then costs minutes, not the whole run."""
         self._real = bool(real)
-        space = np.array(sorted(set(int(d) for d in seed_dets)), dtype=np.uint64)
-        self._cache_reset(); self._cache_add(space)
-        t0 = time.time(); E, cvec = self._cache_solve()
-        if log: log(f"  QSCI* seed |space|={len(space)}  E={E:.6f}  [{time.time()-t0:.0f}s]")
-        if ckpt: ckpt(0, E, len(space), time.time() - t0)
-        for it in range(grow_iters):
+        it0 = 0
+        if state_file and os.path.exists(state_file):
+            z = np.load(state_file)
+            space = z["space"].astype(np.uint64)
+            self._id2det = [int(x) for x in space]                 # state order == insertion order
+            self._det2id = {d: i for i, d in enumerate(self._id2det)}
+            self._Hr = [z["hr"]]; self._Hc = [z["hc"]]; self._Hv = [z["hv"]]
+            E = float(z["E"]); cvec = z["cvec"]; it0 = int(z["it"])
+            t0 = time.time()
+            if log: log(f"  QSCI* RESUMED from {state_file}: it{it0}, |space|={len(space)}, E={E:.6f}")
+        else:
+            space = np.array(sorted(set(int(d) for d in seed_dets)), dtype=np.uint64)
+            self._cache_reset(); self._cache_add(space)
+            t0 = time.time(); E, cvec = self._cache_solve()
+            if log: log(f"  QSCI* seed |space|={len(space)}  E={E:.6f}  [{time.time()-t0:.0f}s]")
+            if ckpt: ckpt(0, E, len(space), time.time() - t0)
+
+        def _save_state(itn):
+            if not state_file:
+                return
+            tmp = state_file + ".tmp.npz"                          # atomic: write tmp, then rename
+            np.savez(tmp[:-4],  # np.savez appends .npz
+                     space=space, hr=np.concatenate(self._Hr), hc=np.concatenate(self._Hc),
+                     hv=np.concatenate(self._Hv), E=E, cvec=cvec, it=itn)
+            os.replace(tmp, state_file)
+        for it in range(it0, grow_iters):
             if len(space) >= kcap or time.time() - t0 > tcap: break
             sc = np.sort(space)
             sig = np.where(np.abs(cvec) > 1e-4)[0]
@@ -317,6 +343,7 @@ class PauliEngine:
             E, cvec = self._cache_solve(warm=cvec)
             if log: log(f"  QSCI* grow it{it+1} |space|={len(space)}  E={E:.6f}  [{time.time()-t0:.0f}s]")
             if ckpt: ckpt(it + 1, E, len(space), time.time() - t0)
+            _save_state(it + 1)
         return E, space
 
 
