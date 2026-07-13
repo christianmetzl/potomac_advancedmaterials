@@ -27,9 +27,12 @@ _RES = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
 CHEM = 1.6
 ATOMS = 20
 TOPM = 256
-GROW_ITERS = 60
-GROW_PER_ITER = 30000
-KCAP = 1_500_000
+# Production knobs, env-overridable (big-batch credit run: GROW_PER_ITER=150000 KCAP=550000).
+# STATE_FILE enables exact resume: a crash/restart continues from the last completed iteration.
+GROW_ITERS = int(os.environ.get("GROW_ITERS", 60))
+GROW_PER_ITER = int(os.environ.get("GROW_PER_ITER", 30000))
+KCAP = int(os.environ.get("KCAP", 1_500_000))
+STATE_FILE = os.environ.get("STATE_FILE", os.path.join(_RES, "gpu_run1_h20_mp2seed_state.npz"))
 
 
 def dmrg_reference(qubits):
@@ -80,7 +83,8 @@ def main():
 
     t2 = time.time()
     E, space = eng.qsci_fast(seed, grow_iters=GROW_ITERS, grow_per_iter=GROW_PER_ITER,
-                             kcap=KCAP, log=lambda m: print(m, flush=True), ckpt=_ckpt)
+                             kcap=KCAP, log=lambda m: print(m, flush=True), ckpt=_ckpt,
+                             state_file=STATE_FILE)
     t_qsci = time.time() - t2
     devmon.stop()
     err = (E - e_ref) * 1000

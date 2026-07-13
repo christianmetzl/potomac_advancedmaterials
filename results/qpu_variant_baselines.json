@@ -1,0 +1,44 @@
+{
+  "run": "qpu_variant_noiseless_baselines",
+  "device": "qbraid:qbraid:sim:qir-sv",
+  "shots": 2000,
+  "results": [
+    {
+      "tag": "shallow_topm8",
+      "topm": 8,
+      "excitations": 8,
+      "two_q_gate_bound": 104,
+      "export_L1": 9.133915412212756e-15,
+      "job_id": "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55447d5e6838c8f545d492",
+      "postselect_keep_frac": 1.0,
+      "dominant_is_hf": true,
+      "pooled_dets": 2,
+      "E_sampled": -3.1227962125738564,
+      "err_sampled_mHa": 47.709,
+      "E_grown": -3.170504797437573,
+      "err_grown_mHa": 0.0,
+      "grown_dets": 512,
+      "e_fci": -3.1705047974375766,
+      "wall_s": 12.1
+    },
+    {
+      "tag": "ladder_topm16",
+      "topm": 16,
+      "excitations": 16,
+      "two_q_gate_bound": 208,
+      "export_L1": 1.82777987081488e-14,
+      "job_id": "qbraid:qbraid:sim:qir-sv-bd52-qjob-6a55448a5e6838c8f545d4ac",
+      "postselect_keep_frac": 1.0,
+      "dominant_is_hf": true,
+      "pooled_dets": 4,
+      "E_sampled": -3.131738327153236,
+      "err_sampled_mHa": 38.766,
+      "E_grown": -3.170504797437573,
+      "err_grown_mHa": 0.0,
+      "grown_dets": 512,
+      "e_fci": -3.1705047974375766,
+      "wall_s": 12.6
+    }
+  ],
+  "note": "Noiseless baselines for the hardware flight, executed through the qBraid hosted runtime (free tier, 0 credits). Hardware results will be compared against these pre-committed values; deviation isolates the device-noise effect from any pipeline effect."
+}
