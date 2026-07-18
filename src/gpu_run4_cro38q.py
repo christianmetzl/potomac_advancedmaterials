@@ -99,9 +99,12 @@ def main():
                        dets=int(nd), E_qsci=Ei, e_ref=e_ref, err_mHa=round(er, 3),
                        P4_at_iter=bool(abs(er) <= CHEM), qsci_wall_s=round(ws, 1)),
                   open(ckpt_fn, "w"), indent=2)
+    state_fn = os.environ.get("STATE_FILE",
+                              os.path.join(_RES, f"gpu_run4_cas{a.ncas}_state.npz"))
     E, space = eng.qsci_fast({L.hf_det(P["na"], P["nb"])}, grow_iters=a.grow_iters,
                              grow_per_iter=a.grow_per_iter, kcap=a.kcap,
-                             log=lambda m: print(m, flush=True), ckpt=_ckpt)
+                             log=lambda m: print(m, flush=True), ckpt=_ckpt,
+                             state_file=state_fn)                     # crash-resume, same as B1
     devmon.stop()
     if os.path.exists(ckpt_fn): os.remove(ckpt_fn)
     err = (E - e_ref) * 1000
