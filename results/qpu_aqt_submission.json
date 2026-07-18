@@ -2,27 +2,27 @@
   "run": "qpu_aqt_submission",
   "device": "openquantum:aqt:qpu:ibex-q1",
   "shots_per_job": 2000,
-  "probe_job": "openquantum:aqt:qpu:ibex-q1-bd52-qjob-6a4a4a6b0d6e5eddfaace552",
-  "submitted_utc": "2026-07-05 13:55:34Z",
+  "relaunch": "2026-07-13 (grant live; flight funded by user's topped-up OpenQuantum pool, ~82 of 162 cr)",
+  "submitted_utc": "2026-07-18 15:49:15Z",
   "jobs": [
     {
       "tag": "shallow_topm8",
       "topm": 8,
       "excitations": 8,
       "two_q_gate_bound": 104,
-      "export_L1": 9.135433295254236e-15,
-      "qasm_sha256_16": "d856b9e587361bb0",
-      "job_id": "openquantum:aqt:qpu:ibex-q1-bd52-qjob-6a4a625b0d6e5eddfaaced2a"
+      "export_L1": 9.135406190199924e-15,
+      "qasm_sha256_16": "d67c6448efcc8f2c",
+      "job_id": "openquantum:aqt:qpu:ibex-q1-bd52-qjob-6a5ba07cd17a5abc1d706faa"
     },
     {
       "tag": "ladder_topm16",
       "topm": 16,
       "excitations": 16,
       "two_q_gate_bound": 208,
-      "export_L1": 1.8276450231696773e-14,
-      "qasm_sha256_16": "0bd4299ef2cae96b",
-      "job_id": "openquantum:aqt:qpu:ibex-q1-bd52-qjob-6a4a62600d6e5eddfaaced2d"
+      "export_L1": 1.8277913904629628e-14,
+      "qasm_sha256_16": "fcce52936fd94813",
+      "job_id": "openquantum:aqt:qpu:ibex-q1-bd52-qjob-6a5ba07dd17a5abc1d706fad"
     }
   ],
-  "status": "CANCELLED 2026-07-06 before execution \u2014 AQT batch window never opened (~21h pending); cancelled to preserve the shared OpenQuantum pool until challenge-organizer credits arrive. No execution, ~nothing billed (billing occurs at execution). Circuits remain committed and SHA-pinned; relaunch is one command (scratchpad-equivalent submit + src/qpu_aqt_decode.py harvest)."
+  "probe_job": "openquantum:aqt:qpu:ibex-q1-bd52-qjob-6a5ba07bd17a5abc1d706fa7"
 }
