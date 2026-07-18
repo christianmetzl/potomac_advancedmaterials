@@ -1,0 +1,4 @@
+RUN1-MP2SEED: H20 (40q) | seed=MP2(top256) | grow 12x150000 kcap 550000
+  MP2 seed |space|=257 (HF + 256 doubles) | build 64.0s
+  reference: block2 DMRG(chi=400) [committed evidence, predates access] E=-10.292194
+  QSCI* RESUMED from /home/jovyan/potomac_advancedmaterials/results/gpu_run1_h20_mp2seed_state.npz: it1, |space|=150257, E=-10.287867
