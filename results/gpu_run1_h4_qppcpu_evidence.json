@@ -3,24 +3,27 @@
   "system": "H4",
   "qubits": 8,
   "target": "qpp-cpu",
-  "shots": 10000,
+  "shots": 5000,
   "top_m_excitations": 10,
-  "sampled_dets": 9,
+  "sampled_dets": 7,
   "final_space": 32,
-  "E_qsci": -2.1568572982997103,
-  "e_ref": -2.1568572982997076,
+  "E_qsci": -2.1568572982997085,
+  "e_ref": -2.1568572982997094,
   "ref_kind": "FCI (exact)",
-  "err_mHa": -0.0,
-  "peak_rss_gb": 0.85,
+  "err_mHa": 0.0,
+  "peak_host_rss_gb": 0.62,
+  "peak_device_mem_gb": null,
+  "p3_metric": "host_rss (no GPU present)",
+  "engine": "qsci_fast (incremental Hamiltonian, Option C)",
   "wall_s": {
-    "build": 1.8,
-    "sample": 21.8,
-    "qsci": 0.0,
-    "total": 23.5
+    "build": 1.9,
+    "sample": 0.3,
+    "qsci": 0.8,
+    "total": 3.0
   },
   "prereg": {
     "P1_chem_acc": true,
     "P2_det_band": null,
-    "P3_mem_lt_8gb": true
+    "P3_mem_lt_8gb": null
   }
 }
