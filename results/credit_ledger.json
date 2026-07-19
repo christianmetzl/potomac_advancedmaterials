@@ -2,8 +2,16 @@
   "title": "Grant-share credit ledger (source of truth for docs/credit_budget.md)",
   "pool": {
     "topups": [
-      { "date": "2026-07", "amount": 60000, "source": "organizers (first top-up)" },
-      { "date": "2026-07-19", "amount": 70000, "source": "organizers (second top-up)" }
+      {
+        "date": "2026-07",
+        "amount": 60000,
+        "source": "organizers (first top-up)"
+      },
+      {
+        "date": "2026-07-19",
+        "amount": 70000,
+        "source": "organizers (second top-up)"
+      }
     ],
     "total": 130000
   },
@@ -21,12 +29,33 @@
     }
   ],
   "instances": [
-    { "name": "gpu-h100-sxm-5eee135b", "rate_cr_per_min": 8.95, "role": "B1 40q flagship; then P3 device-memory test" },
-    { "name": "gpu-a100-sxm-f38c0cd0", "rate_cr_per_min": 4.15, "role": "B2 38q CrO audit" }
+    {
+      "name": "gpu-h100-sxm-5eee135b",
+      "rate_cr_per_min": 8.95,
+      "role": "B1 40q flagship; then P3 device-memory test",
+      "retired": {
+        "utc_approx": "2026-07-19T15:15:00Z",
+        "final_uptime_console": "17h30m",
+        "lifetime_cost_estimate_cr": 9398,
+        "method": "console uptime at shutdown x observed rate; exact figure = wallet delta once B2 takes the next API snapshot",
+        "reason_for_retirement": "work complete (P1/P2 final, P3 attempt blocked by instance GPU failure a24fe53); stopped and terminated"
+      }
+    },
+    {
+      "name": "gpu-a100-sxm-f38c0cd0",
+      "rate_cr_per_min": 4.15,
+      "role": "B2 38q CrO audit"
+    }
   ],
   "projections_cr": {
-    "p3_test": [1600, 2150],
-    "b2_completion": [2000, 2500]
+    "p3_test": [
+      1600,
+      2150
+    ],
+    "b2_completion": [
+      2000,
+      2500
+    ]
   },
   "personally_funded_zero_pool_draw": [
     "all GPU sessions before the first top-up: 20q/28q cuStateVec runs, 38q DMRG reference build, 40q MPS attempt-1",

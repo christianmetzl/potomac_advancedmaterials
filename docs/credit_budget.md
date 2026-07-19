@@ -22,7 +22,7 @@ shared pool. Two projects share it; **our hard ceiling is 65k credits total** ac
 ## Rates (qBraid on-demand, observed)
 | Instance | Rate | Role |
 |---|---|---|
-| gpu-h100-sxm-5eee135b | 8.95 cr/min (537/h) | B1 (40q H₂₀ flagship) + P3 memory test |
+| gpu-h100-sxm-5eee135b | 8.95 cr/min (537/h) | B1 (40q H₂₀ flagship); P3 attempt blocked (GPU failure) — **RETIRED 2026-07-19, ~17.5 h lifetime ≈ 9,400 cr** |
 | gpu-a100-sxm-f38c0cd0 | 4.15 cr/min (249/h) | B2 (38q CrO audit) |
 
 ## Committed / projected spend (this campaign phase)
@@ -30,7 +30,7 @@ shared pool. Two projects share it; **our hard ceiling is 65k credits total** ac
 |---|---|---|
 | H100 uptime through B1 finalize (~16.7 h) | ~8,950 | spent |
 | A100 uptime through 12.6 h | ~3,140 | spent |
-| P3 device-memory test on H100 (~3 h, 4 h cap) | ~1,600–2,150 | authorized |
+| P3 device-memory test — moved to A100 post-B2 (H100 GPU failed, a24fe53) | ~750 | authorized |
 | B2 to session ceiling (~8–10 h remaining) | ~2,000–2,500 | in flight |
 | AQT decode, reproduce.py, paper work (CPU) | ~0 | — |
 | **Subtotal, current instances + plan** | **~16–17k** | |
