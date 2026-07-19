@@ -47,23 +47,28 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 | 10g | **qBraid cloud-runtime chain validation** | P5 protocol executed end-to-end through qBraid's hosted runtime (free qir-sv tier): +2.0 mHa vs FCI, PASS; job IDs recorded | `src/qbraid_submit.py` | `qbraid_P5_qbraid_qbraid_sim_qir-sv_evidence.json` | — (needs qBraid API key) | executed-cloud (qBraid runtime, simulator tier); real QPU silicon still owed |
 | 19a | **20q GPU exact anchor (executed)** | +0.000 mHa vs FCI; cuStateVec, 0.44 GB device memory; P1 PASS, P3 PASS | `src/gpu_run1_h20_mps.py` (qsci_fast) | `gpu_run1_h10_nvidia_evidence.json` | — (GPU) | **executed-GPU** (NVIDIA cuStateVec via qBraid) |
 | 19b | **28q GPU converged QSCI (executed)** | +0.395 mHa vs committed block2 DMRG(χ=400); device-sampled seed (cuStateVec), grown to 64,212 dets; 2.82 GB device memory; P1 PASS, P3 PASS | `src/gpu_run1_h20_mps.py` (qsci_fast) | `gpu_run1_h14_nvidia_evidence.json` | — (GPU) | **executed-GPU** (NVIDIA cuStateVec via qBraid) |
-| 19c | **40q H20 QSCI frontier (fast engine, MP2-seed)** | monotone convergence 8.9→5.8→4.6→3.8→**3.2 mHa** vs committed DMRG(χ=400) as dets grow 30k→150k; ~(dets)^-0.7 → pre-registered P2 (~10⁶ dets). Strict 1.6 mHa pass = determinant-budget limit, not method limit | `src/gpu_run1_h20_mp2seed.py` (qsci_fast) | `gpu_run1_h20_mp2seed_iter5_checkpoint.json` | — | **executed-CPU** (MP2-seeded growth; 40q GPU sampling impractical, documented) |
-| 19d | 40q strict pass / 38q CrO / real-QPU silicon | 40q pass owed (needs ~10⁶ dets — memory/eigensolver-bound, screening engine in progress); 38q + real QPU ready | `src/gpu_run1_h20_mp2seed.py`, `src/gpu_run4_cro38q.py`, `src/qbraid_submit.py` | — | — | **owed / in-progress** `[QBRAID-RUN]` |
+| 19c | **40q flagship — P1 & P2 PASS (final)** | **+1.226 mHa** vs frozen DMRG(χ=400) at **450,257 dets** (P2 band [3e5,4e6] ✓); early stop at iter 3 disclosed in-evidence (disk ceiling; variational ⇒ stop can only worsen, never manufacture a pass). **E1 qualifier, self-found:** +2.19 mHa vs χ=800 ⇒ absolute chem-acc awaits frozen E3 | `src/gpu_run1_h20_mp2seed.py` (qsci_fast) | `gpu_run1_h20_mp2seed_evidence.json` | — | **executed** (MP2-seeded growth on H100 host; sampling pivot documented) |
+| 19d | **38q CrO audit — P4 FAIL-as-measured = the audit-success case (final)** | terminal **−3.784 mHa BELOW** the same-CAS DMRG(χ=400) reference (529,392 dets, 19.1 h, energy-converged: dE ~0.02 mHa/iter); session-ceiling stop disclosed; full 15-point growth_trace in evidence | `src/gpu_run4_cro38q.py` (qsci_fast) | `gpu_run4_cas19_evidence.json` | — | **executed** (A100 host) |
+| 19e | **P3 device memory — FAIL as-measured, decomposed by measurement** | verdict 40.32 GB > 8 GB (frozen config, untuned); mechanism vendor-documented (cuTensorNet: 50% of free card ≈ measured); capped diagnostic: identical workload **4.88 GB < 8 GB** — physics estimate holds, FAIL is an 80 GB-card artifact; H100 attempt blocked (a24fe53), A100 swap disclosed | `src/gpu_run1_h20_P3_A100.py` | `gpu_run1_h20_P3_device_memory_A100_evidence.json` | — | **executed** (A100; hardware swap disclosed) |
+| 24 | **E1 χ-escalation counter-audit — case A confirmed** | CrO 38q: χ-ladder −1118.045626 (400) → −1118.048347 (800) → −1118.049054 (1200), all ABOVE the QSCI terminal (gaps +3.78/+1.06/+0.36 mHa) — truncation-error mechanism confirmed at 3 bond dims; H20 40q: χ=800 −0.97 mHa below χ=400 → case B vacuous (no below-reference claim existed there); interpretation rules incl. the claim-withdrawal case frozen pre-run | `src/e1_chi800_counteraudit.py`, `src/e1_evaluate.py` | `cro_cas19_dmrg_chi800/chi1200.json`, `h20_40q_dmrg_chi800.json` | — | **executed-CPU** (personally funded, zero grant draw) |
+| 25 | **E4 STEP 1 — Sn₂O₂ 38q reference pre-committed** | same-CAS DMRG(χ=400) E = −576.4232577 Ha (CAS(18,19), def2-SVP + Sn ECP, committed rhombus geometry) — committed BEFORE any QSCI run it will judge, mirroring the CrO/P4 provenance pattern; E4 STEP 2 frozen, unexecuted | `src/e1_chi800_counteraudit.py` path | `sn2o2_cas19_dmrg_reference.json` | — | **executed-CPU** (personally funded) |
+| 26 | Upstream assumptions → measured (exploratory, not pre-registered) | x2c scalar-relativistic shifts: CrO −57.7 meV (1.890→1.832 eV), VO +18.4 meV — orderings robust; AVAS supports the CrO CAS(10,10) window (ncas 9–10 at thr 0.1–0.5) | `src/exploratory_probes.py` | `x2c_exploratory.json`, `avas_check_exploratory.json` | — | **executed-CPU**, labeled exploratory |
 
 ## Honest status summary
 - **Executed (CPU or circuit-sampled):** rows 1–12 (incl. 5b, 10b–10f), 16–18, and 20–23 — the bulk of the submission is run and recorded.
 - **Proxy (validated against real measurement at 16q & 20q, row 3b):** rows 6, 13–15 — the large-scale
   scaling/transfer numbers use the determinant-space selected-CI proxy, which row 3b shows tracks the
   circuit-sampled pipeline.
-- **Executed on GPU (rows 19a–19b):** 20q exact (+0.000 mHa) and 28q converged (+0.395 mHa vs committed
-  DMRG) both run end-to-end on NVIDIA GPU via qBraid, meeting their pre-registered P1/P3 criteria.
-- **Owed / in-progress (row 19c):** the 40q converged pass, the 38q CrO oxide, and real-QPU silicon —
-  clearly marked as targets/frontier in the paper, never as achieved results (40q attempt-1 is reported
-  honestly as compute-limited, +14.8 mHa non-converged).
-- **Judges' re-run:** `python src/reproduce.py` → **24/24 PASS** (16 re-execution — incl. the frozen blind-holdout
-  script and both engine-equivalence gates — + 8 evidence audits that verify the committed GPU/cloud/one-shot
-  artifacts' internal arithmetic, stated pass criteria, and the pre-registration SHA-256; audits are labeled
-  distinctly and never counted as re-runs. Transcript: `docs/reproduce_transcript.txt`).
+- **Executed at scale (rows 19a–19e, 24):** 20q exact, 28q device-sampled chem-acc, 40q P1/P2 PASS,
+  38q reference-corrected (P4 disclosed FAIL), P3 measured + decomposed, and the χ-escalation
+  counter-audit — the full pre-registered campaign is executed and committed; **the only remaining
+  external item is the AQT trapped-ion decode (P5 silicon), which gates nothing else.**
+- **Judges' re-run:** `python src/reproduce.py` — the 24-check suite (re-executions incl. the frozen
+  blind-holdout script and both engine-equivalence gates, plus labeled evidence audits). Latest
+  committed transcript: **18 executed PASS + 6 optional auto-skipped** (CPU-only box without
+  cudaq/torch; skips are the script's documented optional-dependency path, not failures). A
+  full-dependency rerun on the grant org's free CPU tier is queued to make the canonical transcript
+  skip-minimal. Transcript: `docs/reproduce_transcript.txt`.
 
 ## Known honesty caveats (also stated in the paper)
 - Transfer ladder advantage is a **3-seed mean** that narrows into run-to-run noise beyond ~28q — not an
@@ -74,3 +79,9 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 - Scaling is **exponential with a smaller base** (vanishing FCI fraction), **not polynomial**.
 - SnO's precise QSCI value is **PySCF-version sensitive** (0.11–0.45 mHa across runs); the claim is
   chemical accuracy, which `reproduce.py` asserts robustly (≤0.6 mHa).
+- **40q absolute accuracy:** P1's PASS is against its frozen χ=400 reference; our own χ=800
+  counter-audit puts the absolute gap at +2.19 mHa (> 1.6). Stated wherever the flagship is claimed;
+  frozen E3 is the pre-registered path to absolute certification. We found this ourselves — no
+  reviewer did.
+- **P4 FAIL is an audit success** and is always reported with both halves: metric FAIL as frozen +
+  variational ordering (QSCI below the reference at χ=400/800/1200).
