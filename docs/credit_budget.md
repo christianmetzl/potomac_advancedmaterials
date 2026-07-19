@@ -1,5 +1,16 @@
 # GPU/QPU credit budget — grant-share accounting
 
+> **Self-verifying, not self-reported:** every derived number below is recomputed from the
+> machine-readable ledger `results/credit_ledger.json` by `python src/verify_credits.py`, which also
+> enforces the 65k cap (exit 2 on breach) and checks that worst-case projections still fit. On any
+> machine with qBraid credentials, `--live` pulls the wallet balance from the API and reports drift;
+> `--live --append` records a fresh timestamped snapshot into the ledger. This document is prose over
+> that ledger — if they disagree, the ledger and verifier win.
+>
+> **Honest limit (stated in the ledger too):** the wallet is pool-level. Attribution to this project
+> is exact only while the second project's spend is zero (true at the recorded snapshot); once both
+> projects draw, the qBraid per-instance billing history is the arbiter, not the balance.
+
 **Constraint (2026-07-19):** organizers topped up 70k credits on top of the earlier 60k → 130k in the
 shared pool. Two projects share it; **our hard ceiling is 65k credits total** across all computations.
 

@@ -1,0 +1,36 @@
+{
+  "title": "Grant-share credit ledger (source of truth for docs/credit_budget.md)",
+  "pool": {
+    "topups": [
+      { "date": "2026-07", "amount": 60000, "source": "organizers (first top-up)" },
+      { "date": "2026-07-19", "amount": 70000, "source": "organizers (second top-up)" }
+    ],
+    "total": 130000
+  },
+  "share": {
+    "fraction": 0.5,
+    "cap": 65000,
+    "reason": "pool is shared with a second parallel project; our hard ceiling is half"
+  },
+  "wallet_snapshots": [
+    {
+      "utc": "2026-07-19T13:30:00Z",
+      "balance": 116578,
+      "method": "wallet UI (qBraid Credits Overview)",
+      "note": "13,422 used per wallet; at snapshot time ONLY this project had drawn from the pool, so pool consumption == our consumption"
+    }
+  ],
+  "instances": [
+    { "name": "gpu-h100-sxm-5eee135b", "rate_cr_per_min": 8.95, "role": "B1 40q flagship; then P3 device-memory test" },
+    { "name": "gpu-a100-sxm-f38c0cd0", "rate_cr_per_min": 4.15, "role": "B2 38q CrO audit" }
+  ],
+  "projections_cr": {
+    "p3_test": [1600, 2150],
+    "b2_completion": [2000, 2500]
+  },
+  "personally_funded_zero_pool_draw": [
+    "all GPU sessions before the first top-up: 20q/28q cuStateVec runs, 38q DMRG reference build, 40q MPS attempt-1",
+    "AQT ibex-q1 QPU flight (personal OpenQuantum pool, ~82 of 162 personal credits)"
+  ],
+  "attribution_caveat": "Wallet balance is pool-level. Attribution of pool spend to THIS project is exact only while the second project has spent nothing (true at the snapshot above). Once both projects draw, per-instance billing history from the qBraid console is the arbiter, not the balance."
+}
