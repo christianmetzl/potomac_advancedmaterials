@@ -1,0 +1,34 @@
+{
+  "label": "P3 device-memory measurement, sampling phase only",
+  "status": "ATTEMPTED — BLOCKED; NOT MEASURED on this instance",
+  "p3_verdict": "UNRESOLVED (neither PASS nor FAIL — no device-memory reading obtained)",
+  "intended_config": {
+    "target": "tensornet-mps",
+    "system": "H20",
+    "qubits": 40,
+    "chi_reference": 400,
+    "shots": 200000,
+    "topm": 256,
+    "growth": "disabled (grow-iters 0)",
+    "driver": "src/gpu_run1_h20_mps.py",
+    "metric": "peak DEVICE memory via DeviceMemMonitor (nvidia-smi memory.used)",
+    "frozen_threshold_gb": 8.0
+  },
+  "blocker": {
+    "summary": "GPU/NVML unavailable on this instance",
+    "nvidia_smi": "Failed to initialize NVML: Unknown Error (3/3 retries)",
+    "cudaq_tensornet_mps": "CUDA error: CUDA driver version is insufficient for CUDA runtime version; process core-dumped",
+    "device_nodes": "/dev/nvidia0, /dev/nvidiactl, /dev/nvidia-uvm present, but NVML init fails",
+    "note": "GPU was healthy at session start (H100 80GB, idle); degraded mid-session. Not recoverable from userspace; needs a fresh GPU instance / pod restart."
+  },
+  "attempt1_precedent_context_only": {
+    "peak_device_mem_gb": 12.06,
+    "threshold_gb": 8.0,
+    "would_be": "FAIL (>8 GB)",
+    "config": "tensornet-mps, shots=200000, topm=256, non-converged iter-6 checkpoint",
+    "caveat": "This is the prior attempt-1 precedent for CONTEXT only. It is NOT the current measurement; no verdict is derived from it here."
+  },
+  "p1_p2_status": "SETTLED by the MP2-seed run (evidence commit 7fec4cf; iter-3 state 2f8523b): P1 PASS (+1.226 mHa), P2 PASS (450257 dets). NOT re-opened or re-evaluated by this P3 attempt.",
+  "recovery_path": "Re-run the sampling phase (tensornet-mps, chi=400, shots 200000, topm 256, grow-iters 0) on a fresh GPU instance with DeviceMemMonitor; a device reading >8 GB is a conclusive FAIL, an under-8 GB completed reading is a PASS.",
+  "guardrails_honored": "No tuning of chi/shots/config. No host-RSS substituted for device memory. No verdict fabricated. Reported exactly as measured — which is: not measurable on this instance."
+}

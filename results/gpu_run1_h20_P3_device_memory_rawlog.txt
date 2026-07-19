@@ -1,0 +1,23 @@
+P3 DEVICE-MEMORY MEASUREMENT — sampling phase only — ATTEMPT LOG
+date: 2026-07-19 (pre-shutdown)
+intended config: CUDAQ_TARGET=tensornet-mps gpu_run1_h20_mps.py --atoms 20 --shots 200000 --topm 256 --grow-iters 0 (growth disabled)
+goal: peak DEVICE memory via DeviceMemMonitor vs frozen P3 threshold < 8 GB
+
+== BLOCKER: GPU/NVML unavailable on this instance ==
+-- nvidia-smi (x1) --
+Failed to initialize NVML: Unknown Error
+-- /dev/nvidia* nodes --
+crw-rw-rw- 1 root root 511,   0 Jul 18 19:42 /dev/nvidia-uvm
+crw-rw-rw- 1 root root 511,   1 Jul 18 19:42 /dev/nvidia-uvm-tools
+crw-rw-rw- 1 root root 195,   0 Jul 18 19:42 /dev/nvidia0
+crw-rw-rw- 1 root root 195, 255 Jul 18 19:42 /dev/nvidiactl
+-- driver/NVML lib --
+-rw-r--r-- 1 root root 2082360 Apr  8  2025 /usr/lib/x86_64-linux-gnu/libnvidia-ml.so.550.163.01
+-- cudaq tensornet-mps init attempt --
+CUDA error CUDA driver version is insufficient for CUDA runtime version in line 20
+timeout: the monitored command dumped core
+
+diagnosis: NVML init failure + 'CUDA driver version is insufficient for CUDA runtime version' (cudaq core-dumped).
+GPU was healthy at session start (H100 80GB idle); degraded mid-session. Fix requires a fresh GPU instance/pod restart.
+P3 therefore NOT MEASURED on this instance. No device reading obtained -> verdict UNRESOLVED (neither PASS nor FAIL).
+attempt-1 precedent (context only, NOT this measurement): peak_device_mem_gb=12.06 (>8 GB) at shots=200000, topm=256, non-converged iter6 checkpoint.
