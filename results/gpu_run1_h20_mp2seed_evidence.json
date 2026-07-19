@@ -1,0 +1,28 @@
+{
+  "run": "gpu_run1_mp2seed",
+  "system": "H20",
+  "qubits": 40,
+  "seed": "MP2 (top-M doubles + HF)",
+  "top_m_excitations": 256,
+  "seed_dets": 257,
+  "final_space": 450257,
+  "E_qsci": -10.290968522589724,
+  "e_ref": -10.29219417780498,
+  "ref_kind": "block2 DMRG(chi=400) [committed evidence, predates access]",
+  "err_mHa": 1.226,
+  "peak_host_rss_gb": 26.23,
+  "peak_device_mem_gb": null,
+  "p3_note": "P3 (MPS device memory) NOT tested by the MP2-seed path; no MPS sampling here",
+  "engine": "qsci_fast (incremental Hamiltonian, Option C)",
+  "wall_s": {
+    "build": 65.9,
+    "qsci": 20.6,
+    "total": 86.8
+  },
+  "prereg": {
+    "P1_chem_acc": true,
+    "P2_det_band": true,
+    "P3_mem_lt_8gb": null
+  },
+  "note": "stopped after iteration 3 of nominal schedule; kcap operationally reduced 550k→450k because the instance disk (33.8 GB free) cannot hold the iter-4 state checkpoint (~35 GB tmp write); thresholds untouched; P1/P2 evaluated on the pre-existing committed iter-3 state (commit 2f8523b)."
+}

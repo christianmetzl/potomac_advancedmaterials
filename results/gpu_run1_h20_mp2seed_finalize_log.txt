@@ -1,0 +1,8 @@
+RUN1-MP2SEED: H20 (40q) | seed=MP2(top256) | grow 12x150000 kcap 450000
+  MP2 seed |space|=257 (HF + 256 doubles) | build 65.9s
+  reference: block2 DMRG(chi=400) [committed evidence, predates access] E=-10.292194
+  QSCI* RESUMED from /home/jovyan/potomac_advancedmaterials/results/gpu_run1_h20_mp2seed_state.npz: it3, |space|=450257, E=-10.290969
+
+RUN1-MP2SEED H20: E=-10.290969 vs block2 DMRG(chi=400) [committed evidence, predates access] -> +1.226 mHa | dets=450257 | device n/a | total 86.8s
+prereg: P1(<=1.6 mHa)=PASS P2(dets in [3e5,4e6])=PASS P3(device<8GB)=N/A (MP2-seed path, no MPS)
+saved results/gpu_run1_h20_mp2seed_evidence.json
