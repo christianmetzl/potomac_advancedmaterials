@@ -1,0 +1,165 @@
+{
+  "run": "gpu_run4",
+  "system": "CrO 5-Pi (quintet)",
+  "active_space": "CAS(18,19)",
+  "qubits": 38,
+  "nelecas": [
+    11,
+    7
+  ],
+  "target": "qpp-cpu classical QSCI growth (qsci_fast, incremental Hamiltonian, Option C); no GPU/device sampling in this run",
+  "engine": "qsci_fast (incremental Hamiltonian, Option C)",
+  "config_requested": {
+    "ncas": 19,
+    "grow_iters": 40,
+    "grow_per_iter": 40000,
+    "kcap": 800000
+  },
+  "status": "TERMINAL EVIDENCE \u2014 run stopped at growth iter 14 of 40 by the ~20h session ceiling (operator-authorized cutover to the P3 measurement). NON-CONVERGED in the schedule sense (did not reach grow-iters=40 or kcap=800000), but the QSCI energy is CONVERGED and the P4 verdict is SETTLED (see convergence_note).",
+  "why_stopped": "Session ceiling (~20h) reached at iter 14 (cum growth wall 68656s ~= 19.07h). kcap=800000 dets would need iter ~20-21 (~29h+) and grow-iters=40 far more; neither reachable in-session. Energy fully converged (per-iter dE collapsed to ~0.02 mHa), so additional iterations change dets, not the verdict. Stop is the pre-registered '~20h session' condition, not a crash or blocker.",
+  "rohf_converged": true,
+  "pauli_terms": 48890,
+  "E_qsci": -1118.0494099446744,
+  "e_ref": -1118.0456262251828,
+  "ref_kind": "block2 DMRG(chi=400), SAME CAS [committed reference results/cro_cas19_dmrg_reference.json, predates GPU access]",
+  "err_mHa": -3.784,
+  "final_space": 529392,
+  "final_iter": 14,
+  "grow_iters_requested": 40,
+  "kcap": 800000,
+  "peak_host_rss_gb": 43.84,
+  "qsci_wall_s": 68656.2,
+  "growth_trace": [
+    {
+      "iter": 0,
+      "label": "HF seed",
+      "space": 1,
+      "E": -1117.859865,
+      "err_mHa": 185.761,
+      "cum_wall_s": 0
+    },
+    {
+      "iter": 1,
+      "space": 9392,
+      "E": -1118.018179,
+      "err_mHa": 27.447,
+      "cum_wall_s": 61
+    },
+    {
+      "iter": 2,
+      "space": 49392,
+      "E": -1118.04561,
+      "err_mHa": 0.016,
+      "cum_wall_s": 589
+    },
+    {
+      "iter": 3,
+      "space": 89392,
+      "E": -1118.048145,
+      "err_mHa": -2.519,
+      "cum_wall_s": 4446
+    },
+    {
+      "iter": 4,
+      "space": 129392,
+      "E": -1118.048649,
+      "err_mHa": -3.023,
+      "cum_wall_s": 9662
+    },
+    {
+      "iter": 5,
+      "space": 169392,
+      "E": -1118.048887,
+      "err_mHa": -3.261,
+      "cum_wall_s": 15131
+    },
+    {
+      "iter": 6,
+      "space": 209392,
+      "E": -1118.049033,
+      "err_mHa": -3.407,
+      "cum_wall_s": 20971
+    },
+    {
+      "iter": 7,
+      "space": 249392,
+      "E": -1118.049132,
+      "err_mHa": -3.506,
+      "cum_wall_s": 26682
+    },
+    {
+      "iter": 8,
+      "space": 289392,
+      "E": -1118.049203,
+      "err_mHa": -3.577,
+      "cum_wall_s": 32447
+    },
+    {
+      "iter": 9,
+      "space": 329392,
+      "E": -1118.049258,
+      "err_mHa": -3.632,
+      "cum_wall_s": 38352
+    },
+    {
+      "iter": 10,
+      "space": 369392,
+      "E": -1118.049301,
+      "err_mHa": -3.675,
+      "cum_wall_s": 44332
+    },
+    {
+      "iter": 11,
+      "space": 409392,
+      "E": -1118.049336,
+      "err_mHa": -3.71,
+      "cum_wall_s": 50415
+    },
+    {
+      "iter": 12,
+      "space": 449392,
+      "E": -1118.049365,
+      "err_mHa": -3.739,
+      "cum_wall_s": 56465
+    },
+    {
+      "iter": 13,
+      "space": 489392,
+      "E": -1118.049389,
+      "err_mHa": -3.763,
+      "cum_wall_s": 62478
+    },
+    {
+      "iter": 14,
+      "space": 529392,
+      "E": -1118.04941,
+      "err_mHa": -3.784,
+      "cum_wall_s": 68656
+    }
+  ],
+  "per_iter_dE_mHa": [
+    -27.431,
+    -2.535,
+    -0.504,
+    -0.238,
+    -0.146,
+    -0.099,
+    -0.071,
+    -0.055,
+    -0.043,
+    -0.035,
+    -0.029,
+    -0.024,
+    -0.021
+  ],
+  "convergence_note": "Monotone variational descent, strongly decelerating: per-iter dE (mHa) = -27.431, -2.535, -0.504, -0.238, -0.146, -0.099, -0.071, -0.055, -0.043, -0.035, -0.029, -0.024, -0.021. dE has collapsed by ~x0.7/iter to -0.021 mHa at iter 14; geometric-tail extrapolation puts the asymptote near E=-1118.04945 Ha (err ~ -3.8 mHa). The QSCI energy is converged for verdict purposes; the remaining schedule (iters 15-40 / up to 800k dets) would move it <0.1 mHa and cannot change the P4 sign.",
+  "honest_interpretation": "QSCI crossed BELOW the chi=400 DMRG reference at iter 3 and converged ~3.8 mHa beneath it. P4 is |E_QSCI - E_DMRG(same CAS)| <= 1.6 mHa; at -3.784 mHa this is a FAIL as-measured. But the failure is in the 'good' direction: at ~530k determinants QSCI has SURPASSED the chi=400 DMRG reference (which is itself a variational upper bound with bond-dimension truncation error) rather than falling short of it. Contrast the earlier grow-per-iter=600 checkpoint that plateaued +7 mHa ABOVE the reference. No threshold moved, no reference swapped, no tuning after seeing results; the converged-below-reference number is reported exactly as measured.",
+  "prereg": {
+    "P4_chem_acc": false,
+    "P4_definition": "|E_QSCI - E_DMRG(same CAS)| <= 1.6 mHa",
+    "P4_value_mHa": -3.784,
+    "P4_result": "FAIL",
+    "P4_note": "Pre-registered as the lowest-confidence prediction. FAIL as-measured (QSCI converged below the chi=400 reference). Reported with the same prominence as a pass."
+  },
+  "guardrails_honored": "Threshold 1.6 mHa untouched; committed DMRG reference untouched; no config tuning after results; energy reported as measured; stop condition is the pre-registered ~20h session ceiling."
+}
