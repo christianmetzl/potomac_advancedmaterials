@@ -1,0 +1,45 @@
+{
+  "record": "session finalize \u2014 A100 campaign box (B2 + P3)",
+  "instance": {
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "gpu_uuid": "GPU-fc8a7a2c-bfe8-bb8e-926f-9b3d58744e4d",
+    "device_string": "gpu-a100-sxm-f38c0cd0",
+    "rate_cr_per_min": 4.15
+  },
+  "work_completed": [
+    {
+      "job": "B2 \u2014 38q CrO oxide QSCI (gpu_run4, CAS(18,19))",
+      "outcome": "TERMINAL at iter 14/40 (session ceiling ~19.1h); QSCI converged",
+      "verdict": "P4 (|E_QSCI - E_DMRG(same CAS)| <= 1.6 mHa) = FAIL as-measured: err -3.784 mHa (QSCI converged ~3.8 mHa BELOW the chi=400 reference \u2014 surpassed it; failure in the 'good' direction)",
+      "evidence": "results/gpu_run4_cas19_evidence.json",
+      "commit": "943a985"
+    },
+    {
+      "job": "P3 \u2014 device-memory measurement, sampling phase of run-1 (H20/40q tensornet-mps)",
+      "outcome": "MEASURED on A100 (planned H100, blocked a24fe53)",
+      "verdict": "P3 (peak DEVICE memory < 8 GB) = FAIL as-measured: 40.32 GB > 8 GB",
+      "mechanism": "cuTensorNet reserves 50% of free memory for scratch (documented; knob CUDAQ_TENSORNET_SCRATCH_SIZE_PERCENTAGE); 50% x 79.25 GB ~= 39.6 GB ~= measured 40.32 GB",
+      "diagnostic_NOT_verdict": "5% scratch cap -> identical run peaks 4.88 GB < 8 GB; allocator appetite ~35.44 GB, true workload footprint ~4.88 GB (consistent with prereg ~0.2 GB tensor estimate). Physics holds; the FAIL is an 80 GB-card allocator artifact, measured not inferred.",
+      "evidence": "results/gpu_run1_h20_P3_device_memory_A100_evidence.json",
+      "commit": "4ebbaa2",
+      "e2_sample": "results/p3_sample_dets.json (102 number-conserving dets w/ counts; consumed verbatim by frozen extension E2, preregistration_v2.json c8591b5 -> zero future sampling cost)"
+    }
+  ],
+  "guardrails": "No threshold moved (P4 1.6 mHa, P3 8.0 GB); committed DMRG reference untouched; no config tuning after results; verdicts reported exactly as measured; existing H100 P3 evidence (a24fe53) untouched.",
+  "credit_ledger": {
+    "state_on_this_box": "platform-verified fetch UNAVAILABLE (qbraidrc has only [lab-settings]; no API auth; CLI has no 'credits' subcommand) \u2014 documented SKIP path, no hand-typed numbers substituted",
+    "offline_verify": "verify_credits.py PASS (pool 130000; share cap 65000; consumed 13422 at 13:30Z UI snapshot; remaining allowance 51578 cr) \u2014 from existing ledger, not a fresh fetch",
+    "live_append_at_shutdown": "SKIPPED per operator (documented SKIP; no API creds on any campaign box; not rerun)",
+    "wallet_snapshot_note": "end-of-campaign wallet snapshot is UI-method, captured by the operator from the grant org's console immediately after instance termination and appended to the ledger by the main session \u2014 no API credentials exist on any campaign box, stated rather than worked around.",
+    "p3_cost_note": "P3 added ~1.5h A100 (verdict ~36min + diagnostic ~25min + overhead) ~= 375 cr, within the authorized ~750 cr projection in docs/credit_budget.md."
+  },
+  "pre_shutdown_checklist": {
+    "1_branch_synced_with_origin": "YES (0/0)",
+    "2_working_tree_clean": "YES",
+    "3_no_running_compute": "YES (B2 stopped, P3 done, GPU 0 MiB / 0%)",
+    "4_all_evidence_pushed": "YES (B2 terminal, P3 A100 verdict+diagnostic, p3_sample_dets)",
+    "5_reference_and_thresholds_intact": "YES (DMRG ref + H100 P3 file untouched; P4/P3 thresholds unmoved)",
+    "credential_state_flag": "gh CLI NOT logged in \u2014 GitHub pushes use the PAT embedded in the remote URL, not gh auth; qbraidrc has only [lab-settings], no API creds. Both are why credit --live/fetch are UNAVAILABLE here. state.npz (B2 resume, ~29 GB) and one git stash (stray B1 gpu_run1_h4 file) are LOCAL-ONLY and die with the box."
+  },
+  "action_required": "OPERATOR: stop this A100 instance from the console now (billing continues until stopped)."
+}
