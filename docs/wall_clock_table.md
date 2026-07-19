@@ -14,9 +14,11 @@ evidence JSON in the last column; '—' = not recorded (never invented).
 | 24 | H12 | CCSD(T) (CPU, single-thread) | 0.2 s | exact/deterministic | `classical_baselines_evidence.json` |
 | 24 | H12 | FCI (CPU, single-thread) | 5.0 s | exact/deterministic | `classical_baselines_evidence.json` |
 | 28 | H14 | QSCI pipeline (cuStateVec sample 31.5 s + growth) | 39.8 min | err +0.395 mHa vs block2 DMRG(chi=400) | `gpu_run1_h14_nvidia_evidence.json` |
-| 38 | CrO CAS(18,19) | QSCI growth, HF seed (A100 host) (IN-PROGRESS) | 12.3 h | err -3.675 mHa vs same-CAS DMRG — partial | `gpu_run4_cas19_*.json` |
+| 38 | CrO CAS(18,19) | QSCI growth, HF seed (A100 host) | 19.1 h | err -3.784 mHa vs same-CAS DMRG | `gpu_run4_cas19_*.json` |
 | 38 | CrO CAS(18,19) | block2 DMRG chi=400 (CPU, reference) | 7.2 min | E = -1118.045626 Ha | `cro_cas19_dmrg_reference.json` |
+| 38 | CrO CAS(18,19) | block2 DMRG chi=800 (CPU, E1 counter-audit) | 5.8 min | chi-escalation check | `cro_cas19_dmrg_chi800.json` |
 | 40 | H20 | QSCI growth, MP2 seed (CPU-bound eigensolves on H100 host) | ≈16 h* | err +1.226 mHa vs DMRG chi=400 — P1/P2 PASS | `gpu_run1_h20_mp2seed_evidence.json` |
+| 40 | H20 | block2 DMRG chi=800 (CPU, E1 counter-audit) | 6.3 min | chi-escalation check | `h20_40q_dmrg_chi800.json` |
 
 \* 40q growth wall reconstructed from the committed per-iteration checkpoint commits
 (d834183, 2f8523b: three 150k-determinant growth iterations at ~2.5–5.7 h each on the

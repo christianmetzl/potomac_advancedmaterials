@@ -45,8 +45,13 @@ accrued between the console snapshot and the wallet check.
 funds, as is the AQT QPU flight (personal OpenQuantum pool). Only the two current instances count
 against the 65k.
 
-**Our remaining allowance: 65,000 − 13,422 = 51,578 credits.** Projected end-of-campaign total after
-P3 + B2: ~18k (≈28% of share), leaving a ~47k contingency reserve.
+**CAMPAIGN CLOSED (2026-07-19 ~22:40 UTC).** Final wallet snapshot: **116,342** → pool consumed
+**13,658 cr** (21% of the 65k share; remaining allowance **51,342**). Both GPU instances retired
+(H100 ~15:15Z, A100 ~22:35Z); all evidence pushed pre-shutdown. **Stated tension:** the observed-rate
+model projected ~17k — the wallet delta since 13:30Z (~236 cr) lags ~3.4k of metered uptime,
+consistent with deferred billing posting. Re-check the wallet in 12–24 h and append a settlement
+snapshot to the ledger; per-instance billing history is the arbiter. Even at the rate-model's ~17k,
+the campaign used ≈26% of the share.
 
 ## Rules of the road
 1. **Hard stop at 65k cumulative** attributed to this project; check billing before any new instance.

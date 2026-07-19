@@ -26,6 +26,12 @@
       "balance": 116578,
       "method": "wallet UI (qBraid Credits Overview)",
       "note": "13,422 used per wallet; at snapshot time ONLY this project had drawn from the pool, so pool consumption == our consumption"
+    },
+    {
+      "utc": "2026-07-19T22:40:00Z",
+      "balance": 116342,
+      "method": "wallet UI (grant org console), operator-captured immediately after A100 termination; appended by main session per the finalize record in results/session_finalize_A100_B2_P3.json",
+      "note": "END-OF-CAMPAIGN snapshot. Implies pool consumed = 13,658 cr. TENSION, stated not hidden: the observed-rate model (8.95/4.15 cr/min x console uptimes) projects ~17k by campaign end \u2014 delta since the 13:30Z snapshot reads only ~236 cr against ~3.4k of metered uptime. Likely deferred/periodic billing posting. ACTION: re-check the grant wallet in 12-24h and append a settlement snapshot; the qBraid per-instance billing history remains the arbiter (attribution_caveat)."
     }
   ],
   "instances": [
@@ -44,22 +50,25 @@
     {
       "name": "gpu-a100-sxm-f38c0cd0",
       "rate_cr_per_min": 4.15,
-      "role": "B2 38q CrO audit"
+      "role": "B2 38q CrO audit",
+      "retired": {
+        "utc_approx": "2026-07-19T22:35:00Z",
+        "reason_for_retirement": "campaign complete: B2 terminal (943a985), P3 verdict + diagnostic (4ebbaa2), finalize (31f2edc); stopped by operator",
+        "p3_cost_estimate_cr": 375,
+        "note": "session total ~23-24h; all evidence pushed before stop; state.npz (29 GB) and one git stash died with the box by design"
+      }
     }
   ],
   "projections_cr": {
-    "p3_test": [
-      1600,
-      2150
-    ],
-    "b2_completion": [
-      2000,
-      2500
+    "campaign_closed_no_committed_future_spend": [
+      0,
+      0
     ]
   },
   "personally_funded_zero_pool_draw": [
     "all GPU sessions before the first top-up: 20q/28q cuStateVec runs, 38q DMRG reference build, 40q MPS attempt-1",
-    "AQT ibex-q1 QPU flight (personal OpenQuantum pool, ~82 of 162 personal credits)"
+    "AQT ibex-q1 QPU flight (personal OpenQuantum pool, ~82 of 162 personal credits)",
+    "E1 chi-ladder + E4 STEP 1 reference + x2c/AVAS probes + reproduce rerun: personal org balance IDENTICAL before/after (5,008.44 -> 5,008.44, screenshots 2026-07-19); ~68.5 of 100 subscription compute-hrs, zero credits"
   ],
   "attribution_caveat": "Wallet balance is pool-level. Attribution of pool spend to THIS project is exact only while the second project has spent nothing (true at the snapshot above). Once both projects draw, per-instance billing history from the qBraid console is the arbiter, not the balance."
 }
