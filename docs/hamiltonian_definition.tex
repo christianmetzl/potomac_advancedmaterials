@@ -1,0 +1,82 @@
+% MATGEN-Q Hamiltonian definitions — exactly as constructed in src/qsci_lib.py
+% (PySCF integrals -> CASCI embedding -> OpenFermion InteractionOperator -> Jordan-Wigner)
+% Compile: pdflatex hamiltonian_definition.tex
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,bm}
+\usepackage[margin=1in]{geometry}
+\begin{document}
+
+\section*{MATGEN-Q Hamiltonian definitions (EIGENNEXUS, GIC 2026)}
+
+\subsection*{1.\ Ab initio electronic Hamiltonian (second quantization, spin-orbitals)}
+Non-relativistic Born--Oppenheimer Hamiltonian over orthonormal molecular
+spin-orbitals $\{\varphi_p\}$ (physicist two-electron ordering, as consumed by
+\texttt{openfermion.InteractionOperator}):
+\begin{equation}
+\hat H \;=\; E_{\mathrm{nuc}}
+\;+\; \sum_{pq} h_{pq}\, \hat a_p^{\dagger} \hat a_q
+\;+\; \tfrac12 \sum_{pqrs} \langle pq|rs\rangle\,
+      \hat a_p^{\dagger} \hat a_q^{\dagger} \hat a_s \hat a_r ,
+\end{equation}
+\begin{align}
+h_{pq} &= \int \! d\bm{x}\;
+  \varphi_p^{*}(\bm{x}) \Big( -\tfrac12 \nabla^2
+  - \sum_{A} \frac{Z_A}{|\bm{r}-\bm{R}_A|} \Big) \varphi_q(\bm{x}), \\[2pt]
+\langle pq|rs\rangle &= \iint \! d\bm{x}_1 d\bm{x}_2\;
+  \frac{\varphi_p^{*}(\bm{x}_1)\,\varphi_q^{*}(\bm{x}_2)\,
+        \varphi_r(\bm{x}_1)\,\varphi_s(\bm{x}_2)}{r_{12}} .
+\end{align}
+Orbitals from RHF (closed shell) / ROHF (open shell); basis STO-6G (H chains)
+or def2-SVP (oxides; def2-ECP on Sn).
+
+\subsection*{2.\ Active-space (CASCI) embedding}
+Doubly occupied core orbitals $i,j$ are frozen at mean field and folded into an
+effective one-body operator over active orbitals $t,u,v,w$ (chemist integrals
+$(pq|rs)$; PySCF \texttt{mc.get\_h1eff()} / \texttt{mc.get\_h2eff()}):
+\begin{equation}
+\hat H_{\mathrm{CAS}} \;=\; E_{\mathrm{core}}
+\;+\; \sum_{tu} \tilde h_{tu}\, \hat a_t^{\dagger} \hat a_u
+\;+\; \tfrac12 \sum_{tuvw} \langle tu|vw\rangle\,
+      \hat a_t^{\dagger} \hat a_u^{\dagger} \hat a_w \hat a_v ,
+\end{equation}
+\begin{align}
+\tilde h_{tu} &= h_{tu} + \sum_{i\in\mathrm{core}}
+   \big[\, 2\,(tu|ii) - (ti|iu) \,\big], \\[2pt]
+E_{\mathrm{core}} &= E_{\mathrm{nuc}}
+   + 2\sum_{i\in\mathrm{core}} h_{ii}
+   + \sum_{ij\in\mathrm{core}} \big[\, 2\,(ii|jj) - (ij|ji) \,\big].
+\end{align}
+CASCI $=$ exact diagonalization of $\hat H_{\mathrm{CAS}}$ in the
+$\mathrm{CAS}(n_e, n_{\mathrm{orb}})$ Fock space; e.g.\ CrO
+$\mathrm{CAS}(18,19)$ with $(n_\alpha,n_\beta)=(11,7)$.
+
+\subsection*{3.\ Jordan--Wigner qubit mapping}
+One qubit per spin-orbital, interleaved convention
+($\alpha \to$ even qubits, $\beta \to$ odd; $N_q = 2\,n_{\mathrm{orb}}$):
+\begin{equation}
+\hat a_p^{\dagger} = \Big( \prod_{q<p} Z_q \Big)\,
+   \frac{X_p - i\,Y_p}{2}, \qquad
+\hat a_p = \Big( \prod_{q<p} Z_q \Big)\, \frac{X_p + i\,Y_p}{2},
+\end{equation}
+\begin{equation}
+\Longrightarrow\quad
+\hat H \;=\; \sum_{k} c_k\, \hat P_k, \qquad
+\hat P_k \in \{I, X, Y, Z\}^{\otimes N_q}, \quad c_k \in \mathbb{R}.
+\end{equation}
+Term counts: CrO CAS(10,10) 3{,}727; NiO 4{,}823; SnO 2{,}329;
+SnO$_2$ 3{,}151; Sn$_2$O$_2$ 789. Construction validated to 0.0000\,mHa
+against CASCI/FCI (H$_4$) and an independent Slater--Condon engine
+(H$_6$/H$_{10}$).
+
+\subsection*{4.\ The audited quantity}
+QSCI diagonalizes $\hat P_S \hat H \hat P_S$ in a grown determinant subspace
+$S$; by Hylleraas--Undheim/MacDonald,
+\begin{equation}
+E_S \;=\; \min_{\substack{|\Psi\rangle \in \mathrm{span}(S)}}
+  \frac{\langle \Psi|\hat H|\Psi\rangle}{\langle \Psi|\Psi\rangle}
+  \;\;\geq\;\; E_0 \quad\text{(exact ground energy of } \hat H_{\mathrm{CAS}}),
+\end{equation}
+monotonically non-increasing as $S$ grows --- the variational upper bound that
+powers every audit verdict.
+
+\end{document}
