@@ -1,0 +1,34 @@
+diff --git a/src/qsci_lib.py b/src/qsci_lib.py
+index 4fabfec..fcd362f 100644
+--- a/src/qsci_lib.py
++++ b/src/qsci_lib.py
+@@ -297,6 +297,7 @@ class PauliEngine:
+             self._det2id = {d: i for i, d in enumerate(self._id2det)}
+             self._Hr = [z["hr"]]; self._Hc = [z["hc"]]; self._Hv = [z["hv"]]
+             E = float(z["E"]); cvec = z["cvec"]; it0 = int(z["it"])
++            z.close()   # release the fd: an open NpzFile pins the (soon-replaced) file on disk
+             t0 = time.time()
+             if log: log(f"  QSCI* RESUMED from {state_file}: it{it0}, |space|={len(space)}, E={E:.6f}")
+         else:
+@@ -310,10 +311,17 @@ class PauliEngine:
+             if not state_file:
+                 return
+             tmp = state_file + ".tmp.npz"                          # atomic: write tmp, then rename
+-            np.savez(tmp[:-4],  # np.savez appends .npz
+-                     space=space, hr=np.concatenate(self._Hr), hc=np.concatenate(self._Hc),
+-                     hv=np.concatenate(self._Hv), E=E, cvec=cvec, it=itn)
+-            os.replace(tmp, state_file)
++            try:
++                np.savez(tmp[:-4],  # np.savez appends .npz
++                         space=space, hr=np.concatenate(self._Hr), hc=np.concatenate(self._Hc),
++                         hv=np.concatenate(self._Hv), E=E, cvec=cvec, it=itn)
++                os.replace(tmp, state_file)
++            except OSError as e:                                   # ENOSPC etc.: a failed checkpoint
++                if log: log(f"  WARNING: state save failed ({e}); run continues WITHOUT checkpoint")
++                try:
++                    os.remove(tmp)
++                except OSError:
++                    pass
+         for it in range(it0, grow_iters):
+             if len(space) >= kcap or time.time() - t0 > tcap: break
+             sc = np.sort(space)

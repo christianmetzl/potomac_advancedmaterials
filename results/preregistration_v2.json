@@ -1,5 +1,5 @@
 {
-  "title": "Pre-registered extensions (v2) — post-campaign hardening runs (EIGENNEXUS, GIC 2026 Phase 3)",
+  "title": "Pre-registered extensions (v2) \u2014 post-campaign hardening runs (EIGENNEXUS, GIC 2026 Phase 3)",
   "committed": "2026-07-19 (git history is the tamper-evident timestamp; commit precedes execution of every entry below)",
   "discipline": "Same rules as preregistration_v1.json: interpretation rules frozen before execution; outcomes reported as-is, pass or fail; no rule moved afterward. Entries marked NOT-YET-FROZEN are placeholders and carry no commitment until a subsequent commit freezes them BEFORE their run.",
   "extensions": [
@@ -16,28 +16,61 @@
         "no_tuning": "QSCI energies being compared are the already-committed terminal values (7fec4cf for 40q; B2 terminal for 38q). No QSCI re-runs in response to E1 outcomes. The 0.2 mHa tolerance reflects DMRG convergence noise at these sweep schedules and is frozen here."
       },
       "budget": "personal qBraid org (~5,008 cr available); CPU large-RAM instance; both chi=800 runs estimated well under 2,000 cr combined.",
-      "confidence": "Case A expected (chi-convergence of gapped 1D-mappable systems is fast, and the committed chi-scan showed chem-acc at chi=400 for H20 — but that scan is exactly what is being stress-tested for CrO, where no chi-scan exists at CAS(18,19))."
+      "confidence": "Case A expected (chi-convergence of gapped 1D-mappable systems is fast, and the committed chi-scan showed chem-acc at chi=400 for H20 \u2014 but that scan is exactly what is being stress-tested for CrO, where no chi-scan exists at CAS(18,19))."
     },
     {
       "id": "E2",
-      "run": "Device-sampled selection at 38q (closes the proxy caveat at scale)",
-      "status": "NOT-YET-FROZEN — placeholder; thresholds to be committed before any execution."
+      "run": "Device-sampled selection at the 40q flagship (closes the proxy caveat at scale)",
+      "frozen": "2026-07-19",
+      "what": "tensornet-mps sampling of the compressed-UCC circuit for H20/40q (top-256 MP2 doubles, >=50,000 shots, number-conserving post-selection) -> determinant seed -> IDENTICAL growth engine and schedule as the committed MP2-seeded run (GROW_PER_ITER=150000, KCAP=450000, matching the committed terminal determinant count 450,257). If the P3 device-memory measurement run committed its sampled determinants, E2's growth MAY consume that committed seed verbatim instead of re-sampling (sampling principle already validated; this only saves GPU cost).",
+      "frozen_interpretation": {
+        "pass": "|E_device-seeded - E_MP2-seeded(-10.290969)| <= 0.5 mHa at the matched determinant count: seed-independence CONFIRMED at 40q; the paper's 'proxy at scale' limitation (section 7, bullet 1) is retired and replaced by this executed equivalence.",
+        "fail": "deviation > 0.5 mHa: seed-dependence at scale is itself a reported FINDING; the proxy caveat STAYS in the paper unchanged. Reported either way; err vs the committed DMRG reference reported alongside in both cases."
+      },
+      "cost_estimate_cr": "sampling ~1,500-3,000 (GPU) or ~0 if the committed P3 sample is reused; growth ~2,000-4,000 (CPU-bound)",
+      "status": "FROZEN; execution contingent on funding (grant headroom or top-up); unexecuted it stands as pre-registered outlook."
     },
     {
       "id": "E3",
-      "run": "40q full-convergence + EN-PT2 certificate (kcap ~2M dets)",
-      "status": "NOT-YET-FROZEN — placeholder; thresholds to be committed before any execution."
+      "run": "40q flagship to certificate convergence (full growth + per-iteration EN-PT2)",
+      "frozen": "2026-07-19",
+      "what": "MP2-seeded qsci_fast on H20/40q, GROW_PER_ITER=150000, KCAP=2,000,000, big-RAM instance (>=200 GB) with >=100 GB free disk for the state file; Epstein-Nesbet PT2 over the connected external space evaluated at every iteration (chunked, same formula as the committed selci_pt2 validation).",
+      "frozen_interpretation": {
+        "prediction_i": "the PT2 certificate contracts to |dE_PT2| <= 0.5 mHa before kcap (certificate convergence demonstrated at the flagship scale)",
+        "prediction_ii": "terminal E_var <= +0.9 mHa vs the committed chi=400 reference (-10.292194); also reported vs the E1 chi=800 reference once it exists",
+        "prediction_iii": "determinant budget at certificate convergence within half a decade of the committed P2 point estimate 1.13e6",
+        "reporting": "each prediction judged independently, pass or fail, no threshold moved."
+      },
+      "cost_estimate_cr": "4,000-8,000",
+      "status": "FROZEN; execution contingent on funding; unexecuted it stands as pre-registered outlook."
     },
     {
       "id": "E4",
-      "run": "Sn2O2 CAS(18,19)=38q audit with pre-committed same-CAS DMRG reference",
-      "status": "NOT-YET-FROZEN — placeholder; thresholds to be committed before any execution."
+      "run": "Sn2O2 bridged tin-oxo audit at CAS(18,19) = 38 qubits (EUV chemistry at industrial scale)",
+      "frozen": "2026-07-19",
+      "what": "STEP 1 (pre-work, personally funded, executable now on subscription CPU): block2 DMRG chi=400 reference in the IDENTICAL CAS(18,19)-embedded integrals [RHF, def2-SVP + def2-ECP on Sn, committed rhombus geometry Sn(+/-1.5,0,0) O(0,+/-1.4,0)] committed BEFORE any QSCI growth run, exactly mirroring the CrO/P4 provenance pattern. STEP 2 (contingent on funding): HF-seeded qsci_fast, 40,000 dets/iter, kcap 500,000 \u2014 mirroring the B2 configuration.",
+      "frozen_interpretation": {
+        "metric": "|E_QSCI - E_DMRG(chi=400, same CAS)| <= 1.6 mHa, mirroring P4.",
+        "ordering_disclosure": "if E_QSCI < E_DMRG - 0.2 mHa, the variational ordering (QSCI provably closer to exact) is reported alongside the metric FAIL, exactly as in the CrO/B2 disclosure; no threshold moved.",
+        "reporting": "as-is, either way."
+      },
+      "cost_estimate_cr": "reference ~0 (subscription CPU-hours); QSCI 2,500-5,000",
+      "status": "FROZEN; STEP 1 authorized as personally-funded pre-work; STEP 2 contingent on funding."
     },
     {
       "id": "E5",
-      "run": "44q H22 frontier, determinant budget pre-registered from the committed scaling law",
-      "status": "NOT-YET-FROZEN — placeholder; thresholds to be committed before any execution."
+      "run": "44-qubit H22 frontier (past the challenge goalpost, predicted in advance)",
+      "frozen": "2026-07-19",
+      "what": "STO-6G H22 chain, R=0.74 A, 44 qubits. Reference: block2 DMRG chi=800 committed pre-run \u2014 CONDITIONAL on E1 returning case A at 40q (chi=800 validated as the tighter bound); if E1 returns case B, the reference chi is raised and this entry RE-FROZEN before any execution. QSCI: MP2-seeded qsci_fast, 150,000 dets/iter, kcap 3,000,000.",
+      "frozen_interpretation": {
+        "prediction_i": "determinant budget for chemical accuracy within [6e5, 7e6] (scaling law 1.383x/qubit from the 40q point estimate: ~2.2e6)",
+        "prediction_ii": "|E_QSCI - E_DMRG(chi=800)| <= 1.6 mHa at terminal",
+        "reporting": "as-is; a non-converged attempt is reported as such with full logs (this is the least-grounded extension and is labeled so, mirroring P4's original labeling)."
+      },
+      "cost_estimate_cr": "6,000-10,000 GPU/CPU + multi-day CPU reference",
+      "governance_note": "Executes on the grant share ONLY with an explicit budget decision amending rule 3 of docs/credit_budget.md (no >40q exploratory spend), or on new/personal funding. Freezing this protocol is not a commitment to run it.",
+      "status": "FROZEN (conditionally, pending E1 case at 40q); execution contingent on funding AND governance sign-off."
     }
   ],
-  "funding_note": "E1 runs on the team's personal qBraid org and draws zero grant credits (see docs/credit_budget.md rules). E2-E5 are contingent on grant headroom or further top-ups and remain placeholders."
+  "funding_note": "E1 runs on the team's personal qBraid org (zero grant draw). E4 STEP 1 (the DMRG reference) is authorized personally-funded pre-work. E2, E3, E4 STEP 2, and E5 are FROZEN PROTOCOLS whose execution is contingent on funding; if never executed before the submission deadline they stand, unmodified, as the pre-registered research outlook \u2014 protocols a reviewer can cost, audit, and anticipate, rather than promises."
 }
