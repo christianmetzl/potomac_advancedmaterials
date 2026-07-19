@@ -25,21 +25,65 @@ def ok(msg):
     print(f"PASS  {msg}")
 
 
+def _qbraidrc():
+    """Parse ~/.qbraid/qbraidrc -> (api_key, base_url) or (None, None). No qBraid packages needed."""
+    import configparser
+    rc = os.path.expanduser("~/.qbraid/qbraidrc")
+    if not os.path.exists(rc):
+        return None, None
+    cp = configparser.ConfigParser()
+    try:
+        cp.read(rc)
+        for sec in cp.sections() or ["default"]:
+            key = cp.get(sec, "api-key", fallback=None) or cp.get(sec, "api_key", fallback=None)
+            url = cp.get(sec, "url", fallback="https://api.qbraid.com/api")
+            if key:
+                return key.strip(), url.strip().rstrip("/")
+    except Exception:
+        pass
+    return None, None
+
+
 def live_balance():
-    """Best-effort wallet fetch via qBraid credentials. Returns float credits or None."""
+    """Best-effort wallet fetch. Order: qbraid_core -> raw REST via qbraidrc -> CLI. Float or None."""
+    paths = ("/billing/credits/get-user-credits", "/user/credits")
+    keys = ("qbraidCredits", "credits", "balance", "totalCredits")
+
+    def _extract(r):
+        if isinstance(r, dict):
+            for k in keys:
+                if k in r:
+                    return float(r[k])
+        return None
+
     try:
         from qbraid_core import QbraidSession
         s = QbraidSession()
-        for path in ("/billing/credits/get-user-credits", "/user/credits"):
+        for path in paths:
             try:
-                r = s.get(path).json()
-                for k in ("qbraidCredits", "credits", "balance"):
-                    if isinstance(r, dict) and k in r:
-                        return float(r[k])
+                v = _extract(s.get(path).json())
+                if v is not None:
+                    return v
             except Exception:
                 continue
     except Exception:
         pass
+    api_key, base = _qbraidrc()                     # raw REST — works without qBraid packages
+    if api_key:
+        try:
+            import requests
+            for path in paths:
+                for hdr in ({"api-key": api_key}, {"X-API-Key": api_key}):
+                    try:
+                        r = requests.get(base + path, headers=hdr, timeout=20)
+                        if r.ok:
+                            v = _extract(r.json())
+                            if v is not None:
+                                return v
+                    except Exception:
+                        continue
+        except Exception:
+            pass
     try:  # CLI fallback
         import subprocess, re
         out = subprocess.check_output(["qbraid", "credits"], text=True, timeout=30)

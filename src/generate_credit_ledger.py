@@ -23,9 +23,33 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _LEDGER = os.path.join(_ROOT, "results", "credit_ledger.json")
 
 
+class _RestSession:
+    """Minimal qBraid REST client from ~/.qbraid/qbraidrc — used when qbraid_core is absent."""
+    def __init__(self):
+        import configparser, requests
+        rc = os.path.expanduser("~/.qbraid/qbraidrc")
+        cp = configparser.ConfigParser(); cp.read(rc)
+        sec = (cp.sections() or ["default"])[0]
+        self.key = cp.get(sec, "api-key", fallback=None) or cp.get(sec, "api_key")
+        self.base = (cp.get(sec, "url", fallback="https://api.qbraid.com/api")).rstrip("/")
+        self._rq = requests
+        if not self.key:
+            raise RuntimeError("no api-key in qbraidrc")
+
+    def get(self, path, params=None):
+        for hdr in ({"api-key": self.key}, {"X-API-Key": self.key}):
+            r = self._rq.get(self.base + path, headers=hdr, params=params, timeout=30)
+            if r.status_code != 401:
+                return r
+        return r
+
+
 def _session():
-    from qbraid_core import QbraidSession
-    return QbraidSession()
+    try:
+        from qbraid_core import QbraidSession
+        return QbraidSession()
+    except Exception:
+        return _RestSession()   # raw REST fallback, no qBraid packages required
 
 
 def fetch_balance(s):
