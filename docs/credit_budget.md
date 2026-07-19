@@ -45,13 +45,12 @@ accrued between the console snapshot and the wallet check.
 funds, as is the AQT QPU flight (personal OpenQuantum pool). Only the two current instances count
 against the 65k.
 
-**CAMPAIGN CLOSED (2026-07-19 ~22:40 UTC).** Final wallet snapshot: **116,342** → pool consumed
-**13,658 cr** (21% of the 65k share; remaining allowance **51,342**). Both GPU instances retired
-(H100 ~15:15Z, A100 ~22:35Z); all evidence pushed pre-shutdown. **Stated tension:** the observed-rate
-model projected ~17k — the wallet delta since 13:30Z (~236 cr) lags ~3.4k of metered uptime,
-consistent with deferred billing posting. Re-check the wallet in 12–24 h and append a settlement
-snapshot to the ledger; per-instance billing history is the arbiter. Even at the rate-model's ~17k,
-the campaign used ≈26% of the share.
+**CAMPAIGN CLOSED — SETTLED (2026-07-19).** Settlement wallet snapshot (EIGENNEXUS grant org):
+**113,517.30** → pool consumed **16,482.70 cr = 25.4% of the 65k share; remaining allowance 48,517**.
+The interim 116,342 reading was pre-settlement billing lag (tension stated at the time, now resolved);
+the observed-rate model landed within ~3% of the settled figure, validating it as the planning
+instrument. Both GPU instances retired; all evidence pushed pre-shutdown. Grant-org subscription also
+includes 100 CPU-hrs/mo (0 used, renews in 11 days) — free capacity for any future CPU-tier work.
 
 ## Rules of the road
 1. **Hard stop at 65k cumulative** attributed to this project; check billing before any new instance.

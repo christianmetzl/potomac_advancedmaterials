@@ -32,6 +32,12 @@
       "balance": 116342,
       "method": "wallet UI (grant org console), operator-captured immediately after A100 termination; appended by main session per the finalize record in results/session_finalize_A100_B2_P3.json",
       "note": "END-OF-CAMPAIGN snapshot. Implies pool consumed = 13,658 cr. TENSION, stated not hidden: the observed-rate model (8.95/4.15 cr/min x console uptimes) projects ~17k by campaign end \u2014 delta since the 13:30Z snapshot reads only ~236 cr against ~3.4k of metered uptime. Likely deferred/periodic billing posting. ACTION: re-check the grant wallet in 12-24h and append a settlement snapshot; the qBraid per-instance billing history remains the arbiter (attribution_caveat)."
+    },
+    {
+      "utc": "2026-07-19T23:59:00Z",
+      "balance": 113517.3,
+      "method": "wallet UI (EIGENNEXUS grant org dashboard), operator-captured post-shutdown",
+      "note": "SETTLEMENT snapshot \u2014 resolves the stated tension: pool consumed 16,482.70 cr, within ~3% of the observed-rate model (~17k). The earlier 116,342 reading was pre-settlement billing lag, as hypothesized. FINAL campaign figure: 16,483 cr = 25.4% of the 65k share; remaining allowance 48,517. Rate model (cr/min x uptime) validated as the planning instrument."
     }
   ],
   "instances": [

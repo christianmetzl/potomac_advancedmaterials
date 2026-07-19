@@ -139,9 +139,9 @@ qBraid execution, as used: **H100-SXM** (B1 flagship, ~17.5 h lifetime; retired 
 host-driver GPU failure — diagnosed, documented, work rehomed) and **A100-SXM 80 GB** (B2 audit + P3
 measurement, ~23.5 h). CUDA-Q cuStateVec for exact ≤28q anchors; tensornet-mps for the 40q sampling
 phase; growth is CPU-bound on the GPU hosts. **Accounting is self-verifying, not self-reported:**
-grant-pool consumption **13,658 cr ≈ 21% of our 65k share** per the end-of-campaign wallet snapshot
-(`results/credit_ledger.json`, enforced by `src/verify_credits.py`; a rate-model tension of ~3k is
-stated in the ledger pending billing settlement). DMRG references, the χ-escalation counter-audit,
+grant-pool consumption **16,483 cr ≈ 25% of our 65k share** per the settled end-of-campaign wallet
+snapshot (`results/credit_ledger.json`, enforced by `src/verify_credits.py`; the interim reading's
+billing lag was stated at the time and resolved on settlement — the rate model landed within ~3%). DMRG references, the χ-escalation counter-audit,
 and the QPU flight were **personally funded — zero grant draw** (before/after wallet identity
 recorded). Frozen, costed extension protocols E2–E5 stand as the research outlook
 (`docs/outlook_roadmap.md`).
