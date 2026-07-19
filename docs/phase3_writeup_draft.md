@@ -1,8 +1,9 @@
 # MATGEN-Q — Phase 3 write-up DRAFT (working; not the final PDF)
 
 **Purpose:** the working draft of the ≤5-page Phase 3 submission. Verified numbers are in place and
-trace to `results/*.json` (reproduced in `reproducibility_audit_2026-06-21.md`). Cells tagged
-**[QBRAID-RUN]** are the executions still owed once qBraid access is live — they are the *only* gaps.
+trace to `results/*.json`. **2026-07-19 update: the at-scale campaign is COMPLETE — every former
+[QBRAID-RUN] slot below is filled with executed, committed evidence; the only remaining external item
+is the AQT trapped-ion decode (P5 silicon), which affects no other claim.**
 This draft already embeds the honest 38q reframe (`paper_version_discrepancy.md` §5) and the mandated
 classical baselines (`classical_baselines.md`). Section 3's innovation headline resolves on the
 decisive-encoder verdict (`phase3_novelty_assessment.md`).
@@ -94,32 +95,70 @@ qubit count, circuit depth, shot budget, and wall-clock.*
 climbs with correlation and breaks down under strong correlation (H₂₄/48q DMRG 6.83 mHa off CCSD(T)).
 This is the curve the quantum MPS/QSCI wall-clock is measured against.
 
-**5c. To execute on qBraid GPU (the headline runs):**
-- **[QBRAID-RUN] 40q scalability (primary criterion):** MPS GQE/QSCI on H₂₀ → energy error vs DMRG,
-  **circuit depth, bond dimension, shot budget, GPU wall-clock**. Target: chemical accuracy (or the
-  closest credible approach) at 40q — the win condition. (CPU today: operational, converging @ 39 mHa.)
-- **[QBRAID-RUN] CrO/NiO near-38q on GPU:** report the accuracy **actually achieved** + wall-clock.
-  *Honest reframe:* lead with executed 20q (CrO 0.038 / NiO 0.197 mHa) and present 38q as the GPU
-  **scaling demonstration**, not a pre-claimed number — the prior "≤0.08 mHa @ 38q" is kept only if a
-  run earns it (`paper_version_discrepancy.md` §5).
-- **[QBRAID-RUN] Hardware validation:** selected circuits on IonQ/IBM QPU at 10–16q (depth/shots).
-- **[QBRAID-RUN] Quantum-vs-classical wall-clock table:** MPS/QSCI vs exact statevector vs VQE on
-  matched instances.
+**5c. Executed at scale (the headline runs — all committed, pre-registered, reported as frozen):**
+- **40q flagship (H₂₀) — P1 PASS, P2 PASS.** GPU anchors: exact to the digit at 20q (+0.000 mHa vs
+  FCI, cuStateVec, 0.44 GB device) and chemically accurate at 28q with a device-sampled seed
+  (+0.395 mHa vs committed DMRG, 2.82 GB device). At 40q the MPS circuit sampler's fixed contraction
+  cost starves growth (measured; documented pivot), so the flagship ran MP2-seeded with the identical,
+  seed-independence-validated growth engine: **+1.226 mHa vs the frozen DMRG(χ=400) reference at
+  450,257 determinants** (~16 h growth wall, H100 host) — P1 ≤1.6 mHa PASS, P2 budget in the
+  pre-registered [3×10⁵, 4×10⁶] band (`gpu_run1_h20_mp2seed_evidence.json`). **Self-audited
+  qualifier, disclosed:** our χ-escalation counter-audit (E1) shows the gap vs a tighter χ=800
+  reference is +2.19 mHa — so *absolute* 40q chemical accuracy is not yet certified; the frozen E3
+  protocol (growth to PT2-certificate convergence) is the pre-registered path.
+- **38q CrO audit (CAS(18,19)) — the flagship *result*: the reference corrected, thrice.** QSCI
+  converged at **−3.784 mHa BELOW the same-CAS DMRG(χ=400) reference** (529,392 dets, 19.1 h, A100
+  host; reference committed before access). P4 reported **FAIL against its frozen |Δ|≤1.6 metric** —
+  the metric measures distance to a reference that proved to be the looser bound. The pre-registered
+  χ-escalation counter-audit (E1, thresholds frozen first, including the case that would have
+  withdrawn the claim): χ=800 and χ=1200 references descend *toward* the QSCI energy from above
+  (gaps +1.06 / +0.36 mHa) and never cross it — the truncation-error mechanism confirmed at three
+  bond dimensions (`gpu_run4_cas19_evidence.json`, `cro_cas19_dmrg_chi800/1200.json`).
+- **P3 device memory — FAIL as measured, decomposed by measurement.** Frozen-config sampling peaked
+  at 40.32 GB (>8 GB threshold); the mechanism is vendor-documented (cuTensorNet reserves 50% of free
+  card memory — 50%×79.25 GB ≈ the measured peak). A capped diagnostic ran the identical workload in
+  **4.88 GB < 8 GB**: the physics estimate holds; the FAIL is an 80 GB-card allocator artifact
+  (`gpu_run1_h20_P3_device_memory_A100_evidence.json`). A pre-registration lesson, reported as frozen.
+- **Hardware validation (P5):** the 3-job pooled protocol executed end-to-end through the qBraid
+  cloud runtime (qir-sv tier): **+2.0/+2.4 mHa vs FCI, PASS**, job IDs committed. Trapped-ion jobs
+  (AQT ibex-q1 via OpenQuantum, personally funded) submitted with L1-verified, SHA-pinned exports;
+  decode pending queue drain — raw counts will be committed pass or fail.
+- **Quantum-vs-classical wall clock:** generated (never typed) from the evidence JSONs —
+  `docs/wall_clock_table.md` / `src/make_walltable.py`; headline rows: FCI seconds→intractable by
+  32q; DMRG references minutes; QSCI 3 min (20q) → 40 min (28q) → ~16–19 h at 38–40q on host CPUs.
+
+**5d. Pre-registration scoreboard (all six resolved exactly as frozen; no threshold moved):** P1 PASS ·
+P2 PASS · P3 FAIL-as-measured (mechanism documented, physics holds under cap) · P4 FAIL-as-measured
+(the audit-success case: below the reference at χ=400/800/1200) · P5 sim-chain PASS, silicon pending ·
+H1 blind holdout PASS (VO quartet by 1.091 eV = experiment). Two disclosed FAILs, each carrying the
+strongest evidence in the portfolio — the discipline working as designed
+(`preregistration_v1.json`, `preregistration_v2.json`).
 
 ## 6. Platform use & resourcing  *(criterion 6; ~0.4 pp)*
-qBraid: classical (CPU/GPU) + quantum (QPU) credits. **NVIDIA H100/A100 (80 GB)** + CUDA-Q;
-`tensornet-mps` for 24–40q, cuStateVec for exact ≤32q validation; 1 GPU for MPS, 4–8 (NVLink) for
-distributed eval + >40q bonus. QPU (IonQ/IBM) for 10–16q validation. Per-run estimates:
-**[QBRAID-RUN]** qubit/depth/shot/wall-clock filled from §5c.
+qBraid execution, as used: **H100-SXM** (B1 flagship, ~17.5 h lifetime; retired after a mid-session
+host-driver GPU failure — diagnosed, documented, work rehomed) and **A100-SXM 80 GB** (B2 audit + P3
+measurement, ~23.5 h). CUDA-Q cuStateVec for exact ≤28q anchors; tensornet-mps for the 40q sampling
+phase; growth is CPU-bound on the GPU hosts. **Accounting is self-verifying, not self-reported:**
+grant-pool consumption **13,658 cr ≈ 21% of our 65k share** per the end-of-campaign wallet snapshot
+(`results/credit_ledger.json`, enforced by `src/verify_credits.py`; a rate-model tension of ~3k is
+stated in the ledger pending billing settlement). DMRG references, the χ-escalation counter-audit,
+and the QPU flight were **personally funded — zero grant draw** (before/after wallet identity
+recorded). Frozen, costed extension protocols E2–E5 stand as the research outlook
+(`docs/outlook_roadmap.md`).
 
 ## 7. Limitations & honest scope  *(criterion 8; Top-Action #6; ~0.3 pp)*
-- Integrated GQE→QSCI **measured** at 12q; larger QSCI uses **perturbative selection as a
-  hardware-independent proxy**, validated against the 12q measured pipeline — quantum-*inspired* at
-  scale until run with real sampling.
-- At ≤28q, classical FCI/DMRG already solve these instances — we demonstrate *correctness + scaling*,
-  not yet a regime where quantum beats classical. The genuine-advantage target is 40q+ strong
-  correlation where DMRG bond dimension explodes.
-- 40q is operational, not yet at chemical accuracy on CPU; the GPU run is the deliverable.
+- Device-sampled selection is **measured** at 12/20/28q; the 40q flagship ran MP2-seeded (documented
+  cost pivot) — quantum-*inspired* at that scale until the frozen equivalence test E2 runs. Its
+  sampling phase is already executed and committed (102 number-conserving determinants from the P3
+  run), reducing E2 to a classical growth run.
+- 40q chemical accuracy is certified **relative to the pre-registered χ=400 reference** (P1). Our own
+  counter-audit shows +2.19 mHa vs χ=800 — absolute certification awaits the frozen E3 protocol. We
+  state this because we found it; no external reviewer did.
+- At ≤28q, classical FCI/DMRG already solve these instances — we demonstrate *correctness + scaling +
+  the audit mechanism*; the demonstrated at-scale value is reference *correction* (38q), not speedup.
+- Upstream assumptions (basis, active-space window, geometry) are shared across all compared methods;
+  two are now measured rather than stated (x2c: ≤58 meV on ~1–2 eV gaps; AVAS supports the CrO
+  window) — the rest remain declared scope (`docs/matgenq_audit_table.md`, honest-scope section).
 
 ## 8. Conclusion & reproducibility
 MATGEN-Q is a working two-stage GQE whose tensor-network + QSCI tiers target 40q on a single GPU, with
@@ -131,11 +170,13 @@ result without modification.
 Xanadu&Mitsubishi EUV; NVIDIA CUDA-Q; Tilly 2022 VQE review; Fare 2022 multi-fidelity screening.]
 
 ---
-### Run-list distilled (what unblocks the final PDF)
-1. 40q MPS GQE/QSCI on H₂₀ (depth, χ, shots, wall-clock, err vs DMRG) — **primary**.
-2. CrO/NiO near-38q on GPU (accuracy achieved + wall-clock) — honest reframe.
-3. Quantum-vs-classical wall-clock table (MPS/QSCI vs statevector vs VQE).
-4. 10–16q IonQ/IBM QPU validation.
-5. ~~Final innovation headline per encoder verdict.~~ **DONE 2026-06-26** — encoder is a clean
-   negative; innovation leads with pillars 1–3 (integrated MPS+QSCI+operator-pool compression).
-All remaining items (1–4) are GPU/qBraid-gated; everything else in this draft is done.
+### Run-list distilled — ALL EXECUTED (2026-07-19)
+1. ~~40q on H₂₀~~ **DONE** — P1/P2 PASS (+1.226 mHa, 450,257 dets) + E1 qualifier disclosed.
+2. ~~CrO 38q~~ **DONE** — terminal −3.784 mHa below the reference; χ-ladder counter-audit case A.
+3. ~~Wall-clock table~~ **DONE** — generated from evidence (`docs/wall_clock_table.md`).
+4. ~~QPU validation~~ **DONE (sim tier)** — qir-sv chain PASS; AQT trapped-ion decode is the sole
+   remaining external item and gates nothing else.
+5. ~~Innovation headline~~ **DONE 2026-06-26** — encoder clean negative; pillars 1–3 lead.
+**Nothing in this draft is compute-gated anymore. Remaining work is prose: compress to 5 pages,
+final claims-ledger sweep, insert figures, and slot the AQT result (or its 'submitted, decode
+pending' status) at deadline time.**
