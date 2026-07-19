@@ -1,12 +1,12 @@
 {
-  "status": "IN-PROGRESS iter 12/40 (partial, not final)",
+  "status": "IN-PROGRESS iter 13/40 (partial, not final)",
   "active_space": "CAS(18,19)",
   "qubits": 38,
-  "iter": 12,
-  "dets": 449392,
-  "E_qsci": -1118.0493648757306,
+  "iter": 13,
+  "dets": 489392,
+  "E_qsci": -1118.0493892863292,
   "e_ref": -1118.0456262251828,
-  "err_mHa": -3.739,
+  "err_mHa": -3.763,
   "P4_at_iter": false,
-  "qsci_wall_s": 56465.3
+  "qsci_wall_s": 62477.9
 }
