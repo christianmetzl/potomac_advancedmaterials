@@ -1,0 +1,43 @@
+{
+  "title": "Pre-registered extensions (v2) — post-campaign hardening runs (EIGENNEXUS, GIC 2026 Phase 3)",
+  "committed": "2026-07-19 (git history is the tamper-evident timestamp; commit precedes execution of every entry below)",
+  "discipline": "Same rules as preregistration_v1.json: interpretation rules frozen before execution; outcomes reported as-is, pass or fail; no rule moved afterward. Entries marked NOT-YET-FROZEN are placeholders and carry no commitment until a subsequent commit freezes them BEFORE their run.",
+  "extensions": [
+    {
+      "id": "E1",
+      "run": "chi-escalation counter-audit of both DMRG references (block2, CPU; personally funded qBraid org, zero grant draw)",
+      "what": "Recompute the committed chi=400 references at chi=800 (chi=1200 if budget allows): (a) CrO CAS(18,19), identical CAS-embedded integrals as results/cro_cas19_dmrg_reference.json; (b) H20 40q, identical basis/geometry as the committed mps_bonddim chi=400 reference.",
+      "motivation": "The audit's strongest at-scale claim is that QSCI landed BELOW the chi=400 references, proving reference truncation error. The obvious counter-question is whether a higher-chi reference closes the gap. We ask it of ourselves first.",
+      "frozen_interpretation": {
+        "premise": "DMRG energy is variational and monotonically non-increasing in chi; QSCI energy is variational. Both bound the same exact energy from above.",
+        "case_A": "If E_DMRG(chi=800) remains ABOVE the final QSCI energy (or within +0.2 mHa of it): the truncation-error mechanism is CONFIRMED with a tighter reference; the reference-correction claim is upheld and quantified as E_DMRG(chi800) - E_QSCI.",
+        "case_B": "If E_DMRG(chi=800) lands BELOW the final QSCI energy by more than 0.2 mHa: the higher-chi reference overtakes our subspace; the 'QSCI provably closer to exact' claim at that system is WITHDRAWN as stated and replaced by the measured ordering, in every artifact (audit table row 4, deck, work package, paper). Reported with the same prominence as a success.",
+        "case_C": "If the chi=800 run does not converge within the personal-credit budget: reported as attempted/unresolved with logs committed; the chi=400-based claims stand but gain an explicit 'higher-chi check attempted, unresolved' caveat.",
+        "no_tuning": "QSCI energies being compared are the already-committed terminal values (7fec4cf for 40q; B2 terminal for 38q). No QSCI re-runs in response to E1 outcomes. The 0.2 mHa tolerance reflects DMRG convergence noise at these sweep schedules and is frozen here."
+      },
+      "budget": "personal qBraid org (~5,008 cr available); CPU large-RAM instance; both chi=800 runs estimated well under 2,000 cr combined.",
+      "confidence": "Case A expected (chi-convergence of gapped 1D-mappable systems is fast, and the committed chi-scan showed chem-acc at chi=400 for H20 — but that scan is exactly what is being stress-tested for CrO, where no chi-scan exists at CAS(18,19))."
+    },
+    {
+      "id": "E2",
+      "run": "Device-sampled selection at 38q (closes the proxy caveat at scale)",
+      "status": "NOT-YET-FROZEN — placeholder; thresholds to be committed before any execution."
+    },
+    {
+      "id": "E3",
+      "run": "40q full-convergence + EN-PT2 certificate (kcap ~2M dets)",
+      "status": "NOT-YET-FROZEN — placeholder; thresholds to be committed before any execution."
+    },
+    {
+      "id": "E4",
+      "run": "Sn2O2 CAS(18,19)=38q audit with pre-committed same-CAS DMRG reference",
+      "status": "NOT-YET-FROZEN — placeholder; thresholds to be committed before any execution."
+    },
+    {
+      "id": "E5",
+      "run": "44q H22 frontier, determinant budget pre-registered from the committed scaling law",
+      "status": "NOT-YET-FROZEN — placeholder; thresholds to be committed before any execution."
+    }
+  ],
+  "funding_note": "E1 runs on the team's personal qBraid org and draws zero grant credits (see docs/credit_budget.md rules). E2-E5 are contingent on grant headroom or further top-ups and remain placeholders."
+}
