@@ -5,7 +5,12 @@
 > enforces the 65k cap (exit 2 on breach) and checks that worst-case projections still fit. On any
 > machine with qBraid credentials, `--live` pulls the wallet balance from the API and reports drift;
 > `--live --append` records a fresh timestamped snapshot into the ledger. This document is prose over
-> that ledger — if they disagree, the ledger and verifier win.
+> that ledger — if they disagree, the ledger and verifier win. On a credentialed box,
+> `python src/generate_credit_ledger.py --write` regenerates the platform-verified sections straight
+> from qBraid records — wallet snapshots from the billing API, per-job lines with qBraid job IDs,
+> costs, and tags — so those lines are fetched, never typed. Sections the API cannot know (organizer
+> top-ups, the 50% share agreement, personally-funded history) stay explicitly labeled as declared,
+> with their records held by the organizers / personal billing.
 >
 > **Honest limit (stated in the ledger too):** the wallet is pool-level. Attribution to this project
 > is exact only while the second project's spend is zero (true at the recorded snapshot); once both
