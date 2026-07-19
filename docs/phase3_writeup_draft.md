@@ -127,6 +127,11 @@ This is the curve the quantum MPS/QSCI wall-clock is measured against.
   `docs/wall_clock_table.md` / `src/make_walltable.py`; headline rows: FCI seconds→intractable by
   32q; DMRG references minutes; QSCI 3 min (20q) → 40 min (28q) → ~16–19 h at 38–40q on host CPUs.
 
+*(Figure 2: `results/fig_38q_audit_chi_ladder.png` — the 15-point 38q trajectory descending below
+all three DMRG references. Figure 3: `results/fig_p3_decomposition.png` — allocator appetite vs true
+footprint vs the frozen threshold. Both generated from committed evidence by
+`src/make_audit_figures.py`; Figure 1 (architecture) remains a design task.)*
+
 **5d. Pre-registration scoreboard (all six resolved exactly as frozen; no threshold moved):** P1 PASS ·
 P2 PASS · P3 FAIL-as-measured (mechanism documented, physics holds under cap) · P4 FAIL-as-measured
 (the audit-success case: below the reference at χ=400/800/1200) · P5 sim-chain PASS, silicon pending ·
