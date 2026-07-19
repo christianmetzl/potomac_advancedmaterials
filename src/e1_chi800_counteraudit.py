@@ -69,6 +69,35 @@ def h20_integrals(n_atoms=20, R=0.74):
                 active_space=f"H{n_atoms} STO-6G R={R}", qubits=2 * norb, system="H20 chain")
 
 
+def sn2o2_integrals(ncas=19, density_fit=False):
+    """Sn2O2 rhombus (bridged Sn-O-Sn), CAS(18,19). Geometry/basis/ecp from src/tin_oxo_demo.py
+    (committed rhombus). RHF (closed-shell singlet), def2-SVP + def2-ECP on Sn. Integral EXTRACTION
+    is the SAME path validated for CrO: mcscf.CASCI get_h1eff()/get_h2eff() + ao2mo.restore(1,..),
+    with NO exact-FCI solve (CAS(18,19) is intractable). level_shift is a convergence aid only; the
+    converged RHF orbitals/integrals are exact regardless of it. Non-DF by default -> exact 2e
+    integrals, matching the CrO-validated (density_fit=False) path."""
+    from pyscf import gto, scf, ao2mo, mcscf
+    nelecas = (ncas - 1) // 2, (ncas - 1) // 2 if ncas % 2 else None  # 18 e -> (9,9) for ncas=19
+    nel = ncas - 1 if ncas % 2 else ncas
+    na = nb = nel // 2
+    atom = "Sn 1.5 0 0; Sn -1.5 0 0; O 0 1.4 0; O 0 -1.4 0"          # tin_oxo_demo.py rhombus
+    mol = gto.M(atom=atom, basis={"Sn": "def2-svp", "O": "def2-svp"},
+                ecp={"Sn": "def2-svp"}, spin=0, charge=0, verbose=0)
+    mf = scf.RHF(mol)
+    if density_fit:
+        mf = mf.density_fit()
+    mf.level_shift = 0.3; mf.max_cycle = 300; mf.conv_tol = 1e-9; mf.kernel()
+    if not mf.converged:
+        mf.level_shift = 0.0; mf.init_guess = "atom"; mf.kernel()
+    mc = mcscf.CASCI(mf, ncas, (na, nb)); mc.verbose = 0
+    h1e, ecore = mc.get_h1eff(); eri = ao2mo.restore(1, mc.get_h2eff(), ncas)
+    return dict(h1=h1e, eri=eri, ecore=float(ecore), na=na, nb=nb, n_sites=ncas,
+                rhf_converged=bool(mf.converged), nao=int(mol.nao), nelectron=int(mol.nelectron),
+                density_fit=bool(density_fit), geometry=atom,
+                active_space=f"CAS({na+nb},{ncas})", qubits=2 * ncas,
+                system="Sn2O2 rhombus (bridged Sn-O-Sn)")
+
+
 def run_dmrg(P, chi, tag, n_threads=8):
     """Frozen make_ref schedule with chi plateau raised. Scratch in ~/dmrg_scratch/<tag>."""
     from pyblock2.driver.core import DMRGDriver, SymmetryTypes
@@ -104,7 +133,8 @@ def machine_specs(n_threads):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--system", choices=["cro", "h20"], required=True)
+    ap.add_argument("--system", choices=["cro", "h20", "sn2o2"], required=True)
+    ap.add_argument("--ref-note", type=str, default=None, help="note stored under 'note' in output json")
     ap.add_argument("--chi", type=int, default=800)
     ap.add_argument("--ncas", type=int, default=19)
     ap.add_argument("--n-threads", type=int, default=8)
@@ -116,6 +146,9 @@ def main():
     if a.system == "cro":
         P = cro_integrals(a.ncas); tag = f"cro{a.ncas}_chi{a.chi}"
         conv_key = "rohf_converged"
+    elif a.system == "sn2o2":
+        P = sn2o2_integrals(a.ncas); tag = f"sn2o2_{a.ncas}_chi{a.chi}"
+        conv_key = "rhf_converged"
     else:
         P = h20_integrals(20); tag = f"h20_chi{a.chi}"
         conv_key = "rhf_converged"
@@ -138,6 +171,17 @@ def main():
         prereg="E1 chi-escalation counter-audit (results/preregistration_v2.json)",
     )
     out[conv_key] = P[conv_key]
+    for k in ("geometry", "nao", "nelectron", "density_fit"):
+        if k in P:
+            out[k] = P[k]
+    if a.system == "sn2o2":
+        out["basis"] = "def2-SVP + def2-ECP on Sn"
+        out["scf_recipe"] = ("RHF (closed-shell singlet), level_shift=0.3 convergence aid "
+                             "(retry level_shift=0/init_guess=atom), conv_tol=1e-9, non-DF exact integrals")
+        out["integral_path"] = ("mcscf.CASCI get_h1eff()/get_h2eff() + ao2mo.restore(1,..) — SAME "
+                                "extraction path validated for CrO; no exact-FCI solve")
+    if a.ref_note:
+        out["note"] = a.ref_note
     if a.validate_note:
         out["validate_note"] = a.validate_note
     fn = a.out or f"{a.system}_{P['qubits']}q_dmrg_chi{a.chi}.json"

@@ -1,0 +1,57 @@
+{
+  "probe": "x2c scalar-relativistic (sfx2c1e) single-points \u2014 EXPLORATORY, not pre-registered",
+  "method": "per-state ROHF (+/- sfx2c1e) -> CASCI in the committed CAS; gap in eV",
+  "honest_caveat": "def2-SVP is non-relativistically contracted; the X2C shift is indicative of sign/scale only, NOT a quantitative relativistic correction (needs an x2c/ANO-RCC basis). No threshold or claim is attached.",
+  "systems": {
+    "CrO": {
+      "active_space": "CAS(10,10)",
+      "gap_definition_eV": "E(triplet)-E(quintet)",
+      "experimental_ground": "quintet (X 5-Pi)",
+      "states": {
+        "quintet": {
+          "CASCI_nonrel_Ha": -1117.891641,
+          "CASCI_x2c_Ha": -1123.232847,
+          "x2c_shift_mHa": -5341.206,
+          "rohf_converged": true
+        },
+        "triplet": {
+          "CASCI_nonrel_Ha": -1117.822197,
+          "CASCI_x2c_Ha": -1123.165522,
+          "x2c_shift_mHa": -5343.325,
+          "rohf_converged": true
+        }
+      },
+      "gap_nonrel_eV": 1.8897,
+      "gap_x2c_eV": 1.832,
+      "gap_shift_meV": -57.66,
+      "ground_state_nonrel": "quintet",
+      "ground_state_x2c": "quintet",
+      "ordering_flips_under_x2c": false
+    },
+    "VO": {
+      "active_space": "CAS(11,10)",
+      "gap_definition_eV": "E(doublet)-E(quartet)",
+      "experimental_ground": "quartet (X 4-Sigma-)",
+      "states": {
+        "quartet": {
+          "CASCI_nonrel_Ha": -1017.512789,
+          "CASCI_x2c_Ha": -1022.00345,
+          "x2c_shift_mHa": -4490.661,
+          "rohf_converged": true
+        },
+        "doublet": {
+          "CASCI_nonrel_Ha": -1017.472713,
+          "CASCI_x2c_Ha": -1021.962699,
+          "x2c_shift_mHa": -4489.987,
+          "rohf_converged": true
+        }
+      },
+      "gap_nonrel_eV": 1.0905,
+      "gap_x2c_eV": 1.1089,
+      "gap_shift_meV": 18.36,
+      "ground_state_nonrel": "quartet",
+      "ground_state_x2c": "quartet",
+      "ordering_flips_under_x2c": false
+    }
+  }
+}

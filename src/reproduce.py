@@ -11,7 +11,8 @@ Usage:
 
 Scope — two honest check families, labeled distinctly in the output:
   * RE-EXECUTION (16): CPU-reproducible headline scripts re-run from a clean workdir and asserted
-    against committed values (4 of these need the optional cudaq/block2 CPU deps and SKIP otherwise).
+    against committed values (several need optional deps — cudaq/block2/torch/pennylane/openfermionpyscf
+    — and SKIP cleanly when the dep is absent, rather than erroring).
   * AUDIT (8): committed GPU/cloud/one-shot evidence JSONs verified for internal arithmetic
     (err == (E - ref)*1000), stated pass criteria, and pre-registration integrity (the blind-holdout
     script's SHA-256 must still match the hash committed before its one-shot run). Audits are NOT
@@ -40,9 +41,9 @@ def _val(d, path):
 CHECKS = [
     ("two-stage GQE (H2/H4/H6)", "stage2_refinement.py", [], "stage2_refinement_evidence.json",
      [("eq", ["0", "err_mHa"], 0.0, 0.05), ("eq", ["1", "err_mHa"], 0.009, 0.05),
-      ("eq", ["2", "err_mHa"], 0.297, 0.1)], False),
+      ("eq", ["2", "err_mHa"], 0.297, 0.1)], False, "pennylane"),   # GQE (torch/pennylane) — optional, SKIP if absent
     ("integrated GQE->QSCI (H6 12q)", "gqe_qsci.py", [], "gqe_qsci_evidence.json",
-     [("eq", ["GQE_to_QSCI_err_mHa"], 1.054, 0.8)], False),     # stochastic sampling -> loose tol
+     [("eq", ["GQE_to_QSCI_err_mHa"], 1.054, 0.8)], False, "torch"),  # stochastic; torch/pennylane optional, SKIP if absent
     ("SnO chem-acc (16q)", "sno_demo.py", [], None,
      [("below", "final_mHa", 0.6)], False),                      # claim: chemical accuracy (~0.11 mHa)
     ("SnO2 chem-acc (20q)", "sno2_demo.py", [], None,
@@ -52,7 +53,7 @@ CHECKS = [
     ("bridged tin-oxo Sn2O2 (16q)", "tin_oxo_demo.py", [], "tin_oxo_evidence.json",
      [("lt", ["qsci_best_err_mHa"], 1.6)], False),
     ("HamLib equivalence (28q)", "hamlib_validate.py", ["14"], None,
-     [("eq_terms", 27735)], True),
+     [("eq_terms", 27735)], True, "openfermionpyscf"),   # openfermionpyscf optional, SKIP if absent
     ("classical baselines (Hn FCI)", "classical_baselines.py", ["6", "10", "12"], "classical_baselines_evidence.json",
      [("eq", ["results", "0", "FCI_ref_match", "diff_mHa"], 0.0, 0.02)], False),
     ("CrO dissociation trust", "cro_dissociation.py", [], "cro_dissociation_evidence.json",

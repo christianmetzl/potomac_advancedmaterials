@@ -1,0 +1,33 @@
+{
+  "probe": "AVAS overlap check of the committed CrO CAS(10,10) window \u2014 EXPLORATORY",
+  "system": "CrO quintet, R=1.621, def2-SVP",
+  "committed_window": "CAS(10,10) = 20 qubits",
+  "avas_target_ao_labels": [
+    "Cr 3d",
+    "Cr 4s",
+    "O 2p"
+  ],
+  "rohf_converged": true,
+  "honest_caveat": "AVAS thresholds are heuristic; this checks whether an automated valence selector lands near the hand-picked CAS(10,10), not a pass/fail claim.",
+  "avas_by_threshold": [
+    {
+      "threshold": 0.1,
+      "avas_ncas": 10,
+      "avas_nelecas": 12,
+      "matches_committed_ncas": true
+    },
+    {
+      "threshold": 0.2,
+      "avas_ncas": 9,
+      "avas_nelecas": 10,
+      "matches_committed_ncas": false
+    },
+    {
+      "threshold": 0.5,
+      "avas_ncas": 9,
+      "avas_nelecas": 10,
+      "matches_committed_ncas": false
+    }
+  ],
+  "interpretation": "At least one AVAS threshold reproduces ncas=10 (the committed window)."
+}

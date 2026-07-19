@@ -1,0 +1,73 @@
+{
+  "system": "Sn2O2 rhombus (bridged Sn-O-Sn)",
+  "active_space": "CAS(18,19)",
+  "qubits": 38,
+  "dmrg_chi": 400,
+  "E_dmrg": -576.4232577378875,
+  "wall_s": 52.6,
+  "sweep_schedule": {
+    "n_sweeps": 8,
+    "bond_dims": [
+      100,
+      150,
+      200,
+      400,
+      400,
+      400,
+      400,
+      400
+    ],
+    "noises": [
+      0.0001,
+      1e-05,
+      1e-06,
+      1e-07,
+      0,
+      0,
+      0,
+      0
+    ],
+    "thrds": [
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08
+    ],
+    "symmetry": "SU2"
+  },
+  "thresholds": [
+    1e-08,
+    1e-08,
+    1e-08,
+    1e-08,
+    1e-08,
+    1e-08,
+    1e-08,
+    1e-08
+  ],
+  "peak_host_rss_gb": 2.35,
+  "scratch_dir": "/home/jovyan/dmrg_scratch/sn2o2_19_chi400",
+  "machine": {
+    "platform": "Linux-6.8.0-1059-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "cpu_count": 16,
+    "n_threads": 8,
+    "omp_num_threads": "8",
+    "mem_total_gb": 67.4
+  },
+  "code_path_note": "block2 DMRG via pyscf-replicated integral construction (qsci_lib cas_problem/hchain_problem integral half; cudaq import bypassed on this CPU box -- make_ref never uses the JW qubit operator). Same ROHF/RHF + mc.get_h1eff()/get_h2eff() + ao2mo.restore(1,..) path.",
+  "prereg": "E1 chi-escalation counter-audit (results/preregistration_v2.json)",
+  "rhf_converged": true,
+  "geometry": "Sn 1.5 0 0; Sn -1.5 0 0; O 0 1.4 0; O 0 -1.4 0",
+  "nao": 80,
+  "nelectron": 60,
+  "density_fit": false,
+  "basis": "def2-SVP + def2-ECP on Sn",
+  "scf_recipe": "RHF (closed-shell singlet), level_shift=0.3 convergence aid (retry level_shift=0/init_guess=atom), conv_tol=1e-9, non-DF exact integrals",
+  "integral_path": "mcscf.CASCI get_h1eff()/get_h2eff() + ao2mo.restore(1,..) \u2014 SAME extraction path validated for CrO; no exact-FCI solve",
+  "note": "block2 DMRG(chi=400) reference in the SAME CAS(18,19); committed BEFORE and PREDATES any QSCI run it will judge (prereg v2 E4 step 1). No E4 thresholds frozen yet; the E4 pass/fail criterion must be committed before the QSCI run. Non-DF exact integrals via the CrO-validated CASCI extraction path; block2 SU(2), same 8-sweep schedule as the CrO reference."
+}
