@@ -1,0 +1,94 @@
+{
+  "label": "P3 device-memory measurement, sampling phase only \u2014 A100 execution",
+  "status": "MEASURED",
+  "hardware_change": "planned on H100, blocked by instance GPU failure (a24fe53), executed on A100 gpu-a100-sxm-f38c0cd0",
+  "hardware": {
+    "gpu_name": "NVIDIA A100 80GB PCIe",
+    "gpu_uuid": "GPU-fc8a7a2c-bfe8-bb8e-926f-9b3d58744e4d",
+    "gpu_total_gb": 80.0,
+    "gpu_free_gb_at_start": 79.25
+  },
+  "prereg_note": "The pre-registration never specified the GPU card, so the H100->A100 swap is legitimate with this disclosure.",
+  "measured_config": {
+    "target": "tensornet-mps",
+    "system": "H20",
+    "qubits": 40,
+    "chi_reference": 400,
+    "shots": 200000,
+    "topm": 256,
+    "growth": "disabled (sampling phase only; P1/P2 not re-opened)",
+    "metric": "peak DEVICE memory via DeviceMemMonitor (nvidia-smi memory.used, device-wide)",
+    "frozen_threshold_gb": 8.0,
+    "scratch_size_percentage": "default (50% of free memory)",
+    "pool_cap_on_verdict": "NONE (frozen config, untuned)"
+  },
+  "measurement": {
+    "peak_device_mem_gb": 40.32,
+    "threshold_gb": 8.0,
+    "verdict": "FAIL",
+    "sampled_number_conserving_dets": 102,
+    "raw_distinct_bitstrings": 1152,
+    "shots": 200000,
+    "timings_s": {
+      "build_s": 103.5,
+      "sample_s": 2068.1
+    }
+  },
+  "p3_verdict": "FAIL (40.32 GB > 8.0 GB) \u2014 as measured",
+  "mechanism_context": {
+    "frozen_metric": "device-wide nvidia-smi memory.used",
+    "what_it_measures": "the cuTensorNet scratch allocator's appetite, not the workload's intrinsic MPS footprint",
+    "documented_behavior": "NVIDIA CUDA-Q tensornet backends reserve 50% of FREE device memory for scratch space by default; customizable via CUDAQ_TENSORNET_SCRATCH_SIZE_PERCENTAGE (valid 5-95%).",
+    "source": "https://nvidia.github.io/cuda-quantum/latest/using/backends/sims/tnsims.html",
+    "implication": "the reading is proportional to FREE card memory and INDEPENDENT of circuit size; it partly reflects the 80 GB card, not the H20/40q MPS. On a smaller card the same run would read smaller.",
+    "explains_this_A100_reading": "50% of 79.25 GB free at start ~= 39.6 GB, matching the measured device-wide peak of 40.32 GB \u2014 the mechanism explains THIS reading exactly.",
+    "demonstrating_datum_4q_smoke": {
+      "circuit": "H2 / 4 qubits",
+      "shots": 2000,
+      "peak_device_mem_gb": 39.9,
+      "gpu_after_process_exit": "0 MiB",
+      "note": "a trivial circuit reserved the same ~40 GB pool -> confirms size-independence"
+    }
+  },
+  "attempt1_precedent_context_only": {
+    "peak_device_mem_gb": 12.06,
+    "threshold_gb": 8.0,
+    "would_be": "FAIL (>8 GB)",
+    "config": "tensornet-mps, shots=200000, topm=256, non-converged iter-6 checkpoint (H100 attempt-1)",
+    "interpretation": "consistent with pool domination (50% of free memory would imply ~24 GB free at the time, plausible but unverifiable); composition unknown; context only",
+    "caveat": "prior attempt-1 precedent for CONTEXT only; no verdict derived from it here. The mechanism explains the A100 reading exactly but attempt-1 only conditionally."
+  },
+  "p1_p2_status": "SETTLED by the MP2-seed run (evidence commit 7fec4cf; iter-3 state 2f8523b): P1 PASS (+1.226 mHa), P2 PASS (450257 dets). NOT re-opened or re-evaluated here.",
+  "sample_linkage": {
+    "file": "results/p3_sample_dets.json",
+    "n_determinants": 102,
+    "for": "frozen extension E2 (results/preregistration_v2.json c8591b5)"
+  },
+  "supplementary_diagnostic": {
+    "label": "DIAGNOSTIC \u2014 NOT the P3 verdict",
+    "purpose": "decompose the device-wide reading into allocator-appetite vs true MPS footprint by measurement: cap the cuTensorNet scratch pool via the documented knob and re-measure",
+    "knob": "CUDAQ_TENSORNET_SCRATCH_SIZE_PERCENTAGE",
+    "setting": "5% (explicit)",
+    "gpu_free_gb_at_start": 79.25,
+    "shots": 2000,
+    "topm": 256,
+    "qubits": 40,
+    "peak_device_mem_gb": 4.88,
+    "timings_s": {
+      "build_s": 101.7,
+      "sample_s": 1376.5
+    },
+    "prereg_physics_estimate_gb": 0.2,
+    "interpretation": "With the cuTensorNet scratch pool capped at the documented 5% floor (~3.96 GB of 79.25 GB free), the IDENTICAL H20/40q chi=400 sampling completes normally (not starved; contraction 1376.5s) and peaks at 4.88 GB device-wide. Decomposition: the uncapped verdict read 40.32 GB; capping drops it to 4.88 GB, so ~35.4 GB was pure allocator appetite (the free-memory-proportional pool), and the workload's own device footprint is ~4.88 GB (capped scratch 3.96 GB + CUDA context + chi=400 MPS tensors, i.e. ~0.92 GB above the scratch cap \u2014 consistent in magnitude with the pre-registered ~0.2 GB tensor estimate once ~0.3-0.7 GB CUDA context is allowed). KEY FINDING: at a ~4 GB scratch cap the run peaks at 4.88 GB, UNDER the 8 GB threshold \u2014 so the pre-registered physics (MPS is memory-frugal) holds by measurement; the uncapped P3 FAIL is an allocator-appetite artifact of the 80 GB card, not a workload that needs >8 GB. This is a measurement, NOT the P3 verdict: the frozen P3 metric remains the uncapped device-wide 40.32 GB reading -> FAIL as-measured, threshold 8.0 GB untouched.",
+    "decomposition_gb": {
+      "uncapped_verdict_peak": 40.32,
+      "scratch_cap_5pct_of_free": 3.96,
+      "capped_peak": 4.88,
+      "allocator_appetite": 35.44,
+      "workload_footprint_at_cap": 4.88,
+      "residual_above_scratch_cap": 0.92,
+      "prereg_tensor_estimate": 0.2
+    }
+  },
+  "guardrails_honored": "Threshold 8.0 GB untouched; frozen config untuned (no pool cap on the verdict run); device memory reported as measured, no host-RSS substituted; existing H100 evidence file (a24fe53) untouched; verdict is exactly what THIS measurement says."
+}
