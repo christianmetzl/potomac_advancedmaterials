@@ -375,9 +375,198 @@
      },
      "trunc_err_vs_fci_mHa": 0.0
     }
+   ],
+   "qsci": {
+    "E": -5.415388996029657,
+    "dets": 25201,
+    "err_vs_fci_mHa": 0.0043,
+    "wall_s": 765.6,
+    "seed": "HF",
+    "params": {
+     "grow_iters": 80,
+     "grow_per_iter": 400,
+     "kcap": 25000,
+     "eps1": 1e-05,
+     "hij_floor": 1e-05,
+     "tcap": 2400
+    }
+   }
+  },
+  {
+   "R": 1.5,
+   "e_hf": -4.632485833773713,
+   "rhf_converged": true,
+   "E_fci": -5.0362929970810155,
+   "e_corr_mHa": -403.807,
+   "ccsd_t": {
+    "ccsd_converged": true,
+    "E_ccsd_t": -5.067035419993197,
+    "err_vs_fci_mHa": -30.742
+   },
+   "dmrg": [
+    {
+     "E_dmrg": -5.01736007800593,
+     "chi": 50,
+     "wall_s": 1.2,
+     "sweep_schedule": {
+      "n_sweeps": 8,
+      "bond_dims": [
+       100,
+       150,
+       200,
+       50,
+       50,
+       50,
+       50,
+       50
+      ],
+      "noises": [
+       0.0001,
+       1e-05,
+       1e-06,
+       1e-07,
+       0,
+       0,
+       0,
+       0
+      ],
+      "thrds": [
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08
+      ],
+      "symmetry": "SU2"
+     },
+     "trunc_err_vs_fci_mHa": 18.9329
+    },
+    {
+     "E_dmrg": -5.034532133259714,
+     "chi": 100,
+     "wall_s": 1.6,
+     "sweep_schedule": {
+      "n_sweeps": 8,
+      "bond_dims": [
+       100,
+       150,
+       200,
+       100,
+       100,
+       100,
+       100,
+       100
+      ],
+      "noises": [
+       0.0001,
+       1e-05,
+       1e-06,
+       1e-07,
+       0,
+       0,
+       0,
+       0
+      ],
+      "thrds": [
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08
+      ],
+      "symmetry": "SU2"
+     },
+     "trunc_err_vs_fci_mHa": 1.7609
+    },
+    {
+     "E_dmrg": -5.036292987509682,
+     "chi": 200,
+     "wall_s": 1.5,
+     "sweep_schedule": {
+      "n_sweeps": 8,
+      "bond_dims": [
+       100,
+       150,
+       200,
+       200,
+       200,
+       200,
+       200,
+       200
+      ],
+      "noises": [
+       0.0001,
+       1e-05,
+       1e-06,
+       1e-07,
+       0,
+       0,
+       0,
+       0
+      ],
+      "thrds": [
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08
+      ],
+      "symmetry": "SU2"
+     },
+     "trunc_err_vs_fci_mHa": 0.0
+    },
+    {
+     "E_dmrg": -5.036292986725479,
+     "chi": 400,
+     "wall_s": 1.9,
+     "sweep_schedule": {
+      "n_sweeps": 8,
+      "bond_dims": [
+       100,
+       150,
+       200,
+       400,
+       400,
+       400,
+       400,
+       400
+      ],
+      "noises": [
+       0.0001,
+       1e-05,
+       1e-06,
+       1e-07,
+       0,
+       0,
+       0,
+       0
+      ],
+      "thrds": [
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08
+      ],
+      "symmetry": "SU2"
+     },
+     "trunc_err_vs_fci_mHa": 0.0
+    }
    ]
   }
  ],
  "part_b": [],
- "peak_host_rss_gb": 0.98
+ "peak_host_rss_gb": 1.02
 }
