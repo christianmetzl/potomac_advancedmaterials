@@ -67,9 +67,16 @@
         "prediction_ii": "|E_QSCI - E_DMRG(chi=800)| <= 1.6 mHa at terminal",
         "reporting": "as-is; a non-converged attempt is reported as such with full logs (this is the least-grounded extension and is labeled so, mirroring P4's original labeling)."
       },
+      "refrozen_2026-07-20": {
+        "trigger": "The conditional above fired: E1 at 40q returned textual case B (E_DMRG(chi=800) = -10.293163 landed 2.19 mHa BELOW the committed QSCI terminal -10.290969; recorded 'case B vacuous' in claims_ledger row 24 because no below-reference claim existed at 40q). Per the frozen rule the reference chi is RAISED and this entry re-frozen before any execution.",
+        "raised_reference": "block2 DMRG chi=1200, H22/44q STO-6G R=0.74, identical integral path and frozen sweep schedule as every committed reference; committed pre-run (chi=800 also built alongside as the ladder rung, not the judge).",
+        "prediction_ii_as_refrozen": "|E_QSCI - E_DMRG(chi=1200)| <= 1.6 mHa at terminal; the chi=800 gap is reported alongside as the ladder diagnostic. Prediction i and the reporting rule unchanged.",
+        "discipline": "re-frozen by this commit BEFORE the H22 reference build or any QSCI execution; nothing else in this entry modified."
+      },
       "cost_estimate_cr": "6,000-10,000 GPU/CPU + multi-day CPU reference",
       "governance_note": "Executes on the grant share ONLY with an explicit budget decision amending rule 3 of docs/credit_budget.md (no >40q exploratory spend), or on new/personal funding. Freezing this protocol is not a commitment to run it.",
-      "status": "FROZEN (conditionally, pending E1 case at 40q); execution contingent on funding AND governance sign-off."
+      "governance_signoff_2026-07-20": "Operator (C. Metzl) explicitly authorized execution of E2, E3, E4 STEP 2, and E5 on the grant share in-session 2026-07-20 ('lets do all open additional jobs e2, e3, e4, e5'); rule 3 of docs/credit_budget.md amended accordingly in the same commit.",
+      "status": "RE-FROZEN 2026-07-20 (chi=1200 reference per the fired conditional); execution authorized, contingent on instance availability before the 2026-07-26 deadline."
     }
   ],
   "funding_note": "E1 runs on the team's personal qBraid org (zero grant draw). E4 STEP 1 (the DMRG reference) is authorized personally-funded pre-work. E2, E3, E4 STEP 2, and E5 are FROZEN PROTOCOLS whose execution is contingent on funding; if never executed before the submission deadline they stand, unmodified, as the pre-registered research outlook \u2014 protocols a reviewer can cost, audit, and anticipate, rather than promises."

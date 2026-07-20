@@ -59,9 +59,27 @@ includes 100 CPU-hrs/mo (0 used, renews in 11 days) — free capacity for any fu
    60 cr (29+29 physics + 2 probe), leaving 102 of 162 personal credits (dashboard-confirmed,
    162−60=102 ✓). No resubmission needed; a grant-funded IonQ replacement is moot. A grant-funded IonQ Forte replacement (~80k) **does not fit** under
    the 65k cap; if AQT stalls permanently, that needs organizer sign-off, not a unilateral spend.
-3. No exploratory scale pushes (>40q) on the grant share: nothing is pre-registered beyond 40q and
-   the evidence campaign is complete. Headroom is contingency reserve, and finishing well under
-   budget is itself part of the cost-discipline claim.
+3. ~~No exploratory scale pushes (>40q) on the grant share~~ **AMENDED 2026-07-20 by explicit
+   operator sign-off** (recorded in `preregistration_v2.json` → E5.governance_signoff): E2, E3,
+   E4 STEP 2, and E5 (44q, re-frozen against χ=1200) are authorized on the grant share. E5 runs
+   exactly as re-frozen — 44q H₂₂, nothing beyond; "max-q" pushes remain out of scope (assessed and
+   declined 2026-07-20: no audit-grade reference exists past ~44q).
 4. After B2 terminal evidence + P3 verdict: both instances shut down; all remaining work is CPU-tier.
+   **Superseded 2026-07-20 by the E-campaign authorization:** new instance spend is governed by the
+   projection below and the 65k cap; `verify_credits.py` remains the enforcement gate.
+
+## E-campaign authorization (2026-07-20)
+| Run | Frozen spec | Est. (cr) |
+|---|---|---|
+| E3 — 40q certificate convergence | kcap 2M, EN-PT2 every iter, ≥200 GB RAM instance | 4,000–8,000 |
+| E4 STEP 2 — Sn₂O₂ 38q QSCI | HF seed, 40k/iter, kcap 500k, vs committed STEP 1 reference | 2,500–5,000 |
+| E2 — device-seeded 40q equivalence | committed `p3_sample_dets.json` seed (sampling cost 0), kcap 450k | 2,000–4,000 |
+| E5 — 44q H₂₂ frontier | MP2 seed, 150k/iter, kcap 3M, vs re-frozen χ=1200 reference (built pre-run, CPU) | 6,000–10,000 |
+| **Total projection** | | **14,500–27,000** |
+
+Worst case: 16,483 (spent) + 27,000 = **43,483 < 65,000 cap** ✓ (remaining buffer ≥21.5k). The
+DMRG-only classical ladder (H22 refs + 48–64q headroom study) runs on the session container CPU at
+zero credits. Deadline gate: instances must be productive by ~Jul 22 to integrate by Jul 26;
+unexecuted entries revert to pre-registered-outlook status, unmodified.
 
 *EIGENNEXUS — GIC 2026 Phase 3. Same audit trail as the physics: numbers over vibes.*

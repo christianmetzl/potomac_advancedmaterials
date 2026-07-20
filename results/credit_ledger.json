@@ -66,10 +66,15 @@
     }
   ],
   "projections_cr": {
-    "campaign_closed_no_committed_future_spend": [
-      0,
-      0
-    ]
+    "e_campaign_authorized_2026-07-20": {
+      "E3_certificate_convergence_40q": [4000, 8000],
+      "E4_step2_sn2o2_38q": [2500, 5000],
+      "E2_device_seeded_equivalence_40q": [2000, 4000],
+      "E5_h22_44q_refrozen_chi1200": [6000, 10000],
+      "total": [14500, 27000],
+      "cap_check": "16483 spent + 27000 worst case = 43483 < 65000 (buffer >= 21517)",
+      "authorization": "operator sign-off in-session 2026-07-20; rule 3 amended (docs/credit_budget.md); E5 re-frozen against chi=1200 per its fired E1 conditional (preregistration_v2.json)"
+    }
   },
   "personally_funded_zero_pool_draw": [
     "all GPU sessions before the first top-up: 20q/28q cuStateVec runs, 38q DMRG reference build, 40q MPS attempt-1",
