@@ -1,0 +1,194 @@
+{
+ "title": "Stretched-geometry truncation-error-vs-correlation sweep (Phase 2 \u00a75 follow-through)",
+ "status_note": "POST-CAMPAIGN SUPPLEMENTARY: not in preregistration_v1/v2; protocol frozen by committing src/stretch_sweep.py before execution (commit recorded below); no post-hoc pass/fail gates \u2014 measured values reported against exact anchors",
+ "phase2_promise": "Phase 2 \u00a75 benchmarking plan: 'report ... truncation error versus correlation'",
+ "cost_note": "zero platform credits: container CPU (grant GPU instances retired 2026-07-19)",
+ "protocol_commit": "bc36f68859b2d90cffc0855990d1b748866ad012",
+ "machine": {
+  "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+  "python": "3.11.15",
+  "cpu_count": 4,
+  "n_threads": 4,
+  "omp_num_threads": "4",
+  "mem_total_gb": 16.9
+ },
+ "code_path_note": "integrals + DMRG via e1_chi800_counteraudit (the committed, chi400-validated path); QSCI via qsci_int.IntEngine (the committed 38/40q growth engine)",
+ "part_a": [
+  {
+   "R": 0.74,
+   "e_hf": -5.096509572613217,
+   "rhf_converged": true,
+   "E_fci": -5.202826400621634,
+   "e_corr_mHa": -106.317,
+   "ccsd_t": {
+    "ccsd_converged": true,
+    "E_ccsd_t": -5.202652928421992,
+    "err_vs_fci_mHa": 0.173
+   },
+   "dmrg": [
+    {
+     "E_dmrg": -5.202656210461592,
+     "chi": 50,
+     "wall_s": 1.0,
+     "sweep_schedule": {
+      "n_sweeps": 8,
+      "bond_dims": [
+       100,
+       150,
+       200,
+       50,
+       50,
+       50,
+       50,
+       50
+      ],
+      "noises": [
+       0.0001,
+       1e-05,
+       1e-06,
+       1e-07,
+       0,
+       0,
+       0,
+       0
+      ],
+      "thrds": [
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08
+      ],
+      "symmetry": "SU2"
+     },
+     "trunc_err_vs_fci_mHa": 0.1702
+    },
+    {
+     "E_dmrg": -5.202817674241841,
+     "chi": 100,
+     "wall_s": 1.1,
+     "sweep_schedule": {
+      "n_sweeps": 8,
+      "bond_dims": [
+       100,
+       150,
+       200,
+       100,
+       100,
+       100,
+       100,
+       100
+      ],
+      "noises": [
+       0.0001,
+       1e-05,
+       1e-06,
+       1e-07,
+       0,
+       0,
+       0,
+       0
+      ],
+      "thrds": [
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08
+      ],
+      "symmetry": "SU2"
+     },
+     "trunc_err_vs_fci_mHa": 0.0087
+    },
+    {
+     "E_dmrg": -5.20282638643358,
+     "chi": 200,
+     "wall_s": 1.1,
+     "sweep_schedule": {
+      "n_sweeps": 8,
+      "bond_dims": [
+       100,
+       150,
+       200,
+       200,
+       200,
+       200,
+       200,
+       200
+      ],
+      "noises": [
+       0.0001,
+       1e-05,
+       1e-06,
+       1e-07,
+       0,
+       0,
+       0,
+       0
+      ],
+      "thrds": [
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08
+      ],
+      "symmetry": "SU2"
+     },
+     "trunc_err_vs_fci_mHa": 0.0
+    },
+    {
+     "E_dmrg": -5.202826397564225,
+     "chi": 400,
+     "wall_s": 1.7,
+     "sweep_schedule": {
+      "n_sweeps": 8,
+      "bond_dims": [
+       100,
+       150,
+       200,
+       400,
+       400,
+       400,
+       400,
+       400
+      ],
+      "noises": [
+       0.0001,
+       1e-05,
+       1e-06,
+       1e-07,
+       0,
+       0,
+       0,
+       0
+      ],
+      "thrds": [
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08,
+       1e-08
+      ],
+      "symmetry": "SU2"
+     },
+     "trunc_err_vs_fci_mHa": 0.0
+    }
+   ]
+  }
+ ],
+ "part_b": [],
+ "peak_host_rss_gb": 0.42
+}
