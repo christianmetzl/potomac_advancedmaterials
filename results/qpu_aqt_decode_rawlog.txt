@@ -1,0 +1,5 @@
+status: {'probe': 'COMPLETED', 'shallow_topm8': 'COMPLETED', 'ladder_topm16': 'COMPLETED'}
+probe: dominant 000000000001 (99/100) -> convention REVERSED
+shallow_topm8: keep 572/2000 (29%) | dets 158 | dom==HF True | sampled +20.44 mHa | grown +0.000 mHa (625 dets)
+ladder_topm16: keep 501/2000 (25%) | dets 334 | dom==HF False | sampled +11.13 mHa | grown +0.000 mHa (756 dets)
+-> /home/user/potomac_advancedmaterials/results/qpu_aqt_evidence.json

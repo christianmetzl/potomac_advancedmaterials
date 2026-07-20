@@ -54,9 +54,10 @@ includes 100 CPU-hrs/mo (0 used, renews in 11 days) — free capacity for any fu
 
 ## Rules of the road
 1. **Hard stop at 65k cumulative** attributed to this project; check billing before any new instance.
-2. The P5 QPU leg is funded from the personal OpenQuantum pool (AQT ibex-q1, ~82 of 162 cr) — it does
-   NOT draw on the grant share. (Re-checked 2026-07-20: 102 Full personal credits remain — one full
-   AQT resubmission cycle of headroom if the queued jobs fail QC.) A grant-funded IonQ Forte replacement (~80k) **does not fit** under
+2. The P5 QPU leg was funded from the personal OpenQuantum pool — it did NOT draw on the grant
+   share. **CLOSED 2026-07-20:** all 3 AQT ibex-q1 jobs completed and decoded clean; actual billed
+   60 cr (29+29 physics + 2 probe), leaving 102 of 162 personal credits (dashboard-confirmed,
+   162−60=102 ✓). No resubmission needed; a grant-funded IonQ replacement is moot. A grant-funded IonQ Forte replacement (~80k) **does not fit** under
    the 65k cap; if AQT stalls permanently, that needs organizer sign-off, not a unilateral spend.
 3. No exploratory scale pushes (>40q) on the grant share: nothing is pre-registered beyond 40q and
    the evidence campaign is complete. Headroom is contingency reserve, and finishing well under

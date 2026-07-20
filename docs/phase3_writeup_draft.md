@@ -124,10 +124,16 @@ state of the art is the stricter comparison — VQE itself was benchmarked at sm
   card memory — 50%×79.25 GB ≈ the measured peak). A capped diagnostic ran the identical workload in
   **4.88 GB < 8 GB**: the physics estimate holds; the FAIL is an 80 GB-card allocator artifact
   (`gpu_run1_h20_P3_device_memory_A100_evidence.json`). A pre-registration lesson, reported as frozen.
-- **Hardware validation (P5):** the 3-job pooled protocol executed end-to-end through the qBraid
-  cloud runtime (qir-sv tier): **+2.0/+2.4 mHa vs FCI, PASS**, job IDs committed. Trapped-ion jobs
-  (AQT ibex-q1 via OpenQuantum, personally funded) submitted with L1-verified, SHA-pinned exports;
-  decode pending queue drain — raw counts will be committed pass or fail.
+- **Hardware validation (P5) — real trapped-ion silicon, decoded:** the 3-job pooled protocol
+  executed end-to-end through the qBraid cloud runtime (qir-sv tier): **+2.0/+2.4 mHa vs FCI, PASS**,
+  job IDs committed. The trapped-ion flight (AQT ibex-q1 via OpenQuantum, personally funded, 2,000
+  shots/job, L1-verified SHA-pinned exports) completed and decoded 2026-07-20: the probe pinned the
+  count-key bit order (99/100 shots), number-conserving post-selection kept 28.6%/25.1% of shots, the
+  raw device-sampled determinants give **+20.4/+11.1 mHa**, and device-seeded QSCI growth recovers the
+  exact FCI energy (0.000 mHa at 625/756 dets — at 12q the grown space spans the full Sz=0 sector, so
+  exact recovery is the protocol's sanity check; the device-specific results are the sampled energies
+  and yields). Raw counts committed in `qpu_aqt_evidence.json` — genuine 12-qubit trapped-ion samples
+  driving the same QSCI machinery as the 40q runs.
 - **Quantum-vs-classical wall clock:** generated (never typed) from the evidence JSONs —
   `docs/wall_clock_table.md` / `src/make_walltable.py`; headline rows: FCI seconds→intractable by
   32q; DMRG references minutes; QSCI 3 min (20q) → 40 min (28q) → ~16–19 h at 38–40q on host CPUs.
