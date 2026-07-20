@@ -93,7 +93,12 @@ qubit count, circuit depth, shot budget, and wall-clock.*
 **5b. Classical baseline & the exact wall (matched instances, timed):** FCI wall-clock 0.69 s (20q) →
 3.74 s (24q), ~5×/2 atoms (machine-dependent); H₁₄/28q FCI = minutes, 32q+ intractable on CPU. CCSD(T) cheap but error
 climbs with correlation and breaks down under strong correlation (H₂₄/48q DMRG 6.83 mHa off CCSD(T)).
-This is the curve the quantum MPS/QSCI wall-clock is measured against.
+This is the curve the quantum MPS/QSCI wall-clock is measured against. *Upgrade disclosed:* Phase 2
+promised "wall-clock versus VQE"; we benchmark against FCI/CCSD(T)/DMRG instead. At 38–40q no VQE
+baseline converges to a competitive energy on any budget we could justify (barren-plateau
+optimization cost; Tilly 2022), so timing the methods that actually set the classical
+state of the art is the stricter comparison — VQE itself was benchmarked at small scale in Phase 2
+(Table 1).
 
 **5c. Executed at scale (the headline runs — all committed, pre-registered, reported as frozen):**
 - **40q flagship (H₂₀) — P1 PASS, P2 PASS.** GPU anchors: exact to the digit at 20q (+0.000 mHa vs

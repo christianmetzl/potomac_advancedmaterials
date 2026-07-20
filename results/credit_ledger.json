@@ -74,6 +74,7 @@
   "personally_funded_zero_pool_draw": [
     "all GPU sessions before the first top-up: 20q/28q cuStateVec runs, 38q DMRG reference build, 40q MPS attempt-1",
     "AQT ibex-q1 QPU flight (personal OpenQuantum pool, ~82 of 162 personal credits)",
+    "OpenQuantum personal wallet re-check 2026-07-20 (dashboard screenshot): 0 Spark / 102 Full credits remaining, 69 quantum ops this month, earliest expiration 2027-07-05 -- headroom for one full AQT resubmission cycle (~82 cr) if the queued P5 jobs fail QC; grant share unaffected either way",
     "E1 chi-ladder + E4 STEP 1 reference + x2c/AVAS probes + reproduce rerun: personal org balance IDENTICAL before/after (5,008.44 -> 5,008.44, screenshots 2026-07-19); ~68.5 of 100 subscription compute-hrs, zero credits"
   ],
   "attribution_caveat": "Wallet balance is pool-level. Attribution of pool spend to THIS project is exact only while the second project has spent nothing (true at the snapshot above). Once both projects draw, per-instance billing history from the qBraid console is the arbiter, not the balance."
