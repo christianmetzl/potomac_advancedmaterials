@@ -1326,3 +1326,5 @@ Time sweep =        0.274 | 1.26 GFLOP/SWP
   QSCI+ grow it17 |space|=6801 nnz=1193059 E=-5.414903 [89s]
   QSCI+ grow it18 |space|=7201 nnz=1304743 E=-5.414968 [98s]
   QSCI+ grow it19 |space|=7601 nnz=1421725 E=-5.415021 [108s]
+  QSCI+ grow it20 |space|=8001 nnz=1541519 E=-5.415066 [119s]
+  QSCI+ grow it21 |space|=8401 nnz=1663655 E=-5.415104 [130s]
