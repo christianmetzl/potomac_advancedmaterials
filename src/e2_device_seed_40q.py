@@ -76,8 +76,11 @@ def main():
         dv = (Ei - E_MP2_SEEDED) * 1000
         trace.append(dict(iter=it, dets=int(nd), E=Ei, dev_vs_mp2seed_mHa=round(dv, 3),
                           err_vs_chi400_mHa=round((Ei - e400) * 1000, 3)))
-        json.dump(dict(status=f"IN-PROGRESS iter {it}/{GROW_ITERS} (partial, not final)",
-                       run="e2_device_seed", trace=trace), open(ckpt_fn, "w"), indent=2)
+        try:
+            json.dump(dict(status=f"IN-PROGRESS iter {it}/{GROW_ITERS} (partial, not final)",
+                           run="e2_device_seed", trace=trace), open(ckpt_fn, "w"), indent=2)
+        except OSError as e:
+            print(f"  WARNING: checkpoint flush failed ({e}); run continues", flush=True)
 
     E, space = eng.qsci_fast(seed, grow_iters=GROW_ITERS, grow_per_iter=GROW_PER_ITER, kcap=KCAP,
                              log=lambda m: print(m, flush=True), ckpt=_ckpt, state_file=state_fn)

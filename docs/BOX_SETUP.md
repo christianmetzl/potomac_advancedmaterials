@@ -53,11 +53,11 @@ tmux new -s campaign   # reattach later: tmux attach -t campaign
 
 > You are the run operator on qBraid box A (64 vCPU/256 GB) for the EIGENNEXUS E-campaign.
 > Read docs/E_CAMPAIGN_RUNBOOK.md and results/preregistration_v2.json first. Your jobs, in order:
-> 1) Launch E3 exactly as frozen: `nohup env OMP_NUM_THREADS=64 MKL_NUM_THREADS=64 python src/e3_certificate_40q.py > e3.log 2>&1 &` — never change GROW_PER_ITER/KCAP/thresholds.
-> 2) Babysit it: every ~30 min check e3.log, RAM (`free -g`), disk (`df -h`), and commit+push `results/e3_certificate_evidence.json` + the log at every completed iteration. If the process dies, relaunch the identical command — it resumes bit-exact from its state file.
+> 1) Launch E3 exactly as frozen: `nohup env OMP_NUM_THREADS=64 MKL_NUM_THREADS=64 python src/e3_certificate_40q.py > e3.log 2>&1 &` — never change GROW_PER_ITER/KCAP/thresholds. (This box has only ~20 GB free disk; E3 v2 runs state-file-free by design — do NOT set STATE_FILE.)
+> 2) Babysit it: every ~30 min check e3.log, RAM (`free -g`), disk (`df -h`), and commit+push `results/e3_certificate_evidence.json` + the log at every completed iteration. If the process dies, relaunch the identical command — it restarts from the seed (no state file on this disk; the committed per-iteration certificate points are the durable record).
 > 3) When E3 finishes: commit+push everything, then `python src/verify_credits.py --live --append`, commit the ledger.
 > 4) Before E5: `git pull`, confirm `results/h22_44q_dmrg_chi1200.json` exists. If it is missing or marked DNF, build the judge FIRST and commit it BEFORE any growth: `python src/dmrg_ladder_ext.py --rung 22 1200 /tmp/r1200.json` then `python -c "import json,sys; sys.path.insert(0,'src'); import dmrg_ladder_ext as lx; lx._write_reference(22,1200,json.load(open('/tmp/r1200.json')),role='E5 JUDGE reference (re-frozen chi=1200)')"` — if block2 fails to load MKL on this image, consult src/e1_env.sh for the documented fix.
-> 5) Launch E5: `nohup env OMP_NUM_THREADS=64 MKL_NUM_THREADS=64 python src/e5_h22_44q.py > e5.log 2>&1 &` (point STATE_FILE at the largest free volume if home is tight). Same babysit/commit discipline.
+> 5) Launch E5: `nohup env OMP_NUM_THREADS=64 MKL_NUM_THREADS=64 STATE_FILE= python src/e5_h22_44q.py > e5.log 2>&1 &` (STATE_FILE empty = checkpointing off: this box's ~20 GB disk cannot hold the state file — disclosed deviation, see runbook; the PARTIAL trace + evidence flushes are the durable record). Same babysit/commit discipline; on death, relaunch restarts from seed.
 > 6) HARD ABORT GATE (frozen): if E5 has not converged by 2026-07-25 06:00 UTC, stop it, commit all logs/state trace, and report it as non-converged per its frozen reporting rule. Do not extend.
 > 7) Before ANY instance shutdown: push all evidence, take a final `verify_credits.py --live --append` snapshot, commit, push. Evidence must never die with the box.
 > Rules: protocols are FROZEN — no parameter tuning, no threshold moves, report outcomes as-is (FAIL is a result). Never edit results/preregistration_v2.json. If anything ambiguous comes up, stop and ask me rather than improvising.
@@ -66,10 +66,10 @@ tmux new -s campaign   # reattach later: tmux attach -t campaign
 
 > You are the run operator on qBraid box B (32 vCPU/128 GB) for the EIGENNEXUS E-campaign.
 > Read docs/E_CAMPAIGN_RUNBOOK.md and results/preregistration_v2.json first. Your jobs, in order:
-> 1) Launch E4 exactly as frozen: `nohup env OMP_NUM_THREADS=32 MKL_NUM_THREADS=32 python src/e4_sn2o2_38q.py > e4.log 2>&1 &`.
-> 2) Babysit: every ~30 min check e4.log, RAM, disk; commit+push `results/e4_sn2o2_38q_evidence.json` (and the PARTIAL checkpoint) at every completed iteration. On process death, relaunch identically — bit-exact state resume.
+> 1) Launch E4 exactly as frozen: `nohup env OMP_NUM_THREADS=32 MKL_NUM_THREADS=32 STATE_FILE= python src/e4_sn2o2_38q.py > e4.log 2>&1 &` (STATE_FILE empty = checkpointing off: ~20 GB disk, state would need ~29 GB — disclosed deviation, see runbook).
+> 2) Babysit: every ~30 min check e4.log, RAM, disk; commit+push `results/e4_sn2o2_38q_evidence.json` (and the PARTIAL checkpoint) at every completed iteration. On process death, relaunch identically — it restarts from the HF seed; the committed PARTIAL trace is the durable record.
 > 3) When E4 finishes: commit+push, `python src/verify_credits.py --live --append`, commit the ledger.
-> 4) Launch E2: `nohup env OMP_NUM_THREADS=32 MKL_NUM_THREADS=32 python src/e2_device_seed_40q.py > e2.log 2>&1 &`. Same discipline. E2 consumes the committed seed file verbatim — if `results/p3_sample_dets.json` is missing or fails the runner's assertion, STOP and report; do not substitute a seed.
+> 4) Launch E2: `nohup env OMP_NUM_THREADS=32 MKL_NUM_THREADS=32 STATE_FILE= python src/e2_device_seed_40q.py > e2.log 2>&1 &` (STATE_FILE empty — same disk deviation as E4). Same discipline. E2 consumes the committed seed file verbatim — if `results/p3_sample_dets.json` is missing or fails the runner's assertion, STOP and report; do not substitute a seed.
 > 5) Before ANY shutdown: push all evidence + final wallet snapshot.
 > Rules: FROZEN protocols — no tuning, no threshold moves, outcomes as-is; a metric FAIL with the below-reference ordering is a valid documented outcome (see the CrO/B2 precedent). Never edit results/preregistration_v2.json. Ask before improvising.
 

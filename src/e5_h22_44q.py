@@ -83,8 +83,11 @@ def main():
     def _ckpt(it, Ei, nd, ws):
         er = (Ei - e1200) * 1000
         trace.append(dict(iter=it, dets=int(nd), E=Ei, err_vs_chi1200_mHa=round(er, 3)))
-        json.dump(dict(status=f"IN-PROGRESS iter {it}/{GROW_ITERS} (partial, not final)",
-                       run="e5_h22_44q", trace=trace), open(ckpt_fn, "w"), indent=2)
+        try:
+            json.dump(dict(status=f"IN-PROGRESS iter {it}/{GROW_ITERS} (partial, not final)",
+                           run="e5_h22_44q", trace=trace), open(ckpt_fn, "w"), indent=2)
+        except OSError as e:
+            print(f"  WARNING: checkpoint flush failed ({e}); run continues", flush=True)
 
     E, space = eng.qsci_fast(seed, grow_iters=GROW_ITERS, grow_per_iter=GROW_PER_ITER, kcap=KCAP,
                              log=lambda m: print(m, flush=True), ckpt=_ckpt, state_file=state_fn)

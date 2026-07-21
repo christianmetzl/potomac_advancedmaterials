@@ -38,8 +38,17 @@ so CPU instances only improve the projection.
 
 **Rate-based re-projection: 22.3–37.6k total → worst case 16,483 + 37.6k = 54.1k < 65k cap ✓**
 (tighter than the original 27k worst case — the E5 tail is the driver; its Jul 25 06:00 UTC abort
-gate and `verify_credits.py` remain the guards. E5 state-file at kcap 3M may reach 150–250 GB:
-verify ≥250 GB free disk at launch or point STATE_FILE at scratch/network volume.)
+gate and `verify_credits.py` remain the guards.)
+
+**DISK REALITY (measured 2026-07-21): the catalog CPU boxes expose ~20 GB free on a 49 GB root, no
+scratch volume.** State-file checkpointing (frozen E3 spec wanted ≥100 GB) is therefore DISABLED on
+these boxes — a disclosed operational deviation (recorded in each runner header/evidence; the same
+ceiling forced B1's early stop). Consequences: crash = restart from seed; per-iteration evidence
+traces (tiny, flushed every iteration, checkpoint-committed) are the durable record; all runner
+checkpoint flushes are disk-full-immune. Launch E2/E4/E5 with `STATE_FILE=` (empty) as shown in
+BOX_SETUP; E3 v2 needs no state file at all (it observes the engine's live caches through the
+sanctioned ckpt callback — smoke-validated at 1e-16 Ha vs the committed PT2 formula). Physics,
+engine, schedule, thresholds: unchanged.
 **Bonus, zero credits:** the Subscription tier (100 free CPU-hrs, renews in 10 days) **Large
 (8 vCPU / 25 GB)** box is exactly right for the full-dependency `reproduce.py` canonical transcript
 — the outstanding Phase-1 leftover. Launch it anytime; it draws nothing.
