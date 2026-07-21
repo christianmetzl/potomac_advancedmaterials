@@ -73,6 +73,16 @@ tmux new -s campaign   # reattach later: tmux attach -t campaign
 > 5) Before ANY shutdown: push all evidence + final wallet snapshot.
 > Rules: FROZEN protocols — no tuning, no threshold moves, outcomes as-is; a metric FAIL with the below-reference ordering is a valid documented outcome (see the CrO/B2 precedent). Never edit results/preregistration_v2.json. Ask before improvising.
 
+### Box C (64 vCPU / 256 GB, second big box) — E5 judge build + E5 (added 2026-07-21, decouples E5 from E3)
+
+> You are the run operator on qBraid box C (64 vCPU/256 GB) for the EIGENNEXUS E-campaign. E5 is REASSIGNED to this box (box A keeps E3 only; its old Jobs 4–5 are cancelled). Read docs/E_CAMPAIGN_RUNBOOK.md and results/preregistration_v2.json (E5 entry incl. refrozen_2026-07-20) first. Your jobs, in order:
+> 1) git pull. Confirm results/h22_44q_dmrg_chi400.json and _chi800.json exist (committed ladder rungs). The JUDGE results/h22_44q_dmrg_chi1200.json is expected MISSING — build it FIRST, before any growth: `python src/dmrg_ladder_ext.py --rung 22 1200 /tmp/r1200.json` then `python -c "import json,sys; sys.path.insert(0,'src'); import dmrg_ladder_ext as lx; lx._write_reference(22,1200,json.load(open('/tmp/r1200.json')),role='E5 JUDGE reference (re-frozen chi=1200)')"` — then COMMIT AND PUSH the judge before proceeding (commit must precede execution). If block2 fails to load MKL on this image, consult src/e1_env.sh for the documented fix. Expect ~1–2 h on 64 threads.
+> 2) Launch E5 exactly as frozen: `nohup env OMP_NUM_THREADS=64 MKL_NUM_THREADS=64 STATE_FILE= python src/e5_h22_44q.py > e5.log 2>&1 &` (STATE_FILE empty = checkpointing off on ~20 GB-disk boxes — disclosed deviation, see runbook). The runner refuses to start if the judge file is missing — that refusal means step 1 wasn't completed; never work around it.
+> 3) Babysit: every ~30 min check e5.log, RAM (`free -g` — kcap 3M at 44q may push toward this box's limit; an out-of-memory stop is a RESOURCE outcome, reported as-is with the trace, never retried with altered parameters), disk, and commit+push the PARTIAL/evidence per iteration. Also start the unattended backstop loop with label "box C E5 auto-checkpoint" and the pull-rebase-autostash pattern (see box A/B precedent). On process death, relaunch identically — restarts from seed.
+> 4) HARD ABORT GATE (frozen): if E5 has not converged by 2026-07-25 06:00 UTC, stop it, commit all logs and the trace, and report non-converged per its frozen reporting rule. Do not extend.
+> 5) Before ANY shutdown: push all evidence, `python src/verify_credits.py --live --append`, commit the ledger, and append this instance's settled cost from qBraid console billing to credit_ledger.json attributed_spend_cr.e_campaign_instances (run: "E5").
+> Rules: FROZEN protocols — no tuning, no threshold moves, outcomes as-is. Never edit results/preregistration_v2.json. Ask before improvising.
+
 ### Box S (Subscription Large, free) — canonical reproduce transcript
 
 > You are on the free subscription box (8 vCPU/25 GB) to produce the canonical full-dependency reproduce transcript for EIGENNEXUS.
