@@ -17,8 +17,123 @@
    "file": "h22_44q_dmrg_chi400.json",
    "E_dmrg": -11.309682955420904,
    "wall_s": 138.9
+  },
+  {
+   "chi": 800,
+   "file": "h22_44q_dmrg_chi800.json",
+   "E_dmrg": -11.311403232066795,
+   "wall_s": 543.3
+  },
+  {
+   "chi": 1200,
+   "status": "DNF",
+   "returncode": -6,
+   "note": "resource-DNF (subprocess died; 15 GB box) \u2014 recorded, not dropped",
+   "fallback": "build on the big-RAM instance BEFORE E5 growth starts; commit precedes execution either way"
   }
  ],
- "ladder": [],
- "peak_host_rss_gb": 2.87
+ "ladder": [
+  {
+   "n_atoms": 24,
+   "qubits": 48,
+   "ccsd_t": {
+    "e_hf": -12.06666171064392,
+    "rhf_converged": true,
+    "ccsd_converged": true,
+    "E_ccsd_t": -12.32987357389233
+   },
+   "dmrg_chi400": {
+    "E_dmrg": -12.326591373837765,
+    "wall_s": 180.4
+   },
+   "dmrg400_minus_ccsdt_mHa": 3.282,
+   "dmrg_chi800": {
+    "status": "DNF",
+    "returncode": -9,
+    "note": "resource-DNF (subprocess died; 15 GB box) \u2014 recorded, not dropped"
+   }
+  },
+  {
+   "n_atoms": 26,
+   "qubits": 52,
+   "ccsd_t": {
+    "e_hf": -13.062741840071837,
+    "rhf_converged": true,
+    "ccsd_converged": true,
+    "E_ccsd_t": -13.348591568358767
+   },
+   "dmrg_chi400": {
+    "E_dmrg": -13.34296400013325,
+    "wall_s": 219.5
+   },
+   "dmrg400_minus_ccsdt_mHa": 5.628,
+   "dmrg_chi800": {
+    "status": "DNF",
+    "returncode": -9,
+    "note": "resource-DNF (subprocess died; 15 GB box) \u2014 recorded, not dropped"
+   }
+  },
+  {
+   "n_atoms": 28,
+   "qubits": 56,
+   "ccsd_t": {
+    "e_hf": -14.058847054732574,
+    "rhf_converged": true,
+    "ccsd_converged": true,
+    "E_ccsd_t": -14.367359415563573
+   },
+   "dmrg_chi400": {
+    "E_dmrg": -14.358715066619247,
+    "wall_s": 304.0
+   },
+   "dmrg400_minus_ccsdt_mHa": 8.644,
+   "dmrg_chi800": {
+    "status": "DNF",
+    "returncode": -9,
+    "note": "resource-DNF (subprocess died; 15 GB box) \u2014 recorded, not dropped"
+   }
+  },
+  {
+   "n_atoms": 30,
+   "qubits": 60,
+   "ccsd_t": {
+    "e_hf": -15.054970650174837,
+    "rhf_converged": true,
+    "ccsd_converged": true,
+    "E_ccsd_t": -15.386166485801343
+   },
+   "dmrg_chi400": {
+    "E_dmrg": -15.374026364670385,
+    "wall_s": 361.8
+   },
+   "dmrg400_minus_ccsdt_mHa": 12.14,
+   "dmrg_chi800": {
+    "status": "DNF",
+    "returncode": -6,
+    "note": "resource-DNF (subprocess died; 15 GB box) \u2014 recorded, not dropped"
+   }
+  },
+  {
+   "n_atoms": 32,
+   "qubits": 64,
+   "ccsd_t": {
+    "e_hf": -16.05110776574996,
+    "rhf_converged": true,
+    "ccsd_converged": true,
+    "E_ccsd_t": -16.405004779710964
+   },
+   "dmrg_chi400": {
+    "E_dmrg": -16.388780486991422,
+    "wall_s": 494.3
+   },
+   "dmrg400_minus_ccsdt_mHa": 16.224,
+   "dmrg_chi800": {
+    "status": "DNF",
+    "returncode": -6,
+    "note": "resource-DNF (subprocess died; 15 GB box) \u2014 recorded, not dropped"
+   }
+  }
+ ],
+ "peak_host_rss_gb": 10.4,
+ "total_wall_s": 3057.4
 }
