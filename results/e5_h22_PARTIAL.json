@@ -1,0 +1,12 @@
+{
+  "status": "IN-PROGRESS iter 0/60 (partial, not final)",
+  "run": "e5_h22_44q",
+  "trace": [
+    {
+      "iter": 0,
+      "dets": 257,
+      "E": -11.186623707832823,
+      "err_vs_chi1200_mHa": 125.203
+    }
+  ]
+}
