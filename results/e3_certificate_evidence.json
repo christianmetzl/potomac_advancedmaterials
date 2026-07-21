@@ -1,0 +1,18 @@
+{
+  "status": "IN-PROGRESS (partial, not final)",
+  "run": "e3_certificate_40q",
+  "points": [
+    {
+      "iter": 0,
+      "dets": 257,
+      "E_var": -10.192153144343173,
+      "pt2_mHa": -84.234,
+      "E_est": -10.276387192835656,
+      "n_external": 3834586,
+      "n_den_screened": 0,
+      "pt2_wall_s": 193.4,
+      "var_err_vs_chi400_mHa": 100.041,
+      "var_err_vs_chi800_mHa": 101.01
+    }
+  ]
+}
