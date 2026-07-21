@@ -43,13 +43,17 @@ so CPU instances only improve the projection.
 - **Jul 25:** E5 terminal or abort-gate; final integration, PDF rebuild, re-zip.
 - Shutdown discipline: evidence pushed **before** every instance stop (B2 rule).
 
-## Runners (all in `src/`, smoke-test target = container CPU at toy scale)
-| Run | Runner | Status |
+## Runners (all in `src/`) — ALL SMOKE-TESTED GREEN in the session container, 2026-07-21
+| Run | Runner | Smoke result |
 |---|---|---|
-| E2 | `e2_device_seed_40q.py` — growth from `p3_sample_dets.json`, 150k/iter, kcap 450k; judge: \|E − (−10.290969)\| ≤ 0.5 mHa at matched det count | to write + smoke |
-| E3 | `e3_certificate_40q.py` — MP2-seeded, 150k/iter, kcap 2M, chunked EN-PT2 every iteration (committed `selci_pt2` formula); predictions i–iii judged independently | to write + smoke |
-| E4 | `e4_sn2o2_38q.py` — HF-seeded, 40k/iter, kcap 500k, integrals via the CrO-validated `sn2o2_integrals` path; judge: committed `sn2o2_cas19_dmrg_reference.json` (±1.6 mHa, ordering disclosure mirrors P4) | to write + smoke |
-| E5 | `e5_h22_44q.py` — MP2-seeded, 150k/iter, kcap 3M; judge: re-frozen χ=1200 reference; χ=800 gap reported as ladder diagnostic | to write + smoke |
+| E2 | `e2_device_seed_40q.py` — growth from `p3_sample_dets.json`, 150k/iter, kcap 450k; judge: \|E − (−10.290969)\| ≤ 0.5 mHa at matched det count | ✅ H₆: 0.0000 mHa vs FCI |
+| E3 | `e3_certificate_40q.py` — MP2-seeded, 150k/iter, kcap 2M, chunked hash-bucketed EN-PT2 every iteration; predictions i–iii judged independently | ✅ PT2 ≡ committed `selci_pt2.en_pt2` **exactly** (\|Δ\|=0.0 Ha, identical external counts, 6/6 iters); bracket vs FCI converges |
+| E4 | `e4_sn2o2_38q.py` — HF-seeded, 40k/iter, kcap 500k, integrals via the reference's exact `sn2o2_integrals` path; judge: committed `sn2o2_cas19_dmrg_reference.json` (±1.6 mHa, ordering disclosure mirrors P4) | ✅ Sn₂O₂ CAS(6,6): 0.0000 mHa vs exact diag |
+| E5 | `e5_h22_44q.py` — MP2-seeded, 150k/iter, kcap 3M; judge: re-frozen χ=1200 reference (runner REFUSES to start without the committed file); χ=800/400 gaps reported as ladder diagnostic | ✅ H₆: 0.0000 mHa vs FCI |
+
+Instance setup note: the plain `pip install cudaq` CPU wheel suffices for `qsci_lib` on CPU-only
+instances — validated in this container (H₄ qsci_fast: 0.0000 mHa vs FCI). No GPU image required.
+Production env knobs per runner: `GROW_ITERS`, `STATE_FILE` (E3 also `PT2_BUCKETS`, default 8).
 
 ## Zero-credit work already queued on the session container
 1. Stretch sweep (running) — Phase 2 truncation-vs-correlation promise.
