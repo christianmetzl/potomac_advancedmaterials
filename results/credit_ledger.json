@@ -67,13 +67,14 @@
   ],
   "projections_cr": {
     "e_campaign_authorized_2026-07-20": {
-      "E3_certificate_convergence_40q": [4000, 8000],
-      "E4_step2_sn2o2_38q": [2500, 5000],
-      "E2_device_seeded_equivalence_40q": [2000, 4000],
-      "E5_h22_44q_refrozen_chi1200": [6000, 10000],
-      "total": [14500, 27000],
-      "cap_check": "16483 spent + 27000 worst case = 43483 < 65000 (buffer >= 21517)",
-      "authorization": "operator sign-off in-session 2026-07-20; rule 3 amended (docs/credit_budget.md); E5 re-frozen against chi=1200 per its fired E1 conditional (preregistration_v2.json)"
+      "E3_certificate_convergence_40q": [7700, 11500],
+      "E4_step2_sn2o2_38q": [3500, 4600],
+      "E2_device_seeded_equivalence_40q": [1900, 3100],
+      "E5_h22_44q_refrozen_chi1200": [9200, 18400],
+      "total": [22300, 37600],
+      "cap_check": "16483 spent + 37600 worst case = 54083 < 65000 (buffer >= 10917)",
+      "authorization": "operator sign-off in-session 2026-07-20; rule 3 amended (docs/credit_budget.md); E5 re-frozen against chi=1200 per its fired E1 conditional (preregistration_v2.json)",
+      "reprojection_note": "2026-07-21: per-run bands sharpened from the frozen prereg estimates to live-catalog CPU-instance rates (64vCPU/256GB @6.40 cr/min for E3/E5, 32vCPU/128GB @3.20 for E4/E2 -- docs/E_CAMPAIGN_RUNBOOK.md); E5's Jul-25 06:00 UTC abort gate bounds its tail"
     }
   },
   "personally_funded_zero_pool_draw": [

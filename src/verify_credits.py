@@ -117,7 +117,20 @@ def main():
         fail(f"CAP EXCEEDED: consumed {consumed:,} > cap {cap:,}")
     ok(f"our remaining allowance: {cap:,} - {consumed:,} = {remaining:,} cr")
 
-    proj_hi = sum(v[1] for v in L["projections_cr"].values())
+    def _proj_hi(v):
+        """Worst-case credits from a projection entry: plain [lo, hi] lists, or authorization
+        dicts (uses their 'total' [lo, hi] when present to avoid double-counting per-run lines,
+        else sums nested entries; strings/metadata contribute 0)."""
+        if isinstance(v, (list, tuple)) and len(v) >= 2 and all(isinstance(x, (int, float)) for x in v[:2]):
+            return v[1]
+        if isinstance(v, dict):
+            t = v.get("total")
+            if isinstance(t, (list, tuple)) and len(t) >= 2:
+                return t[1]
+            return sum(_proj_hi(x) for x in v.values())
+        return 0
+
+    proj_hi = sum(_proj_hi(v) for v in L["projections_cr"].values())
     if consumed + proj_hi > cap:
         fail(f"projections breach cap: {consumed:,} + {proj_hi:,} > {cap:,}")
     ok(f"worst-case projections fit: {consumed:,} + {proj_hi:,} = {consumed + proj_hi:,} <= {cap:,} "
