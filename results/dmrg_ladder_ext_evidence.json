@@ -1,0 +1,17 @@
+{
+ "title": "E5 pre-run DMRG references (H22/44q) + classical simulation-layer ladder 48-64q",
+ "status_note": "Protocol frozen by committing this file before execution; E5 judge = chi1200 per the re-frozen entry (preregistration_v2.json). Ladder is CLASSICAL headroom evidence: no QSCI claim attaches, and no audit-grade independent reference exists past ~44q \u2014 labeled accordingly wherever cited.",
+ "cost_note": "zero platform credits: session container CPU (4 threads, 15 GB)",
+ "protocol_commit": "79cca4175d83aefa1577ef8f794399222c62b653",
+ "machine": {
+  "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+  "python": "3.11.15",
+  "cpu_count": 4,
+  "n_threads": 4,
+  "omp_num_threads": "4",
+  "mem_total_gb": 16.9
+ },
+ "h22_references": [],
+ "ladder": [],
+ "peak_host_rss_gb": 0.03
+}
