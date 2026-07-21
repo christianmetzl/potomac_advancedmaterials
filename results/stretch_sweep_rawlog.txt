@@ -3551,3 +3551,8 @@ ATTENTION: DMRG is not converged to desired tolerance of 1.000e-08
   QSCI+ grow it45 |space|=18001 nnz=5154335 E=-4.723439 [567s]
   QSCI+ grow it46 |space|=18401 nnz=5356053 E=-4.723503 [592s]
   QSCI+ grow it47 |space|=18801 nnz=5553321 E=-4.723534 [618s]
+  QSCI+ grow it48 |space|=19201 nnz=5751379 E=-4.723556 [645s]
+  QSCI+ grow it49 |space|=19601 nnz=5952871 E=-4.723580 [671s]
+  QSCI+ grow it50 |space|=20001 nnz=6159211 E=-4.723607 [700s]
+  QSCI+ grow it51 |space|=20401 nnz=6367629 E=-4.723634 [727s]
+  QSCI+ grow it52 |space|=20801 nnz=6576615 E=-4.723659 [756s]
