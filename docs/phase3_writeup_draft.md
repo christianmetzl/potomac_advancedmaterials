@@ -38,6 +38,19 @@ executed, reproducible results.**
   only by a spectrum-invariant orbital-phase gauge. Every Hamiltonian is third-party reproducible.
 - **Accuracy anchors / classical references:** FCI (exact, ≤20q), CCSD(T) near equilibrium, DMRG under
   strong correlation (verified = FCI to 0.00 mHa at 20q).
+- **Pre-registration discipline (the standing principle behind every verdict):** decision rules are
+  committed before the data exists, so no interpretation can be fitted afterward — git history is the
+  tamper-evident timestamp. Three tiers, labeled per claim in `docs/claims_ledger.md`: **(i) every
+  judged at-scale claim** (P1–P5, the blind VO holdout, extensions E1–E5) carries a pre-committed
+  pass/fail threshold, interpretation rules frozen before execution — including the claim-withdrawal
+  case — and references that provably predate their runs (`preregistration_v1/v2.json`); the
+  discipline is enforced in code (runners refuse to start without their pre-committed judge) and was
+  honored on the losing side too (P3, P4 reported as FAILs against frozen metrics). **(ii) Supplementary
+  descriptive studies** (stretched-geometry sweep, classical χ-ladder) freeze their protocol by commit
+  before execution but deliberately carry no verdict gates — numbers reported as measured against
+  exact anchors, labeled "no post-hoc pass/fail". **(iii) Early small-scale results** (4–28q demos,
+  encoder studies) predate this framework and are not claimed as pre-registered; they are judged
+  against exact references (FCI/CASCI), and the record retains their honest negatives unfiltered.
 
 ## 3. GQE approach & algorithmic innovation  *(criterion 3 — primary novelty; ~1 pp)*
 **Two-stage GQE.** Stage 1: a decoder-only GPT-QE transformer trained by sequence–energy matching
