@@ -107,7 +107,16 @@ def run_dmrg(P, chi, tag, n_threads=8):
     bond_dims = [100, 150, 200, chi, chi, chi, chi, chi]
     noises = [1e-4, 1e-5, 1e-6, 1e-7, 0, 0, 0, 0]
     thrds = [1e-8] * 8
-    driver = DMRGDriver(scratch=scratch, symm_type=SymmetryTypes.SU2, n_threads=n_threads)
+    # Runtime resource pool ONLY (numerically inert; the frozen schedule/thresholds above and the
+    # integral path are unchanged, so the DMRG energy is identical). block2's default compute pool
+    # (stack_mem=1 GB, n_mkl_threads=1) is too small for chi>=1200 at 44q; on a large-RAM box these
+    # env knobs raise the pool/threads. Defaults reproduce block2's originals EXACTLY, so the
+    # committed chi=400/800 references remain byte-for-byte reproducible through this same path.
+    stack_mem = int(float(os.environ.get("STACK_MEM_GB", "1")) * (1024 ** 3))
+    n_mkl = int(os.environ.get("DMRG_MKL_THREADS", "1"))
+    n_threads = int(os.environ.get("DMRG_N_THREADS", str(n_threads)))
+    driver = DMRGDriver(scratch=scratch, symm_type=SymmetryTypes.SU2, n_threads=n_threads,
+                        stack_mem=stack_mem, n_mkl_threads=n_mkl)
     driver.initialize_system(n_sites=ns, n_elec=na + nb, spin=na - nb, orb_sym=None)
     mpo = driver.get_qc_mpo(h1e=P["h1"], g2e=P["eri"], ecore=P["ecore"], iprint=1)
     ket = driver.get_random_mps(tag=tag.upper(), bond_dim=min(chi, 100), nroots=1)

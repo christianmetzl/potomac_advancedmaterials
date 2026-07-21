@@ -1,0 +1,64 @@
+{
+  "system": "H22 chain",
+  "active_space": "H22 STO-6G R=0.74",
+  "qubits": 44,
+  "dmrg_chi": 1200,
+  "E_dmrg": -11.311826693389307,
+  "wall_s": 622.9,
+  "sweep_schedule": {
+    "n_sweeps": 8,
+    "bond_dims": [
+      100,
+      150,
+      200,
+      1200,
+      1200,
+      1200,
+      1200,
+      1200
+    ],
+    "noises": [
+      0.0001,
+      1e-05,
+      1e-06,
+      1e-07,
+      0,
+      0,
+      0,
+      0
+    ],
+    "thrds": [
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08
+    ],
+    "symmetry": "SU2"
+  },
+  "rhf_converged": true,
+  "machine": {
+    "platform": "Linux-6.8.0-1059-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "cpu_count": 64,
+    "n_threads": 64,
+    "omp_num_threads": "64",
+    "mem_total_gb": 270.2,
+    "dmrg_stack_mem_gb": 96,
+    "dmrg_mkl_threads": 1
+  },
+  "role": "E5 JUDGE reference (re-frozen chi=1200)",
+  "code_path_note": "block2 DMRG via the committed e1_chi800_counteraudit integral path (pyscf RHF STO-6G -> MO integrals -> block2 SU2, frozen schedule)",
+  "prereg": "E5 re-frozen 2026-07-20 (results/preregistration_v2.json): chi=1200 is the judge; chi=400/800 are ladder rungs. Committed BEFORE any E5 QSCI execution.",
+  "runtime_note": "MKL runtime fix per src/e1_env.sh (LD_PRELOAD /home/jovyan/.local/lib/libmkl_rt.so.1 + LD_LIBRARY_PATH /home/jovyan/.local/lib; block2's bundled libmkl_def.so.1 was missing on this image) + block2 stack_mem raised to 96 GB and threads to 64 (block2 n_threads=64, n_mkl_threads=1) via STACK_MEM_GB/DMRG_N_THREADS/DMRG_MKL_THREADS env overrides added to run_dmrg. RUNTIME RESOURCES ONLY: the frozen sweep schedule/thresholds/chi/integral path are unchanged, and the code defaults reproduce block2's originals (1 GB pool, n_mkl=1) EXACTLY, so the committed chi=400/800 references remain byte-for-byte reproducible. Built on box C (64 vCPU/256 GB) BEFORE any E5 QSCI execution; commit precedes execution.",
+  "tripwire_monotonicity": {
+    "rule": "chi=1200 E_dmrg must be <= committed chi=800 value (variational monotonicity)",
+    "chi800_E_dmrg": -11.311403232066795,
+    "chi1200_E_dmrg": -11.311826693389307,
+    "chi1200_minus_chi800_mHa": -0.423,
+    "pass": true
+  }
+}
