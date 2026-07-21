@@ -68,6 +68,20 @@ includes 100 CPU-hrs/mo (0 used, renews in 11 days) — free capacity for any fu
    **Superseded 2026-07-20 by the E-campaign authorization:** new instance spend is governed by the
    projection below and the 65k cap; `verify_credits.py` remains the enforcement gate.
 
+## ATTRIBUTION EVENT (2026-07-21) — the pool is now genuinely shared
+At E-campaign instance start the grant wallet read **84,611** — down 28,906 from the 07-19
+settlement with ~zero spend of ours: **the second project has begun drawing, heavily.** As the
+ledger always said, pool balance stopped being our meter the moment that happened. Consequences,
+implemented in `verify_credits.py` + `credit_ledger.json`:
+- **Cap accounting is now attribution-based:** `attributed_spend_cr` (settled 16,482.7 + one line
+  per E-campaign instance from console billing, appended at each shutdown) is what the 65k cap
+  governs. qBraid per-instance billing is the arbiter, as pre-declared.
+- **New runway check:** entitlement ≠ availability — the pool is first-come-first-served. The
+  verifier FAILs if pool balance < our remaining worst-case projection (37.6k), WARNs below 1.5×.
+  At the 07-21 snapshot: 84,611 / 37,600 = **2.25× — adequate, monitor at every handover.**
+- If runway tightens, escalate to the organizers for per-project accounting BEFORE it strands our
+  allowance; our claim on the 65k share is documented here and in the per-instance billing trail.
+
 ## E-campaign authorization (2026-07-20)
 | Run | Frozen spec | Est. (cr) |
 |---|---|---|

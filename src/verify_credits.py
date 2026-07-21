@@ -113,11 +113,22 @@ def main():
     consumed = total - snap["balance"]
     if consumed < 0:
         fail(f"negative consumption: balance {snap['balance']:,} > pool {total:,}")
-    remaining = cap - consumed
-    ok(f"latest snapshot {snap['utc']}: balance {snap['balance']:,} -> pool consumed {consumed:,}")
+    ok(f"latest snapshot {snap['utc']}: balance {snap['balance']:,} -> POOL consumed {consumed:,.1f}")
+
+    # ---- attribution-aware accounting (2026-07-21): the pool is shared; the cap governs OUR spend.
+    # OUR spend = settled campaign figure + per-instance E-campaign lines (qBraid console billing,
+    # appended by the box operators at each shutdown). Pool-minus-ours = the second project's draw.
+    att = L.get("attributed_spend_cr", {})
+    our_spent = float(att.get("settled_campaign_2026-07-19", consumed))
+    inst = att.get("e_campaign_instances", [])
+    our_spent += sum(float(x.get("cr", 0)) for x in inst if isinstance(x, dict))
+    other_draw = max(0.0, consumed - our_spent)
+    remaining = cap - our_spent
+    ok(f"OUR attributed spend: {our_spent:,.1f} cr ({len(inst)} E-campaign instance lines); "
+       f"second project's draw: {other_draw:,.1f} cr")
     if remaining < 0:
-        fail(f"CAP EXCEEDED: consumed {consumed:,} > cap {cap:,}")
-    ok(f"our remaining allowance: {cap:,} - {consumed:,} = {remaining:,} cr")
+        fail(f"CAP EXCEEDED: OUR attributed spend {our_spent:,.1f} > cap {cap:,}")
+    ok(f"our remaining allowance: {cap:,} - {our_spent:,.1f} = {remaining:,.1f} cr")
 
     def _proj_hi(v):
         """Worst-case credits from a projection entry: plain [lo, hi] lists, or authorization
@@ -133,10 +144,23 @@ def main():
         return 0
 
     proj_hi = sum(_proj_hi(v) for v in L["projections_cr"].values())
-    if consumed + proj_hi > cap:
-        fail(f"projections breach cap: {consumed:,} + {proj_hi:,} > {cap:,}")
-    ok(f"worst-case projections fit: {consumed:,} + {proj_hi:,} = {consumed + proj_hi:,} <= {cap:,} "
-       f"({100 * (consumed + proj_hi) / cap:.0f}% of share)")
+    if our_spent + proj_hi > cap:
+        fail(f"projections breach cap: OUR {our_spent:,.1f} + {proj_hi:,} > {cap:,}")
+    ok(f"worst-case projections fit OUR cap: {our_spent:,.1f} + {proj_hi:,} = "
+       f"{our_spent + proj_hi:,.1f} <= {cap:,} ({100 * (our_spent + proj_hi) / cap:.0f}% of share)")
+
+    # ---- pool RUNWAY: entitlement is not availability. The pool is first-come-first-served;
+    # if the other project drains it, our unspent allowance becomes unusable regardless of the cap.
+    if snap["balance"] < proj_hi:
+        fail(f"POOL RUNWAY EXHAUSTED: balance {snap['balance']:,} < our remaining worst-case "
+             f"projection {proj_hi:,} — escalate to organizers (per-project accounting)")
+    elif snap["balance"] < 1.5 * proj_hi:
+        print(f"WARN  pool runway tight: balance {snap['balance']:,} vs our remaining worst-case "
+              f"{proj_hi:,} ({snap['balance'] / proj_hi:.1f}x). The second project's continued draw "
+              f"could strand our allowance — prioritize launches, re-check at every handover.")
+    else:
+        ok(f"pool runway: balance {snap['balance']:,} covers our remaining worst-case {proj_hi:,} "
+           f"({snap['balance'] / max(proj_hi, 1):.1f}x)")
     print(f"NOTE  {L['attribution_caveat']}")
 
     if "--live" in sys.argv:
@@ -144,23 +168,27 @@ def main():
         if bal is None:
             print("SKIP  --live: no qBraid credentials/CLI reachable from this machine "
                   "(run on a box with ~/.qbraid/qbraidrc)")
-        elif total - bal > cap:
-            # Implied pool consumption exceeds our entire cap: this is almost certainly the WRONG
-            # WALLET (e.g. the box/API key belongs to the personal org, balance ~5k, not the grant
-            # pool ~113k) — or the second project has drawn heavily (attribution_caveat). Either way
-            # an automated append would poison the ledger; require a human-labeled manual entry.
-            print(f"WARN  --live: fetched balance {bal:,.0f} implies pool consumption "
-                  f"{total - bal:,.0f} > the whole {cap:,} cap. This machine's qBraid credentials "
-                  f"likely point at a DIFFERENT org's wallet (personal vs EIGENNEXUS grant). "
-                  f"NOT appending; verify the org (qbraid account credits vs the grant console) "
-                  f"and record a labeled manual snapshot if this reading is intentional.")
+        elif bal < 0.06 * total:
+            # A grant-pool wallet reading this low is either the WRONG ORG's wallet (the personal
+            # org sits ~5k) or a pool nearly drained by the other project — both demand a human
+            # look before anything is auto-appended.
+            print(f"WARN  --live: fetched balance {bal:,.0f} is <6% of the {total:,} pool. Either "
+                  f"this machine's qBraid credentials point at a DIFFERENT org's wallet (personal "
+                  f"vs EIGENNEXUS grant), or the pool is nearly exhausted. NOT appending; verify "
+                  f"the org (qbraid account credits vs the grant console) and record a labeled "
+                  f"manual snapshot if this reading is intentional.")
         else:
             drift = snap["balance"] - bal
             print(f"LIVE  wallet balance now: {bal:,.0f} (drift {drift:+,.0f} vs last snapshot "
-                  f"= spend since {snap['utc']})")
-            if cap - (total - bal) < 0:
-                fail(f"CAP EXCEEDED (live): consumed {total - bal:,.0f} > cap {cap:,}")
-            ok(f"live remaining allowance: {cap - (total - bal):,.0f} cr")
+                  f"{snap['utc']} — pool-level, includes the second project's draw)")
+            if bal < proj_hi:
+                fail(f"POOL RUNWAY EXHAUSTED (live): balance {bal:,.0f} < our remaining "
+                     f"worst-case projection {proj_hi:,}")
+            elif bal < 1.5 * proj_hi:
+                print(f"WARN  pool runway tight (live): {bal:,.0f} vs our remaining worst-case "
+                      f"{proj_hi:,} ({bal / proj_hi:.1f}x)")
+            else:
+                ok(f"pool runway (live): {bal:,.0f} covers our remaining worst-case {proj_hi:,}")
             if "--append" in sys.argv:
                 L["wallet_snapshots"].append(dict(
                     utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),

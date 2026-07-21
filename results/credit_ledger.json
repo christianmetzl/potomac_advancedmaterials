@@ -38,8 +38,19 @@
       "balance": 113517.3,
       "method": "wallet UI (EIGENNEXUS grant org dashboard), operator-captured post-shutdown",
       "note": "SETTLEMENT snapshot \u2014 resolves the stated tension: pool consumed 16,482.70 cr, within ~3% of the observed-rate model (~17k). The earlier 116,342 reading was pre-settlement billing lag, as hypothesized. FINAL campaign figure: 16,483 cr = 25.4% of the 65k share; remaining allowance 48,517. Rate model (cr/min x uptime) validated as the planning instrument."
+    },
+    {
+      "utc": "2026-07-21T00:48:27Z",
+      "balance": 84611.4369,
+      "method": "qbraid account credits via verify_credits --live on grant-org box A (E-campaign instance start); box append was not pushed (verify FAIL aborted its git chain), re-recorded by the main session from the terminal capture",
+      "note": "ATTRIBUTION EVENT: pool dropped 28,906 cr since the 07-19 settlement with ~zero spend of ours (box A had just started; container work is free). Per attribution_caveat this is the SECOND PROJECT's draw \u2014 the pool-level==ours assumption is now dead, per-instance billing is the arbiter, and attributed_spend_cr (below) is the cap-relevant figure. Runway math at this snapshot: pool 84,611 vs our remaining worst-case 37,600 (2.25x) \u2014 adequate today, monitor at every handover."
     }
   ],
+  "attributed_spend_cr": {
+    "settled_campaign_2026-07-19": 16482.7,
+    "e_campaign_instances": [],
+    "note": "OUR spend only \u2014 the number the 65k cap governs. Box operators append one line per E-campaign instance at shutdown, from the qBraid console per-instance billing: {\"instance\": \"...\", \"cr\": <settled cost>, \"utc\": \"...\", \"run\": \"E3|E4|E2|E5\"}. Pool balance minus this = the second project's draw."
+  },
   "instances": [
     {
       "name": "gpu-h100-sxm-5eee135b",

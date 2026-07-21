@@ -12,7 +12,11 @@ by ~Jul 22 for integration by Jul 25. Budget: worst case 27k on top of 16,483 sp
 - Evidence JSONs flush incrementally; push checkpoints at every milestone (instance death loses
   nothing but the rung in flight — the B2 lesson).
 - `python src/verify_credits.py --live` before spin-up, at each handover, and at shutdown; append
-  wallet snapshots to the ledger.
+  wallet snapshots to the ledger. **Attribution duty (since the 2026-07-21 second-project draw):**
+  at each instance shutdown, read that instance's settled cost from the qBraid console billing and
+  append a line to `credit_ledger.json` → `attributed_spend_cr.e_campaign_instances`
+  (`{"instance": ..., "cr": ..., "utc": ..., "run": "E3|E4|E2|E5"}`) — that list, not the pool
+  balance, is what the 65k cap governs. Watch the verifier's pool-RUNWAY line at every handover.
 - Abort gate for E5: if not converged by **Jul 25 06:00 UTC**, stop, commit logs, report as
   non-converged per its frozen reporting rule.
 
