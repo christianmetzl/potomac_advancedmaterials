@@ -48,8 +48,8 @@
     {
       "utc": "2026-07-21T19:18:42Z",
       "balance": 41951.9368,
-      "method": "qBraid API via verify_credits.py --live --append",
-      "note": "automated snapshot"
+      "method": "qBraid API via verify_credits.py --live --append (box B, automated at the E4->E2 handover)",
+      "note": "RUNWAY WARNING: second project burned ~42.7k MORE since the 00:48Z snapshot (its cumulative draw now ~70k+ of the shared 130k pool -- i.e. beyond a 50% share). Pool runway vs our remaining worst-case is ~1.1x: BELOW the 1.5x WARN threshold in docs/credit_budget.md. Escalation to organizers drafted (docs/pool_runway_escalation_email.md); E-campaign continues with priority on banking evidence early; all runners tolerate a mid-run pool freeze (evidence flushes per iteration). [runway analysis appended by main session; balance/method are box B's automated capture]"
     }
   ],
   "attributed_spend_cr": {

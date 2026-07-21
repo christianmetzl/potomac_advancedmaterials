@@ -78,9 +78,18 @@ implemented in `verify_credits.py` + `credit_ledger.json`:
   governs. qBraid per-instance billing is the arbiter, as pre-declared.
 - **New runway check:** entitlement ≠ availability — the pool is first-come-first-served. The
   verifier FAILs if pool balance < our remaining worst-case projection (37.6k), WARNs below 1.5×.
-  At the 07-21 snapshot: 84,611 / 37,600 = **2.25× — adequate, monitor at every handover.**
-- If runway tightens, escalate to the organizers for per-project accounting BEFORE it strands our
-  allowance; our claim on the 65k share is documented here and in the per-instance billing trail.
+
+**RUNWAY ESCALATION (2026-07-21 ~19:20Z):** live wallet **41,952** — the second project burned a
+further ~42.7k in under a day; its cumulative draw (~70k+) now **exceeds a 50% share of the 130k
+pool on its own**. Runway vs our remaining worst case ≈ **1.1× — below the WARN threshold; the
+escalation trigger above has FIRED.** Response: (a) organizer escalation drafted for immediate
+send (`docs/pool_runway_escalation_email.md`) requesting per-project accounting / ring-fencing of
+our documented remaining share; (b) campaign re-prioritized to bank evidence early (E2 running,
+E3 certificate acceleration proposed, E5 launch decision deferred pending organizer reply or
+Wednesday-morning runway re-check); (c) all runners already tolerate a mid-run pool freeze —
+evidence flushes and is pushed per iteration, so a freeze strands future compute, never completed
+results. Our own conduct stays inside the cap: attributed spend to date ≈ 16.5k settled + E-runs
+in flight; per-instance billing remains the arbiter.
 
 ## E-campaign authorization (2026-07-20)
 | Run | Frozen spec | Est. (cr) |
