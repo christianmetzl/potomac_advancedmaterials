@@ -11,7 +11,14 @@
   "omp_num_threads": "4",
   "mem_total_gb": 16.9
  },
- "h22_references": [],
+ "h22_references": [
+  {
+   "chi": 400,
+   "file": "h22_44q_dmrg_chi400.json",
+   "E_dmrg": -11.309682955420904,
+   "wall_s": 138.9
+  }
+ ],
  "ladder": [],
- "peak_host_rss_gb": 0.03
+ "peak_host_rss_gb": 2.87
 }

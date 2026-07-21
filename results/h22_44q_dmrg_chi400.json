@@ -1,0 +1,54 @@
+{
+  "system": "H22 chain",
+  "active_space": "H22 STO-6G R=0.74",
+  "qubits": 44,
+  "dmrg_chi": 400,
+  "E_dmrg": -11.309682955420904,
+  "wall_s": 138.9,
+  "sweep_schedule": {
+    "n_sweeps": 8,
+    "bond_dims": [
+      100,
+      150,
+      200,
+      400,
+      400,
+      400,
+      400,
+      400
+    ],
+    "noises": [
+      0.0001,
+      1e-05,
+      1e-06,
+      1e-07,
+      0,
+      0,
+      0,
+      0
+    ],
+    "thrds": [
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08,
+      1e-08
+    ],
+    "symmetry": "SU2"
+  },
+  "rhf_converged": true,
+  "machine": {
+    "platform": "Linux-6.18.5-x86_64-with-glibc2.39",
+    "python": "3.11.15",
+    "cpu_count": 4,
+    "n_threads": 4,
+    "omp_num_threads": "4",
+    "mem_total_gb": 16.9
+  },
+  "role": "E5 ladder rung (chi=400)",
+  "code_path_note": "block2 DMRG via the committed e1_chi800_counteraudit integral path (pyscf RHF STO-6G -> MO integrals -> block2 SU2, frozen schedule)",
+  "prereg": "E5 re-frozen 2026-07-20 (results/preregistration_v2.json): chi=1200 is the judge; chi=400/800 are ladder rungs. Committed BEFORE any E5 QSCI execution."
+}
