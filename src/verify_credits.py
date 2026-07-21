@@ -84,14 +84,16 @@ def live_balance():
                         continue
         except Exception:
             pass
-    try:  # CLI fallback
-        import subprocess, re
-        out = subprocess.check_output(["qbraid", "credits"], text=True, timeout=30)
-        m = re.search(r"([\d][\d,\.]*)\s*credits", out, re.I)
-        if m:
-            return float(m.group(1).replace(",", ""))
-    except Exception:
-        pass
+    import subprocess, re
+    for cmd in (["qbraid", "account", "credits"], ["qbraid", "credits"]):   # CLI fallback, both eras
+        try:
+            out = subprocess.check_output(cmd, text=True, timeout=30, stderr=subprocess.DEVNULL)
+            m = (re.search(r"credits?[^0-9]*([0-9][0-9,\.]*)", out, re.I)
+                 or re.search(r"([0-9][0-9,\.]*)\s*credits", out, re.I))
+            if m:
+                return float(m.group(1).rstrip(".").replace(",", ""))
+        except Exception:
+            continue
     return None
 
 
@@ -142,6 +144,16 @@ def main():
         if bal is None:
             print("SKIP  --live: no qBraid credentials/CLI reachable from this machine "
                   "(run on a box with ~/.qbraid/qbraidrc)")
+        elif total - bal > cap:
+            # Implied pool consumption exceeds our entire cap: this is almost certainly the WRONG
+            # WALLET (e.g. the box/API key belongs to the personal org, balance ~5k, not the grant
+            # pool ~113k) — or the second project has drawn heavily (attribution_caveat). Either way
+            # an automated append would poison the ledger; require a human-labeled manual entry.
+            print(f"WARN  --live: fetched balance {bal:,.0f} implies pool consumption "
+                  f"{total - bal:,.0f} > the whole {cap:,} cap. This machine's qBraid credentials "
+                  f"likely point at a DIFFERENT org's wallet (personal vs EIGENNEXUS grant). "
+                  f"NOT appending; verify the org (qbraid account credits vs the grant console) "
+                  f"and record a labeled manual snapshot if this reading is intentional.")
         else:
             drift = snap["balance"] - bal
             print(f"LIVE  wallet balance now: {bal:,.0f} (drift {drift:+,.0f} vs last snapshot "
