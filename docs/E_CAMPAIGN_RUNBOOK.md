@@ -24,12 +24,29 @@ has large-RAM CPU instances, they strictly dominate on cost; otherwise fall back
 A100-sxm class (4.15 cr/min hosts ran B2 fine). The frozen cost estimates assumed GPU-class rates,
 so CPU instances only improve the projection.
 
-| Run | Instance floor | Disk | Est. wall |
-|---|---|---|---|
-| E3 | **≥200 GB RAM (frozen spec)** | ≥100 GB free (state file) | ~20–30 h (kcap 2M + PT2 each iter) |
-| E4 STEP 2 | ≥64 GB RAM (B2-class) | ~50 GB | ~18–24 h (kcap 500k, mirrors B2) |
-| E2 | ≥128 GB RAM | ~50 GB | ~10–16 h (kcap 450k, matched to committed run) |
-| E5 | ≥200 GB RAM | ≥150 GB | ~24–48 h (kcap 3M; the schedule risk) |
+**Instance selection (from the live On-Demand catalog, 2026-07-21):**
+| Run | LAUNCH THIS | Rate | Est. wall | Est. cost (cr) |
+|---|---|---|---|---|
+| E3 | **CPU · 64 vCPU / 256 GB** (meets the frozen ≥200 GB spec) | 6.40/min | ~20–30 h | 7.7–11.5k |
+| E4 STEP 2 | **CPU · 32 vCPU / 128 GB** | 3.20/min | ~18–24 h | 3.5–4.6k |
+| E2 | same 32/128 box, after E4 | 3.20/min | ~10–16 h | 1.9–3.1k |
+| E5 | same 64/256 box, after E3 (upgrade to NanoAcademic Medium 96/384 @9.60 only if the E3 state-file footprint shows 256 GB is tight — decision at handover) | 6.40/min | ~24–48 h | 9.2–18.4k |
+
+**Rate-based re-projection: 22.3–37.6k total → worst case 16,483 + 37.6k = 54.1k < 65k cap ✓**
+(tighter than the original 27k worst case — the E5 tail is the driver; its Jul 25 06:00 UTC abort
+gate and `verify_credits.py` remain the guards. E5 state-file at kcap 3M may reach 150–250 GB:
+verify ≥250 GB free disk at launch or point STATE_FILE at scratch/network volume.)
+**Bonus, zero credits:** the Subscription tier (100 free CPU-hrs, renews in 10 days) **Large
+(8 vCPU / 25 GB)** box is exactly right for the full-dependency `reproduce.py` canonical transcript
+— the outstanding Phase-1 leftover. Launch it anytime; it draws nothing.
+
+**Per-instance setup (5 min):**
+```bash
+git clone -b claude/wonderful-bohr-rir81t <repo-url> && cd potomac_advancedmaterials
+pip install -r requirements.txt && pip install cudaq     # CPU wheel suffices (validated)
+python src/e3_certificate_40q.py --smoke 6                # sanity: must print FORMULA VALIDATED
+nohup python src/<runner>.py > run.log 2>&1 &             # production; then commit/push evidence
+```
 
 ## Sequence (two instances, A = big-RAM, B = B2-class)
 - **Jul 21:** spin A + B after smoke tests are green.
