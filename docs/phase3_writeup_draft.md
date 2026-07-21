@@ -119,6 +119,20 @@ state of the art is the stricter comparison — VQE itself was benchmarked at sm
   withdrawn the claim): χ=800 and χ=1200 references descend *toward* the QSCI energy from above
   (gaps +1.06 / +0.36 mHa) and never cross it — the truncation-error mechanism confirmed at three
   bond dimensions (`gpu_run4_cas19_evidence.json`, `cro_cas19_dmrg_chi800/1200.json`).
+- **Truncation error vs correlation — the Phase 2 §5 promise, delivered (CPU, zero credits):** the
+  stretched-geometry sweep (`src/stretch_sweep.py`, protocol frozen-by-commit before execution;
+  `stretch_sweep_evidence.json`) measures the promised curve. At 20q with an exact FCI anchor
+  (R = 0.74→2.50 Å, E_corr −106→−1149 mHa): DMRG(χ=100) truncation error grows 0.009 → 17.5 mHa
+  (~2000×) while χ=400 stays exact (≤0.0002 mHa); CCSD(T) collapses to −224.7 mHa *below* FCI at
+  2.5 Å (the literature breakdown, reproduced), while the committed QSCI engine holds chemical
+  accuracy at **every** geometry (worst +0.99 mHa at ~25k dets) — the strong-correlation regime
+  studied, not avoided. At 40q the frozen-schedule χ-ladder shows the same mechanism at scale: the
+  χ400→χ800 gap — a lower bound on the χ=400 truncation error (no exact anchor exists at 40q) —
+  grows **0.92 → 40.5 → 177 mHa** across R = 0.74/1.50/2.50 Å, quantifying why fixed-χ references
+  loosen precisely where correlation strengthens (the audit's central mechanism, now measured along
+  the correlation axis). The fresh code path reproduces the committed χ=400/χ=800 references to
+  ≤0.006 mHa at equilibrium; χ=1200 rungs were resource-DNF on the 15 GB session container
+  (recorded in-evidence, not dropped).
 - **P3 device memory — FAIL as measured, decomposed by measurement.** Frozen-config sampling peaked
   at 40.32 GB (>8 GB threshold); the mechanism is vendor-documented (cuTensorNet reserves 50% of free
   card memory — 50%×79.25 GB ≈ the measured peak). A capped diagnostic ran the identical workload in
