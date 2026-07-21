@@ -1,5 +1,5 @@
 {
-  "status": "IN-PROGRESS iter 9/80 (partial, not final)",
+  "status": "IN-PROGRESS iter 10/80 (partial, not final)",
   "run": "e4_sn2o2_38q",
   "trace": [
     {
@@ -61,6 +61,12 @@
       "dets": 324764,
       "E": -576.4236210594576,
       "err_mHa": -0.363
+    },
+    {
+      "iter": 10,
+      "dets": 364764,
+      "E": -576.4236313752051,
+      "err_mHa": -0.374
     }
   ]
 }
