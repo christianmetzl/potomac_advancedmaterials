@@ -1,7 +1,18 @@
 {
-  "status": "IN-PROGRESS iter 13/80 (partial, not final)",
   "run": "e4_sn2o2_38q",
-  "trace": [
+  "system": "Sn2O2 rhombus (bridged Sn-O-Sn)",
+  "active_space": "CAS(18,19)",
+  "qubits": 38,
+  "geometry": "Sn 1.5 0 0; Sn -1.5 0 0; O 0 1.4 0; O 0 -1.4 0",
+  "E_qsci": -576.4236570387341,
+  "e_ref": -576.4232577378875,
+  "ref_kind": "block2 DMRG(chi=400) same CAS, committed pre-run (STEP 1)",
+  "err_mHa": -0.399,
+  "final_space": 524764,
+  "engine": "qsci_fast (incremental Hamiltonian, Option C) \u2014 identical committed engine",
+  "peak_host_rss_gb": 59.72,
+  "wall_s": 26534.9,
+  "growth_trace": [
     {
       "iter": 0,
       "dets": 1,
@@ -85,6 +96,16 @@
       "dets": 484764,
       "E": -576.4236522003154,
       "err_mHa": -0.394
+    },
+    {
+      "iter": 14,
+      "dets": 524764,
+      "E": -576.4236570387341,
+      "err_mHa": -0.399
     }
-  ]
+  ],
+  "prereg": {
+    "E4_metric_chem_acc": true,
+    "ordering_disclosure": "E_QSCI < E_DMRG - 0.2 mHa: variational ordering reported (QSCI provably closer to exact), mirroring the CrO/B2 disclosure"
+  }
 }
