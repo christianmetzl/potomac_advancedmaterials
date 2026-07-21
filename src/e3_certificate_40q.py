@@ -54,6 +54,7 @@ GROW_PER_ITER = 150_000            # frozen
 KCAP = 2_000_000                   # frozen
 GROW_ITERS = int(os.environ.get("GROW_ITERS", 40))
 PT2_BUCKETS = int(os.environ.get("PT2_BUCKETS", 8))
+PT2_PROCS = int(os.environ.get("PT2_PROCS", 1))    # >1: bucket-parallel (bit-identical; see en_pt2_chunked)
 _GOLD = np.uint64(0x9E3779B97F4A7C15)
 
 
@@ -61,55 +62,89 @@ class _CertificateConverged(Exception):
     """Raised out of the ckpt callback to stop growth once |PT2| <= threshold."""
 
 
-def en_pt2_chunked(eng, space, E, cvec, n_buckets=8, chunk=200, log=None):
+def _pt2_one_bucket(eng, space, sc, E, cvec, b, n_buckets, chunk):
+    """One hash-bucket of the EN-PT2 sum — the SINGLE implementation used by both the serial and
+    the process-parallel paths (buckets are computed and summed independently in both, so the
+    arithmetic and float-addition order per bucket are identical by construction).
+    Returns (pt2_bucket_Ha, n_external_in_bucket, n_denominator_screened_in_bucket)."""
+    with np.errstate(over="ignore"):
+        cand = np.empty(0, dtype=np.uint64)
+        num = np.empty(0, dtype=np.complex128)
+        bu, ba, nbuf = [], [], 0
+
+        def _reduce():
+            nonlocal cand, num, bu, ba, nbuf
+            allu = np.concatenate([cand] + bu)
+            alla = np.concatenate([num] + ba)
+            cand, inv = np.unique(allu, return_inverse=True)
+            num = np.zeros(len(cand), dtype=np.complex128)
+            np.add.at(num, inv, alla)
+            bu, ba, nbuf = [], [], 0
+
+        for c0 in range(0, len(space), chunk):
+            d = np.asarray(space[c0:c0 + chunk], dtype=np.uint64)
+            cc = np.asarray(cvec[c0:c0 + chunk])
+            new = np.bitwise_xor(d[:, None], eng.XM[None, :])
+            par = L._parity((d[:, None] & eng.ZYM[None, :]).reshape(-1)).reshape(new.shape)
+            amp = (eng.PH[None, :] * (1 - 2 * par.astype(np.int64))) * cc[:, None]
+            u = new.reshape(-1)
+            aa = amp.reshape(-1)
+            pos = np.clip(np.searchsorted(sc, u), 0, len(sc) - 1)
+            ext = sc[pos] != u
+            u = u[ext]; aa = aa[ext]
+            hb = ((u * _GOLD) >> np.uint64(32)) % np.uint64(n_buckets)
+            m = hb == np.uint64(b)
+            if m.any():
+                bu.append(u[m]); ba.append(aa[m]); nbuf += int(m.sum())
+            if nbuf > 20_000_000:
+                _reduce()
+        _reduce()
+        if len(cand) == 0:
+            return 0.0, 0, 0
+        den = E - eng.diag(cand)
+        keep = np.abs(den) > 1e-6                          # committed intruder screen, counted
+        pt2_b = float(np.sum((np.abs(num[keep]) ** 2) / den[keep]))
+        return pt2_b, len(cand), int((~keep).sum())
+
+
+_FORK_CTX = {}                                             # fork-shared read-only inputs (COW)
+
+
+def _bucket_worker(b):
+    c = _FORK_CTX
+    return _pt2_one_bucket(c["eng"], c["space"], c["sc"], c["E"], c["cvec"],
+                           b, c["n_buckets"], c["chunk"])
+
+
+def en_pt2_chunked(eng, space, E, cvec, n_buckets=8, chunk=200, log=None, n_procs=1):
     """EN-PT2 over the complete connected external space; committed selci_pt2 formula, hash-bucketed.
+    n_procs > 1 evaluates the (independent) buckets in forked worker processes — a SCHEDULING
+    change only: each bucket runs the identical serial code (_pt2_one_bucket) and the parent sums
+    bucket values in the same b=0..B-1 order as the serial loop, so the result is bit-identical.
     Returns (pt2_Ha, n_external_dets, n_denominator_screened)."""
     sc = np.sort(np.asarray(space, dtype=np.uint64))
+    results = []
+    if n_procs > 1:
+        import multiprocessing as mp
+        _FORK_CTX.update(eng=eng, space=space, sc=sc, E=E, cvec=cvec,
+                         n_buckets=n_buckets, chunk=chunk)
+        try:
+            with mp.get_context("fork").Pool(min(n_procs, n_buckets)) as pool:
+                results = pool.map(_bucket_worker, range(n_buckets))
+        finally:
+            _FORK_CTX.clear()
+    else:
+        for b in range(n_buckets):
+            results.append(_pt2_one_bucket(eng, space, sc, E, cvec, b, n_buckets, chunk))
     pt2 = 0.0
     n_ext = 0
     n_scr = 0
-    with np.errstate(over="ignore"):
-        for b in range(n_buckets):
-            cand = np.empty(0, dtype=np.uint64)
-            num = np.empty(0, dtype=np.complex128)
-            bu, ba, nbuf = [], [], 0
-
-            def _reduce():
-                nonlocal cand, num, bu, ba, nbuf
-                allu = np.concatenate([cand] + bu)
-                alla = np.concatenate([num] + ba)
-                cand, inv = np.unique(allu, return_inverse=True)
-                num = np.zeros(len(cand), dtype=np.complex128)
-                np.add.at(num, inv, alla)
-                bu, ba, nbuf = [], [], 0
-
-            for c0 in range(0, len(space), chunk):
-                d = np.asarray(space[c0:c0 + chunk], dtype=np.uint64)
-                cc = np.asarray(cvec[c0:c0 + chunk])
-                new = np.bitwise_xor(d[:, None], eng.XM[None, :])
-                par = L._parity((d[:, None] & eng.ZYM[None, :]).reshape(-1)).reshape(new.shape)
-                amp = (eng.PH[None, :] * (1 - 2 * par.astype(np.int64))) * cc[:, None]
-                u = new.reshape(-1)
-                aa = amp.reshape(-1)
-                pos = np.clip(np.searchsorted(sc, u), 0, len(sc) - 1)
-                ext = sc[pos] != u
-                u = u[ext]; aa = aa[ext]
-                hb = ((u * _GOLD) >> np.uint64(32)) % np.uint64(n_buckets)
-                m = hb == np.uint64(b)
-                if m.any():
-                    bu.append(u[m]); ba.append(aa[m]); nbuf += int(m.sum())
-                if nbuf > 20_000_000:
-                    _reduce()
-            _reduce()
-            if len(cand) == 0:
-                continue
-            den = E - eng.diag(cand)
-            keep = np.abs(den) > 1e-6                      # committed intruder screen, counted
-            n_scr += int((~keep).sum())
-            n_ext += len(cand)
-            pt2 += float(np.sum((np.abs(num[keep]) ** 2) / den[keep]))
-            if log:
-                log(f"    PT2 bucket {b+1}/{n_buckets}: ext={len(cand):,} cum={pt2*1e3:+.3f} mHa")
+    for b, (pb, ne, ns) in enumerate(results):             # same summation order as the serial loop
+        pt2 += pb
+        n_ext += ne
+        n_scr += ns
+        if log:
+            log(f"    PT2 bucket {b+1}/{n_buckets}: ext={ne:,} cum={pt2*1e3:+.3f} mHa")
     return pt2, n_ext, n_scr
 
 
@@ -144,7 +179,7 @@ def _safe_dump(obj, fn):
 
 
 def run_certified_growth(eng, seed, grow_iters, grow_per_iter, kcap, n_buckets,
-                         on_point, log=None):
+                         on_point, log=None, n_procs=1):
     """One continuous committed-engine growth run; PT2 certificate at every ckpt (incl. seed, it=0).
     on_point(point_dict) -> may raise _CertificateConverged to stop. Returns (E, space) at stop."""
     warm = [None]
@@ -153,10 +188,11 @@ def run_certified_growth(eng, seed, grow_iters, grow_per_iter, kcap, n_buckets,
     def _ckpt(it, Ei, nd, ws):
         sp, E_s, cvec = _observe(eng, Ei, warm)
         tp = time.time()
-        pt2, n_ext, n_scr = en_pt2_chunked(eng, sp, E_s, cvec, n_buckets=n_buckets, log=log)
+        pt2, n_ext, n_scr = en_pt2_chunked(eng, sp, E_s, cvec, n_buckets=n_buckets, log=log,
+                                           n_procs=n_procs)
         state["last"] = (E_s, sp)
         on_point(dict(iter=int(it), dets=int(len(sp)), E_var=float(E_s),
-                      pt2_mHa=round(pt2 * 1e3, 4), E_est=float(E_s + pt2),
+                      pt2_mHa=round(pt2 * 1e3, 4), pt2_Ha=float(pt2), E_est=float(E_s + pt2),
                       n_external=int(n_ext), n_den_screened=int(n_scr),
                       pt2_wall_s=round(time.time() - tp, 1)),
                  (sp, E_s, cvec))          # exact eigenpair used for PT2 (smoke cross-validation)
@@ -190,14 +226,20 @@ def main():
             checks["n"] += 1
             sp, E_s, cvec = obs                      # the exact eigenpair PT2 was computed on
             pt2_ref, ne_ref, _ = ref_eng.en_pt2(sp, E_s, cvec)
-            d_formula = abs((pt["E_est"] - pt["E_var"]) - pt2_ref)   # unrounded pt2
+            d_formula = abs(pt["pt2_Ha"] - pt2_ref)                  # exact unrounded pt2
+            # bucket-parallel path must be BIT-IDENTICAL to the serial value on the same inputs
+            pt2_par, ne_par, _ = en_pt2_chunked(eng, sp, E_s, cvec, n_buckets=4, n_procs=2)
+            d_par = abs(pt["pt2_Ha"] - pt2_par)
+            checks["ok"] &= (d_par == 0.0 and ne_par == pt["n_external"])
             good = d_formula < 1e-9 and pt["n_external"] == ne_ref
             checks["ok"] &= good
             print(f"E3 SMOKE it{pt['iter']}: dets={pt['dets']:4d} "
                   f"E_var-FCI={(pt['E_var']-P['e_fci'])*1e3:+8.3f} "
                   f"E_var+PT2-FCI={(pt['E_est']-P['e_fci'])*1e3:+8.3f} mHa | "
                   f"PT2 vs committed formula: |d|={d_formula:.2e} Ha "
-                  f"ext {pt['n_external']}=={ne_ref} {'OK' if good else 'MISMATCH'}", flush=True)
+                  f"ext {pt['n_external']}=={ne_ref} {'OK' if good else 'MISMATCH'} | "
+                  f"parallel==serial: {'BIT-IDENTICAL' if d_par == 0.0 else f'DIFF {d_par:.2e}'}",
+                  flush=True)
 
         run_certified_growth(eng, seed, grow_iters=6, grow_per_iter=30, kcap=10**6,
                              n_buckets=4, on_point=_cross_validate)
@@ -211,7 +253,8 @@ def main():
     seed = mp2_seed_dets(P, exc)
     e800 = float(json.load(open(os.path.join(_RES, "h20_40q_dmrg_chi800.json")))["E_dmrg"])
     print(f"E3: H20 40q certificate run | seed MP2 top256 ({len(seed)}) | "
-          f"grow {GROW_ITERS}x{GROW_PER_ITER} kcap {KCAP} | PT2 buckets {PT2_BUCKETS} | "
+          f"grow {GROW_ITERS}x{GROW_PER_ITER} kcap {KCAP} | PT2 buckets {PT2_BUCKETS} "
+          f"procs {PT2_PROCS} ({'bucket-parallel, bit-identical' if PT2_PROCS > 1 else 'serial'}) | "
           f"state checkpointing {'ON: ' + os.environ['STATE_FILE'] if os.environ.get('STATE_FILE') else 'OFF (20 GB disk boxes; deviation disclosed in header)'}",
           flush=True)
 
@@ -236,7 +279,7 @@ def main():
     E, space = run_certified_growth(eng, seed, grow_iters=GROW_ITERS,
                                     grow_per_iter=GROW_PER_ITER, kcap=KCAP,
                                     n_buckets=PT2_BUCKETS, on_point=_record,
-                                    log=lambda m: print(m, flush=True))
+                                    log=lambda m: print(m, flush=True), n_procs=PT2_PROCS)
 
     term = points[-1]
     converged_at = term if abs(term["pt2_mHa"]) <= CERT_MHA else None
