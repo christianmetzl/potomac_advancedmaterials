@@ -82,14 +82,19 @@ implemented in `verify_credits.py` + `credit_ledger.json`:
 **RUNWAY ESCALATION (2026-07-21 ~19:20Z):** live wallet **41,952** — the second project burned a
 further ~42.7k in under a day; its cumulative draw (~70k+) now **exceeds a 50% share of the 130k
 pool on its own**. Runway vs our remaining worst case ≈ **1.1× — below the WARN threshold; the
-escalation trigger above has FIRED.** Response: (a) organizer escalation drafted for immediate
-send (`docs/pool_runway_escalation_email.md`) requesting per-project accounting / ring-fencing of
-our documented remaining share; (b) campaign re-prioritized to bank evidence early (E2 running,
-E3 certificate acceleration proposed, E5 launch decision deferred pending organizer reply or
-Wednesday-morning runway re-check); (c) all runners already tolerate a mid-run pool freeze —
-evidence flushes and is pushed per iteration, so a freeze strands future compute, never completed
-results. Our own conduct stays inside the cap: attributed spend to date ≈ 16.5k settled + E-runs
-in flight; per-instance billing remains the arbiter.
+escalation trigger above has FIRED.** Response at the time: escalation email drafted
+(`docs/pool_runway_escalation_email.md`); campaign re-prioritized to bank evidence early; E5
+launch deferred.
+
+**RESOLVED (2026-07-21, operator report):** the second project is FINISHED and will draw no
+further. Consequences: the remaining pool (~41.95k at the 19:18Z snapshot) is effectively
+dedicated to this project; runway is static, not draining. The remaining authorized program
+(E3 tail + E2 + E5, worst case ≈ 24–34k depending on the E3 acceleration decision) fits inside
+the physical pool. E5 is UNBLOCKED. Two accounting facts stay on the record: (1) the co-tenant's
+total draw (~71.5k) exceeded a 50% share of the pool — our own effective ceiling is therefore the
+physical remainder (~42k), i.e. BELOW our agreed 65k share; we cannot overdraw even in principle.
+(2) The escalation email is downgraded from urgent to a FYI-for-the-record option (operator's
+call); the ledger and per-instance billing document the imbalance regardless.
 
 ## E-campaign authorization (2026-07-20)
 | Run | Frozen spec | Est. (cr) |
