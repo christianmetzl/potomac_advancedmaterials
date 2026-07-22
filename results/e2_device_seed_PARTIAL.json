@@ -1,27 +1,13 @@
 {
-  "status": "IN-PROGRESS iter 2/60 (partial, not final)",
+  "status": "IN-PROGRESS iter 0/60 (partial, not final)",
   "run": "e2_device_seed",
   "trace": [
     {
       "iter": 0,
       "dets": 102,
-      "E": -9.868671718356255,
+      "E": -9.86867171835621,
       "dev_vs_mp2seed_mHa": 422.297,
       "err_vs_chi400_mHa": 423.522
-    },
-    {
-      "iter": 1,
-      "dets": 150102,
-      "E": -10.120474464694388,
-      "dev_vs_mp2seed_mHa": 170.495,
-      "err_vs_chi400_mHa": 171.72
-    },
-    {
-      "iter": 2,
-      "dets": 300102,
-      "E": -10.168407981825252,
-      "dev_vs_mp2seed_mHa": 122.561,
-      "err_vs_chi400_mHa": 123.786
     }
   ]
 }
