@@ -1,5 +1,5 @@
 {
-  "status": "IN-PROGRESS iter 1/60 (partial, not final)",
+  "status": "IN-PROGRESS iter 2/60 (partial, not final)",
   "run": "e5_h22_44q",
   "trace": [
     {
@@ -13,6 +13,12 @@
       "dets": 150257,
       "E": -11.303160495746654,
       "err_vs_chi1200_mHa": 8.666
+    },
+    {
+      "iter": 2,
+      "dets": 300257,
+      "E": -11.306635627983054,
+      "err_vs_chi1200_mHa": 5.191
     }
   ]
 }
