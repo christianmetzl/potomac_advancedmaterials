@@ -1,0 +1,80 @@
+{
+  "system": "Sn2O2 bridged tin-oxo rhombus (real EUV motif)",
+  "active_space": "CAS(10,10) = 20 qubits (closed-shell singlet, CASCI exact)",
+  "geometry_note": "committed rhombus Sn(+/-1.5,0,0) O(0,+/-1.4,0), scaled by s (symmetric Sn-O bridge cleavage); basis/ECP identical to the committed E4 reference path",
+  "method": "All-electron def2-SVP + def2-ECP(Sn) RHF -> CASCI; CCSD(T) embedded in the IDENTICAL active space; selected-CI on the active-space qubit Hamiltonian. Apples-to-apples.",
+  "geometries": [
+    {
+      "scale": 1.0,
+      "Sn_O_bridge_ang": 2.0518,
+      "rhf_converged": true,
+      "CASCI_Ha": -576.3785972313574,
+      "CCSD_Ha": -576.3769600093174,
+      "CCSDT_Ha": -576.3784623852962,
+      "CCSDT_converged": true,
+      "CCSDT_err_mHa": 0.135,
+      "selCI_err_mHa": 0.138,
+      "selCI_dets": 732,
+      "dominant_det_weight": 0.9491
+    },
+    {
+      "scale": 1.15,
+      "Sn_O_bridge_ang": 2.3596,
+      "rhf_converged": true,
+      "CASCI_Ha": -576.267615510453,
+      "CCSD_Ha": -576.2605540967041,
+      "CCSDT_Ha": -576.267193856319,
+      "CCSDT_converged": true,
+      "CCSDT_err_mHa": 0.422,
+      "selCI_err_mHa": 0.474,
+      "selCI_dets": 732,
+      "dominant_det_weight": 0.8972
+    },
+    {
+      "scale": 1.3,
+      "Sn_O_bridge_ang": 2.6674,
+      "rhf_converged": true,
+      "CASCI_Ha": -576.1119583127208,
+      "CCSD_Ha": -576.0982545748384,
+      "CCSDT_Ha": -576.1103525332844,
+      "CCSDT_converged": true,
+      "CCSDT_err_mHa": 1.606,
+      "selCI_err_mHa": 0.187,
+      "selCI_dets": 1134,
+      "dominant_det_weight": 0.8344
+    },
+    {
+      "scale": 1.45,
+      "Sn_O_bridge_ang": 2.9752,
+      "rhf_converged": true,
+      "CASCI_Ha": -575.9745933191978,
+      "CCSD_Ha": -575.9499534067485,
+      "CCSDT_Ha": -575.9695078342859,
+      "CCSDT_converged": true,
+      "CCSDT_err_mHa": 5.085,
+      "selCI_err_mHa": 0.171,
+      "selCI_dets": 1201,
+      "dominant_det_weight": 0.6945
+    },
+    {
+      "scale": 1.6,
+      "Sn_O_bridge_ang": 3.2829,
+      "rhf_converged": true,
+      "CASCI_Ha": -575.9164169439559,
+      "CCSD_Ha": -575.8732915824826,
+      "CCSDT_Ha": -575.9109254703717,
+      "CCSDT_converged": true,
+      "CCSDT_err_mHa": 5.491,
+      "selCI_err_mHa": 0.186,
+      "selCI_dets": 1186,
+      "dominant_det_weight": 0.5253
+    }
+  ],
+  "key_finding_template": "On Sn-O bridge cleavage (the strongly-correlated regime where EUV resist chemistry lives), in-active-space CCSD(T) develops a large error vs exact CASCI while selected-CI/QSCI stays variational and accurate -- the same failure-catch shown for CrO, now on the real tin-oxo motif. (Numbers as-measured.)",
+  "honest_caveats": [
+    "CCSD(T) compared to CASCI in the SAME embedded active space (not full-molecule vs small CAS).",
+    "CAS(10,10) def2-SVP is a fixed modest active space chosen so CASCI is exact; demonstrates the failure-mode contrast, not a benchmark-quality PES.",
+    "Symmetric rhombus breathing is a cleavage proxy, not a single-bond minimum-energy path; the strong-correlation onset (dominant-weight collapse) is the physical point.",
+    "Outcome reported as-measured, pass or fail, mirroring the CrO/P4 discipline."
+  ]
+}

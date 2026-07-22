@@ -1,0 +1,6 @@
+s=1.00 Sn-O=2.052A  CASCI=-576.378597  CCSD(T) err=+0.1 mHa (conv=True)  selCI err=0.138 mHa  domWt=0.949  | 4s
+s=1.15 Sn-O=2.360A  CASCI=-576.267616  CCSD(T) err=+0.4 mHa (conv=True)  selCI err=0.474 mHa  domWt=0.897  | 5s
+s=1.30 Sn-O=2.667A  CASCI=-576.111958  CCSD(T) err=+1.6 mHa (conv=True)  selCI err=0.187 mHa  domWt=0.834  | 6s
+s=1.45 Sn-O=2.975A  CASCI=-575.974593  CCSD(T) err=+5.1 mHa (conv=True)  selCI err=0.171 mHa  domWt=0.694  | 10s
+s=1.60 Sn-O=3.283A  CASCI=-575.916417  CCSD(T) err=+5.5 mHa (conv=True)  selCI err=0.186 mHa  domWt=0.525  | 11s
+saved results/sn2o2_dissociation_evidence.json

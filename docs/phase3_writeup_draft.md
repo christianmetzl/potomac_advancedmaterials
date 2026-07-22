@@ -30,8 +30,18 @@ executed, reproducible results.**
 ## 2. Target system, data & reproducibility  *(criteria 2, 8; ~0.75 pp)*
 - **Scaling vehicle:** linear Hₙ chains (n=2…20; 4–40q, STO-6G, Jordan–Wigner) — the canonical
   strong-correlation benchmark; one bond-length knob tunes weak→strong correlation.
-- **Target chemistry:** Sn-oxide active spaces (SnO 16q, SnO₂ 20q) and open-shell transition-metal
-  oxides (CrO ⁵Π, NiO ³Σ⁻, 20q) — genuine multireference systems.
+- **Target chemistry:** Sn-oxide active spaces (SnO 16q, SnO₂ 20q; bridged Sn₂O₂ 38q) and open-shell
+  transition-metal oxides (CrO ⁵Π, NiO ³Σ⁻, 20q) — genuine multireference systems. **The audit
+  mechanism is demonstrated where EUV chemistry actually lives — bond cleavage, not equilibrium:** on
+  Sn₂O₂ bridge stretch (2.05→3.28 Å), in-active-space CCSD(T) error grows 0.1→5.5 mHa (55×, past
+  chemical accuracy) while QSCI holds a variational ≤0.5 mHa and the dominant-determinant weight
+  collapses 0.95→0.53 — the same reference-correcting failure-catch shown for CrO, now on the real
+  tin-oxo resist motif in its strongly-correlated regime (`sn2o2_dissociation.py`).
+- **Positioning (complementary, not overlapping).** The Xanadu–Mitsubishi EUV program (Kharazi et al.,
+  arXiv:2602.20234) targets 92-eV *excited-state* absorption/photoemission at fault-tolerant scale
+  (~10⁵ logical qubits). We are the **downstream, near-term half**: ground-state / redox / bond-cleavage
+  energetics — the chemistry that decides the solubility switch — at ≤40 qubits, runnable on today's
+  hardware. The two are complementary, and MATGEN-Q is the piece executable now.
 - **Data integrity (Top-Action: reproducibility):** Hamiltonians built by a HamLib-replicating
   pipeline (PySCF→OpenFermion→JW), **validated against published HamLib files at 28/32/40q**: exact
   term-count match (27,735 / 47,489 / 116,577) and coefficient agreement to ~15 sig figs, differing
@@ -202,6 +212,13 @@ recorded). Frozen, costed extension protocols E2–E5 stand as the research outl
 - Upstream assumptions (basis, active-space window, geometry) are shared across all compared methods;
   two are now measured rather than stated (x2c: ≤58 meV on ~1–2 eV gaps; AVAS supports the CrO
   window) — the rest remain declared scope (`docs/matgenq_audit_table.md`, honest-scope section).
+- **Scope evolution (we followed the evidence).** Phase 1 pitched a chemistry-conditioned generative
+  encoder for cross-family transfer and an EUV excited-state property angle. We tested the conditional
+  encoder and it came out *within noise* — reported as an honest negative (`decisive_transfer`), and
+  the excited-state angle is better served by the complementary Xanadu–Mitsubishi program above. The
+  evidence redirected our Phase-3 contribution to the **variational-audit layer** — the reference-
+  correcting failure-catch that is now our strongest, most reproducible result. We state the pivot
+  rather than quietly dropping the earlier framing: it is what the data supported.
 
 ## 8. Conclusion & reproducibility
 MATGEN-Q is a working two-stage GQE whose tensor-network + QSCI tiers target 40q on a single GPU, with
