@@ -40,6 +40,19 @@
       "pt2_wall_s": 12418.8,
       "var_err_vs_chi400_mHa": 1.733,
       "var_err_vs_chi800_mHa": 2.702
+    },
+    {
+      "iter": 3,
+      "dets": 450257,
+      "E_var": -10.291239944565287,
+      "pt2_mHa": -1.951,
+      "pt2_Ha": -0.0019509607732879396,
+      "E_est": -10.293190905338575,
+      "n_external": 1087677383,
+      "n_den_screened": 0,
+      "pt2_wall_s": 17554.2,
+      "var_err_vs_chi400_mHa": 0.954,
+      "var_err_vs_chi800_mHa": 1.923
     }
   ]
 }
