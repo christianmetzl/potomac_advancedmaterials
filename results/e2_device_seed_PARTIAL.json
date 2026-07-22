@@ -1,5 +1,5 @@
 {
-  "status": "IN-PROGRESS iter 0/60 (partial, not final)",
+  "status": "IN-PROGRESS iter 1/60 (partial, not final)",
   "run": "e2_device_seed",
   "trace": [
     {
@@ -8,6 +8,13 @@
       "E": -9.86867171835621,
       "dev_vs_mp2seed_mHa": 422.297,
       "err_vs_chi400_mHa": 423.522
+    },
+    {
+      "iter": 1,
+      "dets": 150102,
+      "E": -10.12047446469433,
+      "dev_vs_mp2seed_mHa": 170.495,
+      "err_vs_chi400_mHa": 171.72
     }
   ]
 }
