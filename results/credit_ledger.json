@@ -50,11 +50,25 @@
       "balance": 41951.9368,
       "method": "qBraid API via verify_credits.py --live --append (box B, automated at the E4->E2 handover)",
       "note": "RUNWAY WARNING: second project burned ~42.7k MORE since the 00:48Z snapshot (its cumulative draw now ~70k+ of the shared 130k pool -- i.e. beyond a 50% share). Pool runway vs our remaining worst-case is ~1.1x: BELOW the 1.5x WARN threshold in docs/credit_budget.md. Escalation to organizers drafted (docs/pool_runway_escalation_email.md); E-campaign continues with priority on banking evidence early; all runners tolerate a mid-run pool freeze (evidence flushes per iteration). [runway analysis appended by main session; balance/method are box B's automated capture]"
+    },
+    {
+      "utc": "2026-07-23T07:55:00Z",
+      "balance": 12014.6,
+      "method": "qBraid console (manual read by operator); CLI/API auth unavailable on box B (401 from api-v2.qbraid.com/users/verify, two keys tried, official qbraid_core client). Job 5 final snapshot.",
+      "note": "CRITICAL: pool balance 12,014.60 vs 41,951.94 at 2026-07-21T19:18:42Z -> the second project drained ~29,937 MORE. Pool now 12,014.60 of the shared 130k. OUR attributed spend after box B's line = 16,482.7 + 10,560 = 27,042.7 (remaining allowance vs 65k cap = 37,957.3), but pool balance 12,014.60 << that: pool runway ~0.32x of our remaining worst-case. The pool, not our share cap, is now the binding constraint. E5 (9-18k) and E2-on-a-bigger-box are effectively un-fundable from the pool without organizer action. Main session's runway escalation (docs/pool_runway_escalation_email.md) is the relevant channel."
     }
   ],
   "attributed_spend_cr": {
     "settled_campaign_2026-07-19": 16482.7,
-    "e_campaign_instances": [],
+    "e_campaign_instances": [
+      {
+        "instance": "box B (32 vCPU / 128 GiB)",
+        "cr": 10560,
+        "utc": "2026-07-23T07:55:00Z",
+        "run": "E4 + E2(DNF)",
+        "detail": "E4 Sn2O2 38q COMPLETE (metric PASS + below-ref ordering) + E2 device-seed 40q RESOURCE-DNF (OOM on 128 GiB, oom_kill=2). Settled cost is the instance total from the qBraid console; per-run split not separable from that single figure. Uptime since 2026-07-21T00:25:52Z (~54.5h incl. idle + two failed E2 attempts)."
+      }
+    ],
     "note": "OUR spend only \u2014 the number the 65k cap governs. Box operators append one line per E-campaign instance at shutdown, from the qBraid console per-instance billing: {\"instance\": \"...\", \"cr\": <settled cost>, \"utc\": \"...\", \"run\": \"E3|E4|E2|E5\"}. Pool balance minus this = the second project's draw."
   },
   "instances": [
