@@ -1,0 +1,65 @@
+{
+  "run": "e2_device_seed_40q",
+  "status": "RESOURCE-DNF (OOM on 128 GiB box) \u2014 attempted, did NOT complete; this is an operational record, NOT a scientific result and NOT the E2 outcome",
+  "frozen_config": {
+    "system": "H20",
+    "qubits": 40,
+    "seed": "COMMITTED device sample p3_sample_dets.json (102 dets, verbatim)",
+    "GROW_PER_ITER": 150000,
+    "KCAP": 450000,
+    "note": "config unchanged; no tuning applied"
+  },
+  "outcome": "E2 as frozen requires >=128 GiB and is OOM-killed during iter-3 growth (450k-det cap-fill at 40q) on this 32 vCPU / 128 GiB box. Deterministic: two independent attempts, both OOM-killed by the container cgroup.",
+  "evidence": {
+    "cgroup_memory_max_bytes": 137438953472,
+    "cgroup_memory_max_GiB": 128.0,
+    "cgroup_memory_max_GB": 137.44,
+    "cgroup_memory_peak_bytes": 133464707072,
+    "cgroup_memory_peak_GiB": 124.3,
+    "cgroup_memory_peak_GB": 133.46,
+    "cgroup_peak_pct_of_limit": 97.1,
+    "cgroup_oom_kill_count": 2,
+    "python_traceback": "none (clean SIGKILL by cgroup OOM-killer, both attempts)",
+    "e4_comparison": "E4 (38q, 524k dets) ran to completion on the SAME box at 59.7 GB peak; +2 qubits and the 450k cap roughly double E2's footprint",
+    "pool_ruled_out": "shared pool had ~41,952 cr at time of death \u2014 not a credit/pool-exhaustion kill"
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "reached": "died mid iter-3 shortly after iter 2",
+      "final_evidence": false
+    },
+    {
+      "attempt": 2,
+      "reached": "survived ~5-7h into iter-3 then OOM-killed",
+      "final_evidence": false
+    }
+  ],
+  "partial_trace_reached": [
+    {
+      "iter": 0,
+      "dets": 102,
+      "E": -9.86867171835621,
+      "dev_vs_mp2seed_mHa": 422.297,
+      "err_vs_chi400_mHa": 423.522
+    },
+    {
+      "iter": 1,
+      "dets": 150102,
+      "E": -10.12047446469433,
+      "dev_vs_mp2seed_mHa": 170.495,
+      "err_vs_chi400_mHa": 171.72
+    },
+    {
+      "iter": 2,
+      "dets": 300102,
+      "E": -10.168407981825151,
+      "dev_vs_mp2seed_mHa": 122.561,
+      "err_vs_chi400_mHa": 123.786
+    }
+  ],
+  "partial_trace_caveat": "reached iter 2 only (dets=300102); NOT converged, NOT at the matched-determinant judge count (450,257 / cap 450k). The frozen |E - (-10.290969)| <= 0.5 mHa judge is UNEVALUATED. dev_vs_mp2seed +122.561 mHa here is a mid-growth value, explicitly NOT the E2 result.",
+  "disclosure": "Mirrors the B1 early-stop and the campaign's disk-checkpointing deviation: an operational resource ceiling, disclosed and reported as-is. E2 stands as the pre-registered protocol (preregistration_v2.json E2), attempted, UNRESOLVED on a 128 GiB box; execution as frozen requires a >=256 GB instance. preregistration_v2.json NOT modified; no threshold or config moved.",
+  "operator": "box B (32 vCPU / 128 GiB), E-campaign run operator",
+  "utc": "2026-07-23T06:55:26Z"
+}
