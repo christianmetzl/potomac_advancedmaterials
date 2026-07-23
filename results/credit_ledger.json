@@ -67,6 +67,13 @@
         "utc": "2026-07-23T07:55:00Z",
         "run": "E4 + E2(DNF)",
         "detail": "E4 Sn2O2 38q COMPLETE (metric PASS + below-ref ordering) + E2 device-seed 40q RESOURCE-DNF (OOM on 128 GiB, oom_kill=2). Settled cost is the instance total from the qBraid console; per-run split not separable from that single figure. Uptime since 2026-07-21T00:25:52Z (~54.5h incl. idle + two failed E2 attempts)."
+      },
+      {
+        "instance": "box C (64 vCPU / 256 GiB)",
+        "cr": 14769,
+        "utc": "2026-07-23T10:57:35Z",
+        "run": "E5",
+        "detail": "H22 44q frontier, NON-CONVERGED (terminated for pool runway), trajectory +125.2->+4.04 mHa vs chi1200. cr = 6.40 cr/min x instance uptime ~38.5h from ~2026-07-21T20:30Z (rate*uptime estimate; CLI/API auth dead = 401 on this box, same as box B, so verify_credits --live NOT run); console-confirm pending (instance billed until operator stops it in console, so final figure marginally higher)."
       }
     ],
     "note": "OUR spend only \u2014 the number the 65k cap governs. Box operators append one line per E-campaign instance at shutdown, from the qBraid console per-instance billing: {\"instance\": \"...\", \"cr\": <settled cost>, \"utc\": \"...\", \"run\": \"E3|E4|E2|E5\"}. Pool balance minus this = the second project's draw."
