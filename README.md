@@ -29,7 +29,13 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | Two-stage GQE (UCCSD), H₂/H₄/H₆ | 0.000 / 0.009 / 0.297 mHa | chemical accuracy, 4–12 qubits (`stage2_refinement.py`) |
 | **Integrated GQE→QSCI, H₆ (12q)** | **1.05 mHa** | GPT-QE generates circuits → QSCI samples determinants *from the generated states* → diagonalizes; refines the raw 51 mHa generative state ~50× |
 | QSCI scaling, H₁₄ (28q) | 1.21 mHa | 18,201 determinants = 0.15% of the FCI space |
-| QSCI, H₂₀ (40q) | 39 mHa | operational; converging (not yet chemical accuracy — CPU-bound) |
+| **GPU-executed 20q H₁₀ (cuStateVec)** | **+0.000 mHa** vs FCI, 0.44 GB device | exact GPU-execution anchor on real NVIDIA hardware via qBraid |
+| **GPU-executed 28q H₁₄ (cuStateVec)** | **+0.395 mHa** vs DMRG(χ=400), 2.82 GB device | device-sampled QSCI grown to 64,212 dets; meets pre-registered P1/P3 |
+| **40q H₂₀ flagship (executed)** | **+1.226 mHa** vs DMRG(χ=400), 450,257 dets | P1 PASS; MP2-seeded, seed-independence-validated engine (~16 h, H100 host). Frozen E3 certificate run drives E_var to **+0.495 mHa vs χ=400** (prediction ii met), \|PT2\| bracket tightening to 1.57 mHa |
+| **38q CrO audit (CAS(18,19), executed)** | **−3.784 mHa BELOW** same-CAS DMRG(χ=400) | reference *corrected*: χ=800/1200 descend toward QSCI from above (+1.06/+0.36 mHa), never cross — truncation-error mechanism at three χ |
+| **38q Sn₂O₂ EUV motif (E4, executed)** | **−0.399 mHa BELOW** same-CAS DMRG(χ=400) | a second reference correction, on the real tin-oxo chemistry (524,764 dets, 7.4 h) |
+| **EUV-motif trust curve (Sn₂O₂ cleavage)** | in-active-space CCSD(T) 0.14→5.49 mHa (~40×); QSCI ≤0.47 mHa | Sn–O bridge 2.05→3.28 Å; dominant-det weight collapses 0.95→0.53 (`sn2o2_dissociation.py`) |
+| **Real trapped-ion QPU (AQT ibex-q1, decoded)** | device-sampled +20.4/+11.1 mHa; device-seeded QSCI → exact FCI | genuine 12q trapped-ion silicon (2,000 shots/job, decoded 2026-07-20); qir-sv sim tier +2.0/+2.4 mHa PASS |
 | HamLib validation, 28/32/40q | exact | term counts match (27,735 / 47,489 / 116,577); coefficients agree to ~15 sig figs, differing only by a spectrum-invariant orbital-phase gauge |
 | Noise robustness, 20q | ≤3.3 mHa at 30% corrupted measurements | graceful degradation |
 | Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.45 / 0.18–0.23 across environments) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
@@ -47,19 +53,24 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 
 ## Honest scope
 
-- The **integrated GQE→QSCI loop is demonstrated at 12 qubits**; the larger-scale QSCI results (20–28q) use **perturbative determinant selection as a hardware-independent proxy** for the measurement step, *validated against* the 12q measured pipeline.
-- The 40q result is **operational but not yet at chemical accuracy** — the at-scale GPU runs are the Phase 3 deliverable. We *have* executed the supporting evidence on CPU: the GQE/QSCI circuits run through **CUDA-Q's qpp-cpu backend** (H₄ to exact FCI), and a **block2 MPS bond-dimension study** quantifies the χ the 40q GPU run needs (≈400) and the entanglement growth that justifies the tensor-network tier. The owed piece is the GPU `tensornet-mps`/`cuStateVec` run at 40q, not the platform's viability.
+- The **integrated GQE→QSCI loop is measured at 12q and GPU-executed at 20q/28q** on real NVIDIA hardware (cuStateVec, device-sampled; +0.000 / +0.395 mHa). The at-scale ladder beyond that uses a **hardware-independent determinant-space proxy** for the measurement step, *validated against* the measured 12/16/20q pipeline.
+- The 40q flagship is **executed and chemically accurate relative to its pre-registered DMRG(χ=400) reference** (+1.226 mHa, P1 PASS). Absolute 40q certification is the frozen **E3** protocol, now **in flight**: prediction ii is met (E_var +0.495 mHa vs χ=400) and the EN-PT2 \|PT2\|≤0.5 mHa absolute certificate is still converging (reported as-is). At 38q the audit *corrects* the DMRG reference on both CrO (−3.784 mHa) and the real Sn₂O₂ EUV motif (E4, −0.399 mHa). The remaining honest gap is the full 40q `tensornet-mps` growth run (the flagship was MP2-seeded — a documented cost pivot, growth seed-independence-validated); the GPU/QPU *platform* is proven, not owed.
 - **Train-small, deploy-large (transfer result).** One generator trained only on 8q+12q systems, deployed zero-shot across **16→56 qubits**, proposes lower-energy determinant subspaces than random selection (`src/encoder/scaling_transfer.py --ladder`). The robust signals are statistical: **~3.7× tighter across-seed selection spread** (≈2.0 vs ≈7.4 mHa) and **13/18 size×seed paired wins** (binomial p≈0.05); the per-size mean advantage is all-seeds-positive at 16q and positive in the mean through 28q (+8.9/+8.3/+7.1 mHa), then narrows into noise at 40–56q. That the policy captures real chemistry is corroborated by interpretability (the learned token distribution recovers the MP2 amplitude hierarchy, ρ=0.31, p<0.002). A canonical frontier-relative tokenization makes the small vocabulary a subset of the large one; a determinant-space **selected-CI proxy** (Slater-Condon, validated to 0.0000 mHa vs Jordan–Wigner; no 2ⁿ statevector) makes 56q reachable on CPU. *Honest scope:* a mean trend that narrows into run-to-run noise beyond ~28q (not an every-seed guarantee), a relative advantage at a fixed small budget (not chemical accuracy), and a selected-CI proxy (not circuit-sampled QSCI). Cross-*chemistry* transfer wins clearly on 3/6 oxide targets (BeO a within-noise tie) and fails on SnO; target-specific MP2 beats the prior; cross-*molecule* conditioning was a within-noise tie. All reported as negatives where they are negatives.
 - Sn-oxide Hamiltonians are **our own ECP-CASCI construction** (not from the HamLib library, which contains no tin oxides).
 
 ## Pre-registered predictions (GPU/QPU) and blind holdout
 
-Every owed at-scale run is **pre-registered**: `results/preregistration_v1.json` commits quantitative
-pass/fail predictions (P1–P5) derived *only* from already-committed measured data — bond-dimension
-χ=400 at 40q, the determinant-budget band, memory footprint, and QPU accuracy thresholds — **before**
-qBraid access, with git history as the tamper-evident timestamp. Outcomes will be reported as-is,
-pass or fail. The launch-ready command list is `src/GPU_RUNLIST.md` (CUDA-Q backends switch via
-`CUDAQ_TARGET` env vars — no code edits between the CPU-verified and GPU runs).
+Every at-scale run was **pre-registered before qBraid access, then executed**: `results/preregistration_v1.json`
+(+ `v2.json` for extensions E1–E5) commits quantitative pass/fail predictions (P1–P5) derived *only* from
+already-committed measured data — bond-dimension χ=400 at 40q, the determinant-budget band, memory
+footprint, and QPU accuracy thresholds — **before** access, with git history as the tamper-evident
+timestamp. **Outcomes reported as-is, pass or fail:** P1/P2 PASS (40q flagship), P3 FAIL-as-measured
+(allocator artifact, decomposed), P4 FAIL-as-measured (the audit-success case: QSCI below the χ=400
+reference, mechanism confirmed at χ=800/1200), P5 executed (sim-chain PASS + trapped-ion silicon decoded).
+Frozen extensions E2–E5 executed 2026-07-23: E4 a second reference correction (−0.399 mHa), E3 certificate
+in flight (prediction ii met), E2 a disclosed resource-DNF, E5 a reported non-convergence. The launch-ready
+command list is `src/GPU_RUNLIST.md` (CUDA-Q backends switch via `CUDAQ_TARGET` env vars — no code edits
+between the CPU-verified and GPU runs).
 
 The same discipline applied to something executable today: **a blind one-shot holdout** (entry H1) —
 `src/blind_holdout_vo.py` was frozen (SHA-256 in the pre-registration) before its first and only
@@ -78,7 +89,7 @@ must match to ~1e-13 (27,735 / 47,489 / 116,577 terms at 28/32/40q).
 
 | Objection | Where it stands |
 |---|---|
-| "No real GPU/QPU execution" | True — the one open gap; every such item is `[QBRAID-RUN]`-marked and now pre-registered (above) rather than merely promised. |
+| "No real GPU/QPU execution" | Resolved — executed: 20q/28q on NVIDIA GPU (cuStateVec, +0.000/+0.395 mHa), the 40q flagship (+1.226 mHa vs χ=400), the 38q CrO + Sn₂O₂ audits, and real AQT trapped-ion silicon (decoded 2026-07-20). The remaining owed piece is the full 40q `tensornet-mps` growth run, not platform viability. |
 | "Large-scale numbers are a proxy, not circuit-sampled" | True and disclosed; proxy validated against measured QSCI at 12/16/20q, incl. an unflattering measured-random result we published anyway. |
 | "CASCI in a modest CAS ≠ physical truth" | Correct — our accuracy claims are vs the in-CAS reference; the spin-state *ordering* claim additionally matches the experimental X⁵Π term (and is hedged to sign, not magnitude). |
 | "Transfer statistics are thin (3 seeds, p≈0.05)" | Disclosed verbatim in the paper; the robust claims are the variance reduction and paired-wins count, not the mean curve. |
@@ -87,7 +98,7 @@ must match to ~1e-13 (27,735 / 47,489 / 116,577 terms at 28/32/40q).
 ## Repository structure
 
 ```
-paper/      Phase 2 submission (PDF + DOCX), the docx-js build script, and the architecture figure
+paper/      Phase 3 write-up (PDF + DOCX build scripts) + Phase 2 submission retained; architecture figure
 src/        analysis code — GQE, QSCI, integrated GQE→QSCI, noise, DMRG, Sn-oxides, transition-metal
             oxides, HamLib validation, classical baselines, and src/encoder/ (conditional-encoder test)
 results/    computational-result JSONs (every headline number traces to one of these)
@@ -142,8 +153,8 @@ qubits (`results/classical_baselines_evidence.json`).
 
 ## Running on qBraid (Phase 3)
 
-The headline scaling runs (40q MPS, near-38q transition-metal oxides, QPU validation) execute on
-qBraid with CUDA-Q + GPU credits. Step-by-step:
+The headline scaling runs (40q flagship, 38q transition-metal + Sn₂O₂ oxide audits, QPU validation) were
+**executed** on qBraid with CUDA-Q + GPU credits and are re-runnable there. Step-by-step:
 
 1. **Launch:** click the **Launch on qBraid** badge above to clone this repo into your qBraid account.
 2. **Environment:** select a GPU instance; `pip install -r requirements.txt` then `pip install -r
@@ -151,17 +162,20 @@ qBraid with CUDA-Q + GPU credits. Step-by-step:
    `requirements.txt` — the GPU extras will not install without CUDA.
 3. **Reproduce CPU results first:** run the commands in [Reproduce](#reproduce-cpu--verified) to confirm
    the verified numbers in the qBraid environment.
-4. **GPU scaling runs** *(scripts finalized once access is live — placeholders tracked in
-   `docs/phase3_writeup_draft.md` §5c):* 40q MPS GQE/QSCI on H₂₀; near-38q CrO/NiO; quantum-vs-classical
-   wall-clock; 10–16q IonQ/IBM QPU validation. Each prints qubit count, circuit depth, shot budget,
-   bond dimension, and wall-clock, and writes a `results/*.json`.
+4. **GPU/QPU scaling runs (executed; re-runnable):** 40q GQE/QSCI on H₂₀; 38q CrO + Sn₂O₂ audits;
+   quantum-vs-classical wall-clock; trapped-ion QPU validation (AQT via OpenQuantum, decoded). Each
+   prints qubit count, circuit depth, shot budget, bond dimension, and wall-clock, and writes a
+   `results/*.json`. Evidence and per-run commands: `docs/phase3_writeup_draft.md` §5 and the E-campaign
+   scripts (`e3_certificate_40q.py`, `e4_sn2o2_38q.py`, `sn2o2_dissociation.py`).
 
 *Expected outputs match the values in the write-up; a result that does not reproduce is flagged as
 such (Top-Action: be honest about limitations).*
 
 ## Paper
 
-The Phase 2 submission is in [`paper/`](paper/). The document is generated programmatically (`paper/build_phase2.js`, docx-js) rather than hand-edited.
+The **Phase 3 write-up** is in [`paper/`](paper/) (`EIGENNEXUS_Phase3_Writeup.pdf`, ≤5 pages excl. references),
+generated programmatically (`paper/build_phase3.js` → docx → `paper/build_pdf.py`, no hand-editing so the
+PDF never drifts from the source). The Phase 2 submission is retained alongside it for reference.
 
 ## Team
 
