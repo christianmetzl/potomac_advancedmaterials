@@ -1,0 +1,83 @@
+{
+  "run": "e5_h22_44q",
+  "system": "H22 chain, STO-6G, R=0.74 A",
+  "qubits": 44,
+  "seed": "MP2 top-256 doubles + HF",
+  "seed_dets": 257,
+  "engine": "qsci_fast (identical committed engine); GROW_PER_ITER=150000, KCAP=3000000 (frozen)",
+  "judge": "re-frozen chi=1200 DMRG reference (preregistration_v2.json, refrozen_2026-07-20); committed pre-run 10db6f2",
+  "e_dmrg_chi1200": -11.311826693389307,
+  "ladder_refs": {
+    "400": -11.309682955420904,
+    "800": -11.311403232066795
+  },
+  "ladder_gaps_mHa": {
+    "400": 2.144,
+    "800": 0.423
+  },
+  "status": "NON-CONVERGED (terminated early for grant-pool runway)",
+  "verdict": "E5 = NON-CONVERGED, terminated early for grant-pool runway (documented resource/budget termination, NOT a protocol change; E5's frozen params GROW_PER_ITER=150000/KCAP=3000000 and the chi=1200 judge are untouched). Committed trajectory vs the chi=1200 judge: iter0 +125.2 -> iter1 +8.67 -> iter2 +5.19 -> iter3 +4.04 mHa; error decelerating (-1.15 mHa on the last step) and would not reach the <=1.6 mHa chemical-accuracy threshold before the Jul-25 06:00 UTC abort gate. Non-convergence was the expected, pre-registered outcome for this least-grounded frontier extension (labeled as such in preregistration_v2.json E5 'reporting'). No tuning, no threshold moved. Reported as-is with full logs per the frozen reporting rule.",
+  "termination": {
+    "reason": "grant-pool runway: shared pool remainder (~12,014.6 cr at 2026-07-23T07:55Z) cannot carry both box C (E5) and box A (E3) to an endpoint; E5's continued 6.40 cr/min burn was shortening E3's certificate run. Internal reprioritization to protect E3.",
+    "decision": "operator (C. Metzl), 2026-07-23; documented in credit_ledger.json wallet_snapshots note (07-23T07:55Z).",
+    "terminated_utc": "2026-07-23T10:57:35Z",
+    "frozen_params_untouched": true,
+    "relaunch": "none (deliberate; restart-from-seed remains deterministic and would bit-reproduce iters 0-3)"
+  },
+  "terminal_iteration": 3,
+  "terminal_space_dets": 450257,
+  "E_qsci_terminal": -11.307782216627889,
+  "err_vs_chi1200_mHa": 4.044,
+  "wall_s_at_terminal": 126786,
+  "growth_trace": [
+    {
+      "iter": 0,
+      "dets": 257,
+      "E": -11.186623707832823,
+      "err_vs_chi1200_mHa": 125.203
+    },
+    {
+      "iter": 1,
+      "dets": 150257,
+      "E": -11.303160495746654,
+      "err_vs_chi1200_mHa": 8.666
+    },
+    {
+      "iter": 2,
+      "dets": 300257,
+      "E": -11.306635627983054,
+      "err_vs_chi1200_mHa": 5.191
+    },
+    {
+      "iter": 3,
+      "dets": 450257,
+      "E": -11.307782216627889,
+      "err_vs_chi1200_mHa": 4.044
+    }
+  ],
+  "full_stdout_log_e5": [
+    "E5: H22 44q | judge DMRG(chi=1200)=-11.31182669 (committed pre-run) | ladder {400: -11.309682955420904, 800: -11.311403232066795} | seed MP2 top256 (257 dets) | grow 60x150000 kcap 3000000",
+    "  QSCI* seed |space|=257  E=-11.186624  [0s]",
+    "  QSCI* grow it1 |space|=150257  E=-11.303160  [3466s]",
+    "  QSCI* grow it2 |space|=300257  E=-11.306636  [60443s]",
+    "  QSCI* grow it3 |space|=450257  E=-11.307782  [126786s]"
+  ],
+  "prereg": {
+    "prediction_i_det_band": {
+      "band": [
+        600000.0,
+        7000000.0
+      ],
+      "first_chem_acc_point": null,
+      "hit": false,
+      "note": "no iteration reached |err|<=1.6 mHa before termination, so no first-chem-acc point exists; prediction i cannot be satisfied under early termination (reported as-is, not moved)."
+    },
+    "prediction_ii_chem_acc_vs_chi1200": {
+      "threshold_mHa": 1.6,
+      "terminal_err_mHa": 4.044,
+      "pass": false
+    },
+    "judge": "re-frozen chi=1200 (preregistration_v2.json, refrozen_2026-07-20)",
+    "reporting_rule": "a non-converged attempt is reported as such with full logs (least-grounded extension, labeled so)"
+  }
+}

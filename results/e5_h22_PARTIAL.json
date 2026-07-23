@@ -1,5 +1,5 @@
 {
-  "status": "IN-PROGRESS iter 3/60 (partial, not final)",
+  "status": "TERMINATED at iter 3/60 \u2014 NON-CONVERGED, stopped early for grant-pool runway (see results/e5_h22_evidence.json). Frozen params untouched.",
   "run": "e5_h22_44q",
   "trace": [
     {

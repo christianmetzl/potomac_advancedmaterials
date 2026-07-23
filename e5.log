@@ -1,0 +1,5 @@
+E5: H22 44q | judge DMRG(chi=1200)=-11.31182669 (committed pre-run) | ladder {400: -11.309682955420904, 800: -11.311403232066795} | seed MP2 top256 (257 dets) | grow 60x150000 kcap 3000000
+  QSCI* seed |space|=257  E=-11.186624  [0s]
+  QSCI* grow it1 |space|=150257  E=-11.303160  [3466s]
+  QSCI* grow it2 |space|=300257  E=-11.306636  [60443s]
+  QSCI* grow it3 |space|=450257  E=-11.307782  [126786s]
