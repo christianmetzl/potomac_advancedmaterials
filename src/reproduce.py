@@ -13,7 +13,7 @@ Scope — two honest check families, labeled distinctly in the output:
   * RE-EXECUTION (16): CPU-reproducible headline scripts re-run from a clean workdir and asserted
     against committed values (several need optional deps — cudaq/block2/torch/pennylane/openfermionpyscf
     — and SKIP cleanly when the dep is absent, rather than erroring).
-  * AUDIT (8): committed GPU/cloud/one-shot evidence JSONs verified for internal arithmetic
+  * AUDIT (9): committed GPU/cloud/one-shot evidence JSONs verified for internal arithmetic
     (err == (E - ref)*1000), stated pass criteria, and pre-registration integrity (the blind-holdout
     script's SHA-256 must still match the hash committed before its one-shot run). Audits are NOT
     re-runs — a CPU judge box cannot re-execute GPU/QPU jobs — and are never counted as such.
@@ -99,6 +99,12 @@ CHECKS = [
      [("abslt", ["err_mHa"], 5.0), ("len_eq", ["job_ids"], 3), ("eqi", ["dominant_is_hf"], 1)], False),
     ("AUDIT: qBraid hosted 20q validation", None, [], "qbraid_hosted_h10_evidence.json",
      [("abslt", ["err_grown_mHa"], 1.6), ("eqi", ["export_exact_verified"], 1)], False),
+    ("AUDIT: AQT trapped-ion silicon decode (2 jobs)", None, [], "qpu_aqt_evidence.json",
+     [("len_eq", ["results"], 2),
+      ("consistent_err", ["results", "0", "E_grown"], ["results", "0", "e_fci"], ["results", "0", "err_grown_mHa"], 0.01),
+      ("abslt", ["results", "0", "err_grown_mHa"], 1.6), ("abslt", ["results", "1", "err_grown_mHa"], 1.6),
+      ("gt", ["results", "0", "postselect_keep_frac"], 0.2), ("gt", ["results", "1", "postselect_keep_frac"], 0.2),
+      ("eq", ["results", "0", "err_sampled_mHa"], 20.435, 0.01), ("eq", ["results", "1", "err_sampled_mHa"], 11.127, 0.01)], False),
     ("AUDIT: crossover walls (memory + dets)", None, [], "crossover_evidence.json",
      [("gt", ["wall1_memory", "exact_statevector_bytes", "40"], 1e13),
       ("lt", ["wall2_determinants", "qsci_growth_per_qubit"], 1.5),

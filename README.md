@@ -119,7 +119,7 @@ pip install pyscf openfermion openfermionpyscf h5py pennylane pennylane-lightnin
 **One command** runs the verified CPU suite and checks each headline number against the committed
 `results/*.json`, printing a PASS/FAIL table (`--quick` skips the slower scripts):
 ```bash
-python src/reproduce.py     # -> 24/24 PASS (16 re-execution + 8 evidence audits; captured: docs/reproduce_transcript.txt)
+python src/reproduce.py     # -> 25/25 PASS (16 re-execution + 9 evidence audits; captured: docs/reproduce_transcript.txt)
 ```
 Every quantitative claim is traced to its script + evidence JSON + status (executed / circuit-sampled /
 proxy / GPU-owed) in **`docs/claims_ledger.md`**.
