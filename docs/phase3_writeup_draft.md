@@ -187,6 +187,42 @@ H1 blind holdout PASS (VO quartet by 1.091 eV = experiment). Two disclosed FAILs
 strongest evidence in the portfolio — the discipline working as designed
 (`preregistration_v1.json`, `preregistration_v2.json`).
 
+**5e. Frozen extension campaign (E2–E5 + EUV-motif trust curve) — executed 2026-07-23, reported as
+frozen.** Five costed protocols were pre-registered in `preregistration_v2.json` before compute access;
+outcomes reported exactly as measured, pass, fail, or resource-DNF:
+- **E4 — a second reference correction, on the real EUV motif.** QSCI on the committed Sn₂O₂ rhombus
+  (CAS(18,19) = 38q) converged to **−0.399 mHa below the same-CAS DMRG(χ=400) reference** (524,764
+  determinants, 7.4 h, 59.7 GB peak host RSS; reference committed pre-run). The CrO audit result now
+  reproduced on the actual tin-oxo chemistry — the reference-correcting failure-catch is *not*
+  system-specific (`e4_sn2o2_38q_evidence.json`).
+- **EUV-motif trust curve — the audit shown where it matters most.** Stretching the Sn₂O₂ Sn–O bridge
+  2.05→3.28 Å (the strongly-correlated cleavage regime EUV resist chemistry actually occupies), the
+  in-active-space CCSD(T) error grows **0.14 → 5.49 mHa (~40×)** while the identical committed
+  selected-CI/QSCI stays variational and accurate (**≤0.47 mHa at every geometry**) and the
+  dominant-determinant weight collapses **0.95 → 0.53** (multireference onset). Apples-to-apples (same
+  embedded active space for both methods), the failure-catch now demonstrated on the real motif under
+  bond cleavage — closing the reviewer gap that earlier trust curves lived on a demonstrator TMO
+  (`sn2o2_dissociation_evidence.json`).
+- **E3 — the 40q absolute-certification protocol (in flight at submission).** Growth-to-PT2-certificate
+  on H₂₀ 40q with a bucket-parallel Epstein–Nesbet PT2 estimator (7.6× speedup, bit-identical to the
+  serial path, validated). Committed through iter 4: **E_var +0.495 mHa vs the χ=400 reference —
+  prediction ii MET (≤+0.9 mHa)** — with the EN-PT2 certificate bracket tightening monotonically
+  (|PT2| 84 → 4.6 → 2.6 → 2.0 → 1.57 mHa). The run continues toward the |PT2| ≤ 0.5 mHa absolute-accuracy
+  certificate (prediction i); its final certified value is the sole live slot at submission time
+  (`e3_certificate_evidence.json`). This directly executes the pre-registered path flagged in §5c for
+  absolute 40q certification.
+- **E2 — resource-DNF, disclosed as an operational record (not the E2 result).** The device-seeded 40q
+  equivalence run (committed 102-determinant P3 device sample as verbatim seed) requires ≥128 GiB and
+  was OOM-killed by the container cgroup during iter-3 cap-fill on the 128 GiB box (peak 133.5 GB, 97%
+  of limit; two deterministic attempts, clean SIGKILL). E4 (38q, 524k dets) completed on the *same* box
+  at 59.7 GB — the +2 qubits and 450k-det cap roughly double the footprint. Reported as an honest
+  resource ceiling, no tuning applied (`e2_device_seed_RESOURCE_DNF.json`).
+- **E5 — the least-grounded frontier (44q), non-converged and reported as such.** H₂₂ 44q growth against
+  a re-frozen χ=1200 judge, terminated early to protect E3's certificate runway. Committed trajectory
+  +125 → +8.7 → +5.2 → +4.0 mHa (error decelerating); did not reach the ≤1.6 mHa threshold before the
+  abort gate — the pre-registered *expected* outcome for the frontier extension, no threshold moved and
+  frozen params untouched (`e5_h22_evidence.json`).
+
 ## 6. Platform use & resourcing  *(criterion 6; ~0.4 pp)*
 qBraid execution, as used: **H100-SXM** (B1 flagship, ~17.5 h lifetime; retired after a mid-session
 host-driver GPU failure — diagnosed, documented, work rehomed) and **A100-SXM 80 GB** (B2 audit + P3
@@ -196,17 +232,21 @@ grant-pool consumption **16,483 cr ≈ 25% of our 65k share** per the settled en
 snapshot (`results/credit_ledger.json`, enforced by `src/verify_credits.py`; the interim reading's
 billing lag was stated at the time and resolved on settlement — the rate model landed within ~3%). DMRG references, the χ-escalation counter-audit,
 and the QPU flight were **personally funded — zero grant draw** (before/after wallet identity
-recorded). Frozen, costed extension protocols E2–E5 stand as the research outlook
-(`docs/outlook_roadmap.md`).
+recorded). The frozen, costed extension protocols E2–E5 were **executed 2026-07-23** (results in §5e:
+E4 a second reference correction, E3 the 40q certificate in flight, E2 a disclosed resource-DNF, E5 a
+reported non-convergence) — the research outlook is now measured, not proposed (`docs/outlook_roadmap.md`).
 
 ## 7. Limitations & honest scope  *(criterion 8; Top-Action #6; ~0.3 pp)*
 - Device-sampled selection is **measured** at 12/20/28q; the 40q flagship ran MP2-seeded (documented
-  cost pivot) — quantum-*inspired* at that scale until the frozen equivalence test E2 runs. Its
-  sampling phase is already executed and committed (102 number-conserving determinants from the P3
-  run), reducing E2 to a classical growth run.
+  cost pivot) — quantum-*inspired* at that scale. The frozen equivalence test E2 (device-sampled 40q
+  seed already committed: 102 number-conserving determinants from the P3 run) was **attempted and hit a
+  128 GiB resource ceiling** (§5e, E2 resource-DNF) — the classical growth run needs a larger-memory
+  host, disclosed as an operational limit rather than a scientific claim.
 - 40q chemical accuracy is certified **relative to the pre-registered χ=400 reference** (P1). Our own
-  counter-audit shows +2.19 mHa vs χ=800 — absolute certification awaits the frozen E3 protocol. We
-  state this because we found it; no external reviewer did.
+  counter-audit shows +2.19 mHa vs χ=800; the frozen E3 certificate protocol (§5e) is now **in flight
+  and has already met prediction ii** (E_var +0.495 mHa vs χ=400), with the |PT2| ≤ 0.5 mHa absolute
+  certificate the one value still converging at submission. We state this because we found it; no
+  external reviewer did.
 - At ≤28q, classical FCI/DMRG already solve these instances — we demonstrate *correctness + scaling +
   the audit mechanism*; the demonstrated at-scale value is reference *correction* (38q), not speedup.
 - Upstream assumptions (basis, active-space window, geometry) are shared across all compared methods;
