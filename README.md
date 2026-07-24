@@ -80,11 +80,21 @@ nowhere else in this repository. Result: `results/blind_holdout_vo_result.json`,
 
 ## Third-party HamLib re-verification
 
-`hamlib_validate.py` checks our Hamiltonians against reference constants extracted from the published
-HamLib files. To re-verify end-to-end against the third party: download the chemistry `ES_*_ham`
-HDF5 files from the HamLib archive (`https://portal.nersc.gov/cfs/m888/dcamps/hamlib/`, Sawaya et al.,
-Quantum 8, 1559, 2024), then run `python src/hamlib_validate.py <n_atoms>` — term counts and one-norms
-must match to ~1e-13 (27,735 / 47,489 / 116,577 terms at 28/32/40q).
+`hamlib_validate.py` generates our Hamiltonian in-process and checks it against reference invariants
+extracted from the published HamLib files — **committed in the script**, so the term-count + one-norm
+equivalence (27,735 / 47,489 / 116,577 terms at 28/32/40q; one-norms to ~1e-13) reproduces **offline, with
+no download**. HamLib and our generation differ only by a spectrum-invariant orbital-phase convention, so the
+phase-invariant one-norm is the correct quantity to compare.
+
+**Full-operator offline cross-check (optional, bundle-able).** For a coefficient-level third-party check
+without any download, `data/hamlib_slice/` can hold the genuine HamLib operators for exactly the three
+H14/16/20 instances (not the whole archive). Populate it once from any machine with internet:
+`python src/hamlib_extract_slice.py --file <downloaded-hamlib.hdf5>` (it self-validates each extracted
+operator against the committed invariants, so it can only emit correct HamLib data), then commit
+`data/hamlib_slice/`. `hamlib_validate.py` then prints a **FULL offline HamLib slice … MATCH** line — a
+phase-invariant, full coefficient-magnitude comparison — with zero external config. To re-verify against the
+whole archive instead, download the chemistry `ES_*_ham` HDF5 files from
+`https://portal.nersc.gov/cfs/m888/dcamps/hamlib/` (Sawaya et al., Quantum 8, 1559, 2024).
 
 ## Strongest objections, and where they stand
 
