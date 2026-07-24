@@ -211,4 +211,4 @@ EIGENNEXUS — Christian Metzl, Fares Eldibani, Juan Manuel Aguiar Hualde.
 
 ---
 
-*Competition entry — keep this repository private while the challenge is ongoing.*
+*Competition entry — Team EIGENNEXUS · GIC 2026 Phase 3 · Advanced Materials (Mitsubishi Chemical Group & AIST).*

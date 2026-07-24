@@ -1,68 +1,77 @@
-# Phase 3 submission checklist — EIGENNEXUS (Advanced Materials) — VERIFIED AGAINST RULES 2026-07-22
+# Phase 3 submission checklist — EIGENNEXUS (Advanced Materials) — REFRESHED 2026-07-24
 
 **Deadline:** Sunday **2026-07-26, 11:59 PM EST**. Upload `EIGENNEXUS_AdvancedMaterials_Phase3.zip`
 via the Aqora track page → **Submission tab**. One submission per team; ONE teammate uploads;
-**re-upload replaces** — so upload early, replace as results land.
-(Rules cross-checked against: Phase 3 Challenge Description PDF, Aqora Mitsubishi track page,
-GIC main page FAQ, Aqora ToS — captures 2026-07-22.)
+**re-upload replaces** — so upload early, replace if anything changes.
+(Rules cross-checked against: Phase 3 Challenge Description PDF, Aqora Mitsubishi track page, GIC FAQ,
+Aqora ToS — captured 2026-07-22.)
 
-## Format requirements (verbatim from the rules)
-- [ ] **Official GIC_2026 Cover Page.docx as page 1** — downloaded from the track page link, filled,
-      NOT recreated/modified. Must carry the **device selection**: qBraid GPU (NVIDIA CUDA-Q) +
-      QPU via qBraid catalog (IonQ/AQT/IQM) — the recorded promise from the access email.
-- [ ] **Write-up ≤5 pages** (EXCLUDING references and cover page), **11-pt Times New Roman,
-      single-spaced** — `paper/build_pdf.py` enforces the style and prints the page count;
-      VERIFY ≤5 after integrating E-campaign results (overflow = disqualification risk).
-- [x] **Zip name** `TeamName_Challenge_Phase3.zip` → `EIGENNEXUS_AdvancedMaterials_Phase3.zip` ✓
-- [ ] **README.md** with: team/title/track ✓, setup ✓, step-by-step qBraid run ✓, expected I/O,
-      limitations, **Launch on qBraid button** ✓ — BUT the results table is PRE-CAMPAIGN STALE
-      (still lists 40q as "39 mHa converging"!) → must be refreshed to the executed results.
-- [ ] **Source code** executable on qBraid without external configuration ✓ (developed + executed
-      there; `requirements.txt`) — keep true after final edits.
+## STATUS: package complete — 3 user-side actions remain
+The write-up, code, evidence, and zip are **done, committed, and consistent**; `main` is current so the
+Launch-on-qBraid button serves the full submission. What's left is **cover page → make repo public →
+upload** (+ a 30-second incognito button check). Nothing compute or code remains.
 
-## Content requirements (rubric + Top Actions)
-- [x] Run on qBraid before submission — all at-scale results executed there (GPU + cloud QPU chain)
-- [x] Classical baseline on same instances — FCI/CCSD(T)/DMRG + wall-clock table
-- [x] Specific numbers — qubits/dets/χ/shots/wall-clock throughout; sampling-pivot disclosed at 40q
-- [x] Honest limitations — §7 + disclosure culture (P3/P4 FAILs reported, χ-qualifier, VQE upgrade)
-- [x] Track outcomes — 40q demo ✓, chemical accuracy vs committed refs ✓ (absolute = E3, in flight),
-      hybrid workflow ✓, benchmarking vs classical ✓ + VQE (upgraded & disclosed) ✓
-- [x] Bonus: noise-aware ✓ (20q corruption study + real trapped-ion P5); >40q ✓ (E5 44q in flight +
-      48–64q classical simulation-layer ladder, honestly labeled)
-- [ ] **AI-use disclosure** (see risk register): one precise statement in README + write-up using the
-      rule's own language — AI used for code support and writing; technical contributions,
-      formulations, and results are the team's own (frozen protocols, thresholds, and all governance
-      decisions carry operator sign-offs in git history).
+---
 
-## Integration queue (blocking the final PDF/zip)
-- [ ] Fold E-campaign results into the write-up as they land: E4 ✅ (done, −0.399 mHa PASS +
-      below-reference ordering), E2 (today), E3 certificate (≈Wed), E5 (≈Thu; if non-converged →
-      report per frozen rule; unexecuted extensions stand as pre-registered outlook, unmodified)
-- [ ] Refresh README results table + wall-clock table (add AQT silicon row)
-- [ ] Rebuild PDF (`python paper/build_pdf.py`) → verify page count → re-zip
-      (`python paper/make_submission_zip.py`)
-- [ ] **UPLOAD EARLY (Thursday), replace later** — never gate first upload on E5's Friday abort gate
+## ✅ COMPLETE
+**Format**
+- [x] **Write-up ≤5 pages** (excl. references + cover), 11-pt Times New Roman, single-spaced —
+      `paper/build_pdf.py` prints the count; **verified 5 content pages** after every edit.
+- [x] **Zip name** `EIGENNEXUS_AdvancedMaterials_Phase3.zip` (203 files) — `paper/make_submission_zip.py`.
+- [x] **README.md** — team/title/track, setup, step-by-step qBraid run, expected I/O, limitations,
+      Launch-on-qBraid button; **results table refreshed to executed results** (was pre-campaign stale).
+- [x] **Source code** executable on qBraid without external config (`requirements.txt`; `reproduce.py`
+      needs no downloads for the CPU set).
+- [x] **AI-use disclosure** — precise statement in README **and** write-up (per the rule's own language:
+      AI for code/writing; technical contributions, formulations, results are the team's own; frozen
+      protocols/thresholds + operator sign-offs in git history).
 
-## Access & platform
-- [ ] **Judges must be able to reach the repo**: the Launch-on-qBraid button points at
-      github.com/christianmetzl/potomac_advancedmaterials — make it public (or judge-accessible)
-      before the deadline, else the README's reproduce path fails for judges.
-- [ ] (Optional, free, strengthens criterion 7) canonical full-dependency `reproduce.py` transcript
-      on the subscription CPU box.
+**Content (rubric + Top Actions)**
+- [x] Executed on qBraid — 20/28q cuStateVec, 40q flagship, 38q CrO + Sn₂O₂ (E4), real AQT trapped-ion QPU.
+- [x] Classical baselines on matched instances — FCI/CCSD(T)/DMRG + wall-clock table.
+- [x] Specific numbers — qubits/dets/χ/shots/wall-clock throughout; 40q sampling-pivot disclosed.
+- [x] Honest limitations — §7 + disclosure culture (P3/P4 FAILs, χ-qualifier, VQE→classical upgrade).
+- [x] Track outcomes — 40q demo; chemical accuracy vs committed refs; **absolute accuracy demonstrated
+      independently by E6 DMRG-extrapolation (+1.59 mHa)** after E3's pre-registered PT2 certificate ran
+      to a terminal it5 (external pod kill, ii+iii MET, i not certified — reported as-is); hybrid workflow;
+      classical benchmarking + VQE (disclosed).
+- [x] Bonus — noise-aware (20q corruption + real trapped-ion P5); >40q (E5 44q non-converged, reported;
+      48–64q classical simulation-layer ladder, labeled).
 
-## Risk register (assessed 2026-07-22)
-1. **"Use of AI may be disqualified and voided"** (track page) vs the description's explicit
-   permission ("generative AI permitted for code support and writing; technical contributions,
-   formulations, and results must be the team's own"). Posture: we are in the permitted pattern;
-   mitigate with the precise disclosure above, not silence. Low–moderate → low with disclosure.
-2. **Page-limit creep** after E-result integration — build prints page count; hard gate before zip.
-3. **Dirac-3 paragraph** in the description is cross-track boilerplate (the same document's access
-   instructions say QCi is "Available for QCi Challenge Only"; our track names CUDA-Q in its title).
-   No action; our platform use exceeds the intent (qBraid GPU + real QPU).
-4. **Cover page** is the only disqualification-grade item not yet in hand → do first, not last.
-5. One team per participant / ≤5 members / registration — satisfied (3 members, Phase-1 registered,
-   Phase-3 finalists). IP: participants retain ownership, organizers get evaluation/derivative
-   license (ToS) — informational, no action.
+**Integration & verification**
+- [x] E-campaign folded into the write-up: E4 −0.399 (2nd reference correction), Sn₂O₂ EUV trust curve,
+      E3 terminal certificate, E2 resource-DNF, E5 non-converged, E6 absolute-accuracy anchor.
+- [x] PDF rebuilt → page-count gate PASS → zip regenerated.
+- [x] `reproduce.py` = **26 checks** (17 re-execution + 9 audits incl. AQT decode + cost audit).
+- [x] **`cost_audit.py`** — program cost re-derived from published pricing × committed configs; OpenQuantum
+      pool reconciled (162→102). Executable cost transparency.
+- [x] **`main` branch fast-forwarded** to the submission (the button clones `main`).
+- [x] Full-dependency `reproduce.py` transcript captured → `docs/reproduce_transcript.txt`.
 
-*Every claim in the write-up traces to `docs/claims_ledger.md` → script → committed evidence.
-Numbers over vibes.*
+---
+
+## ⏳ OPEN — required (all user-side)
+- [ ] **Official GIC_2026 Cover Page.docx as page 1** — download from the track-page link, fill in (team,
+      title, track, **device selection**: qBraid GPU / NVIDIA CUDA-Q + QPU via the qBraid catalog), do NOT
+      recreate/modify the template. *The only disqualification-grade item still open.* (`phase1_cover_v2.docx`
+      in the repo is the Phase-1 cover — not this.)
+- [ ] **Make the repo public** — `github.com/christianmetzl/potomac_advancedmaterials` → Settings → Danger
+      Zone → Change visibility → Public. The Launch-on-qBraid button + judge access fail until this.
+- [ ] **Verify the button** from an incognito window once public (repo loads logged-out ⇒ button works).
+- [ ] **Upload the zip** to the Aqora Submission tab — upload early; re-upload replaces.
+
+## 🔵 OPTIONAL — nothing depends on these
+- [ ] HamLib raw-operator slice (`src/hamlib_extract_slice.py` / `download_and_bundle_hamlib.py`) — the
+      offline term-count + one-norm cross-check already works from committed constants; the slice only
+      upgrades it to a full-operator check. NERSC portal currently unreachable; add later or skip.
+
+## Risk register (still current)
+1. **AI-use policy** — permitted for code/writing; results must be the team's own. Mitigated by the
+      committed disclosure (above) + pre-registration/git provenance. Low with disclosure.
+2. **Page-limit creep** — hard gate before every zip; currently 5 pages.
+3. **Dirac-3 paragraph** in the description is cross-track boilerplate; our track names CUDA-Q. No action.
+4. **Cover page** — the one disqualification-grade item still in hand → do first.
+5. Team/registration/IP — satisfied (3 members, Phase-1 registered, Phase-3 finalists).
+
+*Every claim in the write-up traces to `docs/claims_ledger.md` → script → committed evidence, and the
+program cost re-derives via `src/cost_audit.py`. Numbers over vibes.*
