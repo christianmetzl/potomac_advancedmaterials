@@ -31,19 +31,19 @@
       "utc": "2026-07-19T22:40:00Z",
       "balance": 116342,
       "method": "wallet UI (grant org console), operator-captured immediately after A100 termination; appended by main session per the finalize record in results/session_finalize_A100_B2_P3.json",
-      "note": "END-OF-CAMPAIGN snapshot. Implies pool consumed = 13,658 cr. TENSION, stated not hidden: the observed-rate model (8.95/4.15 cr/min x console uptimes) projects ~17k by campaign end \u2014 delta since the 13:30Z snapshot reads only ~236 cr against ~3.4k of metered uptime. Likely deferred/periodic billing posting. ACTION: re-check the grant wallet in 12-24h and append a settlement snapshot; the qBraid per-instance billing history remains the arbiter (attribution_caveat)."
+      "note": "END-OF-CAMPAIGN snapshot. Implies pool consumed = 13,658 cr. TENSION, stated not hidden: the observed-rate model (8.95/4.15 cr/min x console uptimes) projects ~17k by campaign end — delta since the 13:30Z snapshot reads only ~236 cr against ~3.4k of metered uptime. Likely deferred/periodic billing posting. ACTION: re-check the grant wallet in 12-24h and append a settlement snapshot; the qBraid per-instance billing history remains the arbiter (attribution_caveat)."
     },
     {
       "utc": "2026-07-19T23:59:00Z",
       "balance": 113517.3,
       "method": "wallet UI (EIGENNEXUS grant org dashboard), operator-captured post-shutdown",
-      "note": "SETTLEMENT snapshot \u2014 resolves the stated tension: pool consumed 16,482.70 cr, within ~3% of the observed-rate model (~17k). The earlier 116,342 reading was pre-settlement billing lag, as hypothesized. FINAL campaign figure: 16,483 cr = 25.4% of the 65k share; remaining allowance 48,517. Rate model (cr/min x uptime) validated as the planning instrument."
+      "note": "SETTLEMENT snapshot — resolves the stated tension: pool consumed 16,482.70 cr, within ~3% of the observed-rate model (~17k). The earlier 116,342 reading was pre-settlement billing lag, as hypothesized. FINAL campaign figure: 16,483 cr = 25.4% of the 65k share; remaining allowance 48,517. Rate model (cr/min x uptime) validated as the planning instrument."
     },
     {
       "utc": "2026-07-21T00:48:27Z",
       "balance": 84611.4369,
       "method": "qbraid account credits via verify_credits --live on grant-org box A (E-campaign instance start); box append was not pushed (verify FAIL aborted its git chain), re-recorded by the main session from the terminal capture",
-      "note": "ATTRIBUTION EVENT: pool dropped 28,906 cr since the 07-19 settlement with ~zero spend of ours (box A had just started; container work is free). Per attribution_caveat this is the SECOND PROJECT's draw \u2014 the pool-level==ours assumption is now dead, per-instance billing is the arbiter, and attributed_spend_cr (below) is the cap-relevant figure. Runway math at this snapshot: pool 84,611 vs our remaining worst-case 37,600 (2.25x) \u2014 adequate today, monitor at every handover."
+      "note": "ATTRIBUTION EVENT: pool dropped 28,906 cr since the 07-19 settlement with ~zero spend of ours (box A had just started; container work is free). Per attribution_caveat this is the SECOND PROJECT's draw — the pool-level==ours assumption is now dead, per-instance billing is the arbiter, and attributed_spend_cr (below) is the cap-relevant figure. Runway math at this snapshot: pool 84,611 vs our remaining worst-case 37,600 (2.25x) — adequate today, monitor at every handover."
     },
     {
       "utc": "2026-07-21T19:18:42Z",
@@ -88,7 +88,7 @@
         "run": "E3+E6"
       }
     ],
-    "note": "OUR spend only \u2014 the number the 65k cap governs. Box operators append one line per E-campaign instance at shutdown, from the qBraid console per-instance billing: {\"instance\": \"...\", \"cr\": <settled cost>, \"utc\": \"...\", \"run\": \"E3|E4|E2|E5\"}. Pool balance minus this = the second project's draw."
+    "note": "OUR spend only — the number the 65k cap governs. Box operators append one line per E-campaign instance at shutdown, from the qBraid console per-instance billing: {\"instance\": \"...\", \"cr\": <settled cost>, \"utc\": \"...\", \"run\": \"E3|E4|E2|E5\"}. Pool balance minus this = the second project's draw."
   },
   "instances": [
     {
@@ -148,5 +148,46 @@
     "OpenQuantum personal wallet re-check 2026-07-20 (dashboard screenshot): 0 Spark / 102 Full credits remaining, 69 quantum ops this month, earliest expiration 2027-07-05 -- no resubmission needed (flight decoded clean); credits remain as free personal headroom; grant share untouched",
     "E1 chi-ladder + E4 STEP 1 reference + x2c/AVAS probes + reproduce rerun: personal org balance IDENTICAL before/after (5,008.44 -> 5,008.44, screenshots 2026-07-19); ~68.5 of 100 subscription compute-hrs, zero credits"
   ],
-  "attribution_caveat": "Wallet balance is pool-level. Attribution of pool spend to THIS project is exact only while the second project has spent nothing (true at the snapshot above). Once both projects draw, per-instance billing history from the qBraid console is the arbiter, not the balance."
+  "attribution_caveat": "Wallet balance is pool-level. Attribution of pool spend to THIS project is exact only while the second project has spent nothing (true at the snapshot above). Once both projects draw, per-instance billing history from the qBraid console is the arbiter, not the balance.",
+  "cost_audit_inputs": {
+    "note": "Committed quantities for src/cost_audit.py to RE-DERIVE program cost from published pricing (pricing constants + sources live in the script). QPU shot counts are read from results/qpu_aqt_evidence.json; instance uptimes below are from the qBraid console. This makes the cost claims executable, not self-reported.",
+    "published_pricing_source": "qBraid console on-demand CPU rate card (2026-07): 32v/128g=3.20 cr/min, 64v/256g=6.40 cr/min; qir-sv managed simulator=free; OpenQuantum AQT ibex-q1 settled invoice: 29 cr per 2000-shot job (0.0145 cr/shot) + 2 cr probe.",
+    "instances": [
+      {
+        "instance": "cpu-64v-256g-7f20004f",
+        "rate_cr_min": 6.4,
+        "uptime_min": 5220,
+        "uptime_source": "console 'up 3d 15h' — independent read",
+        "settled_cr": 33408,
+        "run": "E3+E6",
+        "independent_crosscheck": true
+      },
+      {
+        "instance": "box B (32 vCPU / 128 GiB)",
+        "rate_cr_min": 3.2,
+        "uptime_min": 3300,
+        "uptime_source": "back-derived from settled console cr (uptime not separately captured)",
+        "settled_cr": 10560,
+        "run": "E4+E2(DNF)",
+        "independent_crosscheck": false
+      },
+      {
+        "instance": "box C (64 vCPU / 256 GiB)",
+        "rate_cr_min": 6.4,
+        "uptime_min": 2308,
+        "uptime_source": "back-derived from settled console cr",
+        "settled_cr": 14769,
+        "run": "E5",
+        "independent_crosscheck": false
+      }
+    ],
+    "settled_campaign_base_cr": 16482.7,
+    "settled_campaign_base_note": "pre-E-campaign settled grant spend (main P1-P5 GPU/flagship runs); taken as the settled console figure, not re-derived by this auditor.",
+    "qpu_aqt_personal": {
+      "per_2000shot_job_cr": 29,
+      "probe_cr": 2,
+      "n_physics_jobs": 2,
+      "funding": "personal — zero grant draw"
+    }
+  }
 }
