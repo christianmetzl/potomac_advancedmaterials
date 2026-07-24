@@ -53,6 +53,16 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | **Blind one-shot holdout (VO)** | pre-registered predictions **held**: QSCI 0.167/0.133 mHa; quartet ground = experimental X⁴Σ⁻ | frozen code (SHA pre-committed), untouched molecule, single run reported as-is; `src/blind_holdout_vo.py` |
 | **QSCI under real CUDA-Q noise channel** | H₄ holds chemical accuracy to **5% per-gate depolarizing** (density-matrix-cpu) | physical noise channel via the CUDA-Q SDK — hardware-representative QPU stand-in; `src/cudaq_noise.py` |
 
+### Decision value — a case where DFT picks the wrong candidate
+
+![Candidate ranking-flip: CrO vs NiO](results/candidate_decision.png)
+
+*Ranking two real oxide centers by high-spin preference: **5 of 6 functionals and the multireference truth
+(CASCI/QSCI) rank CrO > NiO → synthesize CrO** (agrees with CrO's experimental X⁵Π ground). **B3LYP alone
+inverts the ranking** — it mis-assigns CrO's ground state (gap −0.08 vs the true +1.89 eV) and picks NiO, the
+wrong candidate. A DFT-only screen advances the wrong lead; the quantum-accurate selector is decision-robust.
+The dollar framework for what that interception is worth: [`docs/value_case.md`](docs/value_case.md).*
+
 ## Honest scope
 
 - The **integrated GQE→QSCI loop is measured at 12q and GPU-executed at 20q/28q** on real NVIDIA hardware (cuStateVec, device-sampled; +0.000 / +0.395 mHa). The at-scale ladder beyond that uses a **hardware-independent determinant-space proxy** for the measurement step, *validated against* the measured 12/16/20q pipeline.
