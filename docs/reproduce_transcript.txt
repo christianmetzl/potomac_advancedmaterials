@@ -1,21 +1,28 @@
+# reproduce.py — full-dependency transcript
+# captured 2026-07-24T20:31:45Z on the build container (all optional deps installed:
+#   openfermionpyscf, pennylane, torch, block2, cudaq — so NO checks auto-skip).
+# One command: python src/reproduce.py
+# ================================================================================
+
 MATGEN-Q reproducibility driver — CPU headline results
 ============================================================
-  SKIP    two-stage GQE (H2/H4/H6)           optional dep 'pennylane' not installed  [0s]
-  SKIP    integrated GQE->QSCI (H6 12q)      optional dep 'torch' not installed  [0s]
-  PASS    SnO chem-acc (16q)                 0.111 mHa < 0.6  [5s]
-  PASS    SnO2 chem-acc (20q)                0.209 mHa < 0.6  [8s]
-  PASS    CrO/NiO (20q)                      0.038~0.038; 0.197~0.197  [16s]
+  PASS    two-stage GQE (H2/H4/H6)           0.0~0.0; 0.009~0.009; 0.297~0.297  [23s]
+  PASS    integrated GQE->QSCI (H6 12q)      1.054~1.054  [33s]
+  PASS    SnO chem-acc (16q)                 0.121 mHa < 0.6  [4s]
+  PASS    SnO2 chem-acc (20q)                0.222 mHa < 0.6  [6s]
+  PASS    CrO/NiO (20q)                      0.038~0.038; 0.197~0.197  [14s]
   PASS    bridged tin-oxo Sn2O2 (16q)        0.411<1.6  [6s]
-  SKIP    HamLib equivalence (28q)           optional dep 'openfermionpyscf' not installed  [0s]
-  PASS    classical baselines (Hn FCI)       0.0002~0.0  [11s]
-  PASS    CrO dissociation trust             0.038<0.5; CCSD(T) max|err|=144mHa nonconv=True; selCI all<5mHa (max 2.77)  [63s]
-  PASS    CrO spin-gap decision              1.89>1.0; 1.893>1.0; 1.913>1.5; 1==1  [12s]
-  PASS    EN-PT2 two-sided bracket           E_var≥FCI ∀ 12 pts; 4.133|.|<10.0; 0.99922>0.99  [79s]
-  PASS    blind holdout VO re-run (frozen script) 0.167<1.6; 0.154<1.6; True==1  [12s]
-  SKIP    CUDA-Q execution (qpp-cpu)         optional dep 'cudaq' not installed  [0s]
-  PASS    MPS bond-dim & entanglement        50<100; Smax 0.39->4.43  [227s]
-  SKIP    integral engine selftest (SC vs JW + FCI) optional dep 'cudaq' not installed  [0s]
-  SKIP    engine equivalence (fast vs orig vs FCI) optional dep 'cudaq' not installed  [0s]
+  PASS    HamLib equivalence (28q)           27735 terms ==27735  [14s]
+  PASS    classical baselines (Hn FCI)       0.0002~0.0  [7s]
+  PASS    CrO dissociation trust             0.038<0.5; CCSD(T) max|err|=144mHa nonconv=True; selCI all<5mHa (max 2.77)  [58s]
+  PASS    CrO spin-gap decision              1.89>1.0; 1.893>1.0; 1.913>1.5; 1==1  [10s]
+  PASS    EN-PT2 two-sided bracket           E_var≥FCI ∀ 12 pts; 4.133|.|<10.0; 0.99922>0.99  [67s]
+  PASS    blind holdout VO re-run (frozen script) 0.167<1.6; 0.16<1.6; True==1  [9s]
+  PASS    CUDA-Q execution (qpp-cpu)         0.012|.|<1.6; 0.022|.|<1.6  [537s]
+  PASS    MPS bond-dim & entanglement        50<100; Smax 0.39->4.43  [182s]
+  PASS    integral engine selftest (SC vs JW + FCI) 'INTEGRAL ENGINE VALID' printed  [3s]
+  PASS    engine equivalence (fast vs orig vs FCI) 7.993605777301127e-12<0.0001; 0.0<1.6  [4s]
+  PASS    cost audit (published pricing × committed configs) 'COST AUDIT: PASS' printed  [0s]
   PASS    AUDIT: 20q GPU exact anchor (cuStateVec) err consistent (Δ=0.0000 mHa); 0.0|.|<1.6; 0.44<8.0  [0s]
   PASS    AUDIT: 28q GPU converged (cuStateVec) err consistent (Δ=0.0005 mHa); 0.395|.|<1.6; 2.82<8.0; 64212>30000  [0s]
   PASS    AUDIT: 40q frontier checkpoint (iter5) err consistent (Δ=0.0004 mHa); 3.222~3.222; 150257>100000  [0s]
@@ -23,7 +30,8 @@ MATGEN-Q reproducibility driver — CPU headline results
   PASS    AUDIT: pre-registration integrity  len=6==6; sha256(blind_holdout_vo.py) matches prereg  [0s]
   PASS    AUDIT: qBraid cloud-runtime P5 chain 2.017|.|<5.0; len=3==3; True==1  [0s]
   PASS    AUDIT: qBraid hosted 20q validation 0.194|.|<1.6; True==1  [0s]
+  PASS    AUDIT: AQT trapped-ion silicon decode (2 jobs) len=2==2; err consistent (Δ=0.0000 mHa); 0.0|.|<1.6; 0.0|.|<1.6; 0.286>0.2; 0.2505>0.2; 20.435~20.435; 11.127~11.127  [0s]
   PASS    AUDIT: crossover walls (memory + dets) 17592186044416>10000000000000.0; 1.383<1.5; 2.0~2.0  [0s]
 ============================================================
-18/18 checks PASS (+6 optional SKIPPED — install cudaq/block2 to run them)
-  [10 re-execution + 8 evidence audits; audits verify committed GPU/cloud/one-shot artifacts, not re-runs]
+26/26 checks PASS
+  [17 re-execution + 9 evidence audits; audits verify committed GPU/cloud/one-shot artifacts, not re-runs]
