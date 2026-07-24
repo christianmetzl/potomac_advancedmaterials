@@ -197,6 +197,14 @@ The **Phase 3 write-up** is in [`paper/`](paper/) (`EIGENNEXUS_Phase3_Writeup.pd
 generated programmatically (`paper/build_phase3.js` → docx → `paper/build_pdf.py`, no hand-editing so the
 PDF never drifts from the source). The Phase 2 submission is retained alongside it for reference.
 
+## AI-use disclosure
+
+Consistent with the challenge's stated policy (generative AI permitted for code support and writing):
+AI assisted with code and prose. **All technical contributions, formulations, and results are the team's
+own** — every judged claim is pre-registered with frozen protocols and thresholds (`results/preregistration_*.json`),
+each traces to a committed script + evidence file (`docs/claims_ledger.md`), and all governance decisions
+carry operator sign-offs in the git history.
+
 ## Team
 
 EIGENNEXUS — Christian Metzl, Fares Eldibani, Juan Manuel Aguiar Hualde.

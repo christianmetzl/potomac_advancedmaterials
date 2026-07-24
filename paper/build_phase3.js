@@ -137,6 +137,9 @@ const refs=[
  refP(9,"R. Kemmoku, Q. Gao, S. Kanno, et al. “Generative Circuit Design for Quantum-Selected Configuration Interaction.” arXiv:2604.09756 (2026). [Mitsubishi Chemical]"),
 ];
 children.push(...refs);
+children.push(new Paragraph({spacing:{before:160,after:40,line:240,lineRule:"auto"},children:[
+  new TextRun({text:"AI-use disclosure. ",font:FONT,size:19,bold:true,italics:true}),
+  new TextRun({text:"Generative AI assisted code and writing (per the challenge's stated permission for code support and writing); all technical contributions, formulations, and results are the team's own — every judged claim is pre-registered with frozen protocols and thresholds and traces to a committed script + evidence file, with all governance decisions carrying operator sign-offs in the git history.",font:FONT,size:19,italics:true})]}));
 
 const doc=new Document({
   styles:{default:{document:{run:{font:FONT,size:SZ}}}},
