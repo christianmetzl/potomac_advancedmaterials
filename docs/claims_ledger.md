@@ -57,7 +57,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 | 25b | **E4 STEP 1 — Sn₂O₂ 38q reference pre-committed** | same-CAS DMRG(χ=400) E = −576.4232577 Ha (CAS(18,19), def2-SVP + Sn ECP, committed rhombus geometry) — committed BEFORE any QSCI run it will judge, mirroring the CrO/P4 provenance pattern; **E4 STEP 2 now executed → row 27** | `src/e1_chi800_counteraudit.py` path | `sn2o2_cas19_dmrg_reference.json` | — | **executed-CPU** (personally funded) |
 | 26 | Upstream assumptions → measured (exploratory, not pre-registered) | x2c scalar-relativistic shifts: CrO −57.7 meV (1.890→1.832 eV), VO +18.4 meV — orderings robust; AVAS supports the CrO CAS(10,10) window (ncas 9–10 at thr 0.1–0.5) | `src/exploratory_probes.py` | `x2c_exploratory.json`, `avas_check_exploratory.json` | — | **executed-CPU**, labeled exploratory |
 | 27 | **E4 — 2nd reference correction, real EUV motif (executed 2026-07-23)** | Sn₂O₂ 38q QSCI terminal **−0.399 mHa BELOW** the same-CAS DMRG(χ=400) reference of row 25b (524,764 dets, 7.4 h, 59.7 GB peak RSS) — the CrO reference-correction (row 19d) reproduced on the actual tin-oxo chemistry, not system-specific | `src/e4_sn2o2_38q.py` (qsci_fast) | `e4_sn2o2_38q_evidence.json` | — | **executed-CPU** (128 GiB box; personally funded) |
-| 28 | **E3 — 40q absolute-certification protocol (in flight at submission)** | growth-to-PT2-certificate on H₂₀ 40q, bucket-parallel EN-PT2 (7.6× speedup, **bit-identical to serial**, validated); committed through iter 4 at **E_var +0.495 mHa vs χ=400 — prediction ii MET (≤+0.9)**; \|PT2\| certificate tightening 84→4.6→2.6→2.0→1.57 mHa; continuing toward \|PT2\|≤0.5 absolute certificate (prediction i). Final certified value = the one live slot at submission | `src/e3_certificate_40q.py` (qsci_fast) | `e3_certificate_evidence.json` (partial, auto-committed by box A) | — | **executed-CPU, in flight** (box A; funded) |
+| 28 | **E3 — 40q absolute-certification protocol (TERMINAL at it5)** | growth-to-PT2-certificate on H₂₀ 40q, bucket-parallel EN-PT2 (7.6× speedup, **bit-identical to serial**, validated); terminal at iter 5 — the run was ended by an **external pod kill during it6 growth** (disclosed operational outcome, not a convergence failure; ~82 GB at last sighting, no OOM record): **E_var +0.185 mHa vs χ=400 (prediction ii MET, ≤+0.9)**, **750,257 dets (prediction iii MET)**; \|PT2\| clean converging trace 84→4.6→2.6→2.0→1.57→1.31 mHa; **prediction i NOT certified** (\|PT2\|≤0.5 needs ~it10–11, unreached). Reported as-is | `src/e3_certificate_40q.py` (qsci_fast) | `e3_certificate_evidence.json` (iters 0–5) + `e3_terminal_report.md` | — | **executed-CPU, terminal** (box A; external kill; funded) |
 | 29 | **E2 — resource-DNF (operational record, NOT a result)** | device-seeded 40q equivalence run (committed 102-det device sample as verbatim seed) needs ≥128 GiB; OOM-killed by the container cgroup at iter-3 cap-fill (peak 133.5 GB, 97% of limit; **two deterministic attempts, clean SIGKILL**). E4 (row 27) completed on the same box at 59.7 GB — the +2 qubits and 450k cap ≈ double the footprint. Honest hardware ceiling, no tuning | `src/e2_device_seed_40q.py` | `e2_device_seed_RESOURCE_DNF.json` (+ PARTIAL trace) | — | **attempted, resource-DNF** (128 GiB box) |
 | 30 | **E5 — least-grounded frontier (44q), non-converged, reported as such** | H₂₂ 44q growth vs a re-frozen χ=1200 judge, terminated early to protect E3's runway; committed trajectory +125→+8.7→+5.2→+4.0 mHa (decelerating), did NOT reach ≤1.6 mHa before the abort gate — the pre-registered **expected** outcome for the frontier extension; no threshold moved, frozen params untouched | `src/e5_h22_44q.py` (qsci_fast) | `e5_h22_evidence.json` (+ PARTIAL) | — | **executed-CPU, non-converged** (terminated for grant-pool runway) |
 
@@ -71,7 +71,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
   counter-audit — the full pre-registered campaign is executed and committed; **the last external
   item closed 2026-07-20: the AQT trapped-ion flight completed and decoded clean (row 10h) — no
   core-scope item remains open.** The frozen extension campaign E2–E5 executed 2026-07-23 (rows 27–30):
-  E4 a second reference correction (−0.399 mHa), E3 the 40q certificate in flight (prediction ii met),
+  E4 a second reference correction (−0.399 mHa), E3 the 40q certificate terminal at it5 (ii+iii MET, i not certified — external kill),
   E2 a disclosed resource-DNF, E5 a reported non-convergence — outcomes as-measured, none post-hoc.
 - **Judges' re-run:** `python src/reproduce.py` — the 25-check suite (16 re-executions incl. the frozen
   blind-holdout script and both engine-equivalence gates, plus 9 labeled evidence audits — now including
@@ -90,8 +90,10 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
   chemical accuracy, which `reproduce.py` asserts robustly (≤0.6 mHa).
 - **40q absolute accuracy:** P1's PASS is against its frozen χ=400 reference; our own χ=800
   counter-audit puts the absolute gap at +2.19 mHa (> 1.6). Stated wherever the flagship is claimed;
-  the frozen E3 certificate protocol is now **in flight** (row 28) — prediction ii met (E_var +0.495 mHa
-  vs χ=400), the \|PT2\|≤0.5 mHa absolute certificate still converging. We found this ourselves — no
-  reviewer did.
+  the frozen E3 certificate protocol reached a terminal **it5** (row 28; external pod kill during it6
+  growth) — prediction ii MET (E_var +0.185 mHa vs χ=400), a clean converging \|PT2\| trace to 1.31 mHa;
+  the \|PT2\|≤0.5 mHa point (~it10–11) was unreached, reported as-is. The pre-registered E6 DMRG-extrapolation
+  anchor (results/preregistration_e67_supplementary.json) independently measures this E_var's absolute
+  error. We found the χ=800 gap ourselves — no reviewer did.
 - **P4 FAIL is an audit success** and is always reported with both halves: metric FAIL as frozen +
   variational ordering (QSCI below the reference at χ=400/800/1200).
