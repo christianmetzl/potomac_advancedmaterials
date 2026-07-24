@@ -187,7 +187,10 @@
       "per_2000shot_job_cr": 29,
       "probe_cr": 2,
       "n_physics_jobs": 2,
-      "funding": "personal — zero grant draw"
+      "funding": "personal — zero grant draw",
+      "pool_total_cr": 162,
+      "remaining_cr_dashboard": 102,
+      "pool_note": "OpenQuantum personal pool: 162 cr total; flight billed 60 cr (all 3 ibex-q1 jobs); 162-60=102 remaining, matching the 2026-07-20 dashboard (102 Full credits). Zero grant draw."
     }
   }
 }

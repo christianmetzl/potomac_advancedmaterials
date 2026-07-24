@@ -51,9 +51,11 @@ def audit_qpu():
     # ledger's recorded AQT cost (the self-reported figure we are checking against)
     lj = _load("credit_ledger.json")["cost_audit_inputs"]["qpu_aqt_personal"]
     recorded = lj["per_2000shot_job_cr"] * lj["n_physics_jobs"] + lj["probe_cr"]
-    return {"line": "QPU AQT ibex-q1 (personal)", "basis": f"{n_jobs} jobs x {shots//n_jobs} shots + probe",
+    return {"line": "QPU AQT ibex-q1 via OpenQuantum (personal)",
+            "basis": f"{n_jobs} jobs x {shots//n_jobs} shots + probe",
             "derived_cr": round(derived, 2), "recorded_cr": float(recorded),
-            "independent": True, "ok": abs(derived - recorded) <= TOL_CR}
+            "independent": True, "ok": abs(derived - recorded) <= TOL_CR,
+            "pool_total_cr": lj.get("pool_total_cr"), "pool_remaining_cr": lj.get("remaining_cr_dashboard")}
 
 
 def _rate_for(inst):
@@ -90,6 +92,18 @@ def main():
         print(f"  [{flag}] {L['line']:<42} {L['basis']:<34} "
               f"derived {L['derived_cr']:>10.2f} vs recorded {L['recorded_cr']:>10.2f} cr  [{tag}]")
         all_ok &= L["ok"]; dsum += L["derived_cr"]; rsum += L["recorded_cr"]
+
+    # OpenQuantum personal pool reconciliation (proves the QPU spend is complete, ties to the dashboard)
+    qline = lines[0]
+    pt, pr = qline.get("pool_total_cr"), qline.get("pool_remaining_cr")
+    if pt is not None and pr is not None:
+        spent = qline["derived_cr"]
+        implied_remaining = pt - spent
+        pool_ok = abs(implied_remaining - pr) <= TOL_CR
+        all_ok &= pool_ok
+        basis = f"{pt:.0f} total - {spent:.0f} spent"
+        print(f"  [{'OK ' if pool_ok else 'MISMATCH'}] {'OpenQuantum pool reconciliation':<42} {basis:<34} "
+              f"= {implied_remaining:>10.2f} vs dashboard {float(pr):>10.2f} cr  [INDEP]")
 
     # sim tier (free) + pre-E-campaign settled base (taken as figure)
     ci = _load("credit_ledger.json")["cost_audit_inputs"]
