@@ -1,0 +1,79 @@
+{
+  "decision": "Rank two real metal-oxide centers by HIGH-SPIN PREFERENCE (spin-gap E(low)-E(high) [eV]); pick the stronger high-spin (paramagnetic) center to synthesize.",
+  "candidates": {
+    "CrO": "X 5-Pi (quintet, S=2)",
+    "NiO": "X 3-Sigma- (triplet, S=1)"
+  },
+  "active_space": "CAS(10,10) = 20 qubits, def2-SVP, per spin state (ROHF -> CASCI; QSCI selected-CI)",
+  "gap_definition": "E(low-spin) - E(high-spin) [eV]; > 0 => high-spin ground; larger => stronger high-spin center",
+  "multireference_ranking": "CrO > NiO",
+  "multireference_pick_to_synthesize": "CrO",
+  "decision_table": [
+    {
+      "method": "PBE",
+      "CrO_gap_eV": 0.963,
+      "NiO_gap_eV": 0.347,
+      "ranks_higher": "CrO",
+      "inverts_multireference": false
+    },
+    {
+      "method": "BP86",
+      "CrO_gap_eV": 0.926,
+      "NiO_gap_eV": 0.33,
+      "ranks_higher": "CrO",
+      "inverts_multireference": false
+    },
+    {
+      "method": "TPSS",
+      "CrO_gap_eV": 1.018,
+      "NiO_gap_eV": 0.328,
+      "ranks_higher": "CrO",
+      "inverts_multireference": false
+    },
+    {
+      "method": "B3LYP",
+      "CrO_gap_eV": -0.076,
+      "NiO_gap_eV": 0.413,
+      "ranks_higher": "NiO",
+      "inverts_multireference": true
+    },
+    {
+      "method": "PBE0",
+      "CrO_gap_eV": 1.837,
+      "NiO_gap_eV": 0.438,
+      "ranks_higher": "CrO",
+      "inverts_multireference": false
+    },
+    {
+      "method": "TPSSh",
+      "CrO_gap_eV": 1.089,
+      "NiO_gap_eV": 0.365,
+      "ranks_higher": "CrO",
+      "inverts_multireference": false
+    },
+    {
+      "method": "CASCI (this work)",
+      "CrO_gap_eV": 1.89,
+      "NiO_gap_eV": 1.657,
+      "ranks_higher": "CrO",
+      "inverts_multireference": false
+    },
+    {
+      "method": "QSCI (this work)",
+      "CrO_gap_eV": 1.893,
+      "NiO_gap_eV": 1.657,
+      "ranks_higher": "CrO",
+      "inverts_multireference": false
+    }
+  ],
+  "functionals_that_invert_the_ranking": [
+    "B3LYP"
+  ],
+  "key_finding": "The multireference treatment (CASCI +1.89 vs +1.66 eV; QSCI +1.89 vs +1.66 eV) ranks CrO as the far stronger high-spin center \u2014 synthesize CrO. But B3LYP INVERTS this ranking (it mis-assigns CrO's ground state), so that DFT-only screen would advance the wrong candidate. CrO's multireference call agrees with its experimental X 5-Pi quintet ground term.",
+  "honest_caveats": [
+    "CAS(10,10)/def2-SVP is a fixed modest active space; the robust claim is the ranking/sign (which candidate), not a benchmark-quality gap magnitude.",
+    "Each spin state uses CASCI on its own ROHF reference (standard), not state-averaged CASSCF.",
+    "DFT gaps are the committed dft_functional_spread_evidence.json values; CASCI/QSCI computed here.",
+    "The point is decision robustness: a widely-used functional flips which candidate you would synthesize; the multireference selector does not."
+  ]
+}
