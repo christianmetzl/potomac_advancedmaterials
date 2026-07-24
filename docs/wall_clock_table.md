@@ -28,4 +28,4 @@ and is deliberately not quoted as the growth cost.
 Context rows the table is judged against: FCI cost doubles per qubit (intractable ≥32q
 on CPU — classical_baselines_evidence.json); DMRG chi for chemical accuracy grows
 50→100→400 across 20→28→40q (mps_bonddim_evidence.json); the audit tier's decisive-number
-cost at 38q was ≈$12 of cloud compute (docs/credit_budget.md).
+cost at 38q was ≈$12 of cloud compute (see the cost-transparency section of the README and `src/cost_audit.py`).

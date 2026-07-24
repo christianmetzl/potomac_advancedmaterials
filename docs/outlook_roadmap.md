@@ -67,5 +67,4 @@ guarantees live in the classical diagonalization layer, so every hardware improv
 of certified truth without ever being trusted blindly.
 
 *EIGENNEXUS — GIC 2026 Phase 3. Companion artifacts: results/preregistration_v2.json (frozen
-protocols E1–E5), docs/credit_budget.md (funding governance), docs/claims_ledger.md (what is claimed
-vs executed).*
+protocols E1–E5), docs/claims_ledger.md (what is claimed vs executed).*

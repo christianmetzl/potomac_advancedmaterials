@@ -204,7 +204,7 @@ The headline scaling runs (40q flagship, 38q transition-metal + Sn₂O₂ oxide 
 4. **GPU/QPU scaling runs (executed; re-runnable):** 40q GQE/QSCI on H₂₀; 38q CrO + Sn₂O₂ audits;
    quantum-vs-classical wall-clock; trapped-ion QPU validation (AQT via OpenQuantum, decoded). Each
    prints qubit count, circuit depth, shot budget, bond dimension, and wall-clock, and writes a
-   `results/*.json`. Evidence and per-run commands: `docs/phase3_writeup_draft.md` §5 and the E-campaign
+   `results/*.json`. Evidence and per-run commands: the write-up §5 and the E-campaign
    scripts (`e3_certificate_40q.py`, `e4_sn2o2_38q.py`, `sn2o2_dissociation.py`).
 
 *Expected outputs match the values in the write-up; a result that does not reproduce is flagged as

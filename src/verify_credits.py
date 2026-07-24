@@ -1,4 +1,4 @@
-"""Self-verifying credit budget: recompute every derived number in docs/credit_budget.md from
+"""Self-verifying credit budget: recompute every derived number in the credit ledger from
 results/credit_ledger.json, enforce the grant-share cap, and (with --live, where qBraid credentials
 exist) pull the wallet balance from the qBraid API and check drift / append a snapshot.
 

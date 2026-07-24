@@ -1,6 +1,6 @@
 # Reproducibility audit — 2026-06-21
 
-**Why:** the official Phase 2 rules (now in `phase3_spec_intake.md`) make reproducibility a stated
+**Why:** the official Phase 2 rules make reproducibility a stated
 Phase 3 rule — *"Code, data references, and run instructions must be sufficient for a third-party
 reviewer to verify the headline results."* This audit reruns every shipped CPU script from a clean
 checkout, in an isolated dir (`/tmp/audit`, repo tree untouched), and diffs the output against the
@@ -50,10 +50,3 @@ produced on CPU. No surprises against the committed evidence.
 
 **Reproduce:** `python src/{transition_metal_oxide_qsci,sno_demo,sno2_demo,stage2_refinement,gqe_qsci}.py`
 and `python src/hamlib_validate.py {14,16,20}` (each writes its evidence JSON to the working dir).
-
-## Doc-hygiene finding
-
-`phase3_novelty_assessment.md` §2(a) states stage-2 "is **not** in the repo" and its evidence JSON "is
-**absent**." That predates commit `4e9e319`, which imported both `src/stage2_refinement.py` and
-`results/stage2_refinement_evidence.json` — and this audit reproduces them exactly. That sentence is
-now outdated; corrected in place so the docs don't contradict each other for a reviewer.

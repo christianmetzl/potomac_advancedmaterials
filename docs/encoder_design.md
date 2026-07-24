@@ -32,7 +32,7 @@ made before any transfer (B0/B1/conditioned) comparison was run.
 
 ## 1. Why this exists
 
-The Phase-2 honest scoring (`docs/KNOWLEDGE_TRANSFER.md` §11) puts the binding constraint on
+The Phase-2 honest scoring puts the binding constraint on
 **criterion 3 (algorithmic innovation)**: the GQE→QSCI→32q pipeline is the providers' own prior
 art (Kemmoku/Gao), and MATGEN-Q's distinguishing claim — a **chemistry-conditioned generator that
 transfers across molecules** — is *described but not demonstrated*. This experiment demonstrates it,

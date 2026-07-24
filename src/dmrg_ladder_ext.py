@@ -16,7 +16,7 @@ Two deliverables, one frozen protocol (committed BEFORE execution; evidence reco
      at equilibrium (where CCSD(T) is reliable). This is SIMULATION-LAYER HEADROOM evidence — a
      classical result about the engine's room past the goalpost. NO QSCI claim attaches to it, and it
      must never be quoted as a quantum-pipeline result; past ~44q no audit-grade independent reference
-     exists (assessed and declined 2026-07-20, docs/credit_budget.md rule 3 note).
+     exists (assessed and declined 2026-07-20 per the frozen budget-governance rule).
 
 Order of execution is memory-aware and E5-priority: H22 chi400 -> chi800 -> chi1200(subproc) first
 (unblocks the costliest authorized run), then ladder chi400 ascending, then ladder chi800(subproc)

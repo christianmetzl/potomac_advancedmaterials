@@ -95,5 +95,4 @@ open-shell oxides.
 
 ## 5. Cross-references
 - `reproducibility_audit_2026-06-21.md` — every quantum number above is reproduced there.
-- `phase3_plan_to_win.md` §4 pillar 3 — this doc is that pillar's substance.
 - `paper_version_discrepancy.md` §5 — the 38q CrO/NiO row here is the reframed claim.

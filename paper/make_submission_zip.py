@@ -25,7 +25,7 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
 - `src/` — all source code (CPU-verified + the qBraid GPU run-list scripts).
 - `results/` — every committed evidence JSON + figures (each headline number traces here).
 - `docs/claims_ledger.md` — per-claim traceability (number -> script -> evidence -> status).
-- `docs/reproduce_transcript.txt` — captured `python src/reproduce.py` -> 13/13 PASS (11 core + 2 optional CUDA-Q/MPS).
+- `docs/reproduce_transcript.txt` — captured `python src/reproduce.py` -> 26/26 PASS (17 re-execution + 9 evidence audits).
 - `requirements.txt` (CPU) / `requirements-gpu.txt` (cudaq/quimb/block2 for qBraid GPU).
 
 ## TWO ACTIONS REQUIRED BEFORE UPLOAD (team)
@@ -33,11 +33,12 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
    final write-up PDF. The cover page is required and is excluded from the 5-page limit. Do NOT recreate or
    modify the template. Final write-up PDF = [cover page] + EIGENNEXUS_Phase3_Writeup.pdf.
 2. **Record the device selection on the Phase 3 cover page** = qBraid GPU (CUDA-Q) + IonQ/IBM QPU. It was
-   omitted from the Phase 2 cover page; access is gated on this, and it has been raised with the organizers
-   (see docs/qbraid_access_email.md). It MUST appear on the Phase 3 cover page.
+   omitted from the Phase 2 cover page; access is gated on this, and it has been raised with the organizers.
+   It MUST appear on the Phase 3 cover page.
 
 ## Reproducing (judges)
-`pip install -r requirements.txt` then `python src/reproduce.py` -> 13/13 PASS on CPU (11 core + 2 optional CUDA-Q/MPS).
+`pip install -r requirements.txt` then `python src/reproduce.py` -> 26/26 PASS (17 re-execution + 9 evidence audits) with full deps;
+core CPU checks pass with `requirements.txt` alone (CUDA-Q/MPS items need the optional GPU deps).
 GPU/at-scale items (40q MPS, near-38q CrO/NiO, QPU validation) are marked [QBRAID-RUN] in the write-up and
 are the qBraid GPU deliverable; everything else is executed and reproducible on CPU.
 

@@ -1,6 +1,6 @@
 """Decisive cross-family conditional-encoder transfer test.
 
-Settles the open question in docs/phase3_novelty_assessment.md (§3, §5): is the conditional
+Settles the open question raised in the Phase-3 novelty assessment: is the conditional
 encoder NECESSARY, or does plain warm-start already transfer? The prior experiment
 (transfer_eval.py) used a HOMOGENEOUS group-14 monoxide family {CO,SiO,GeO} -> SnO, where a
 single un-conditioned policy already transfers, so conditioning added nothing (the
