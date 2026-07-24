@@ -106,6 +106,9 @@ whole archive instead, download the chemistry `ES_*_ham` HDF5 files from
 | "Transfer statistics are thin (3 seeds, p≈0.05)" | Disclosed verbatim in the paper; the robust claims are the variance reduction and paired-wins count, not the mean curve. |
 | "The noise study saturates a small system" | Qualified in the paper as a selection-principle check, not a hardware forecast; real-QPU validation is pre-registered (P5). |
 
+*The full pre-answered red-team — 11 hostile-reviewer objections, each with a committed-evidence pointer —
+is in [`results/ANTICIPATED_OBJECTIONS.md`](results/ANTICIPATED_OBJECTIONS.md) (or `python cli.py objections`).*
+
 ## Repository structure
 
 ```
@@ -130,6 +133,7 @@ pip install pyscf openfermion openfermionpyscf h5py pennylane pennylane-lightnin
 **One command** runs the verified CPU suite and checks each headline number against the committed
 `results/*.json`, printing a PASS/FAIL table (`--quick` skips the slower scripts):
 ```bash
+python cli.py verify        # ONE command — prove the whole submission (wraps the full 26-check suite below)
 python src/reproduce.py     # -> 26/26 PASS (17 re-execution + 9 evidence audits; captured: docs/reproduce_transcript.txt)
 python src/cost_audit.py    # re-derives the ENTIRE program cost from published pricing × committed shot/uptime configs
 ```
