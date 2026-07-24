@@ -35,8 +35,8 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | **40q absolute anchor (E6, DMRG extrap.)** | FCI(40q) = **−10.293599 ± 0.022 mHa** (R²=0.997); E3 it5 E_var **+1.59 mHa** → chem-acc | independent DMRG χ=400→2400 truncation-error extrapolation; certifies 40q absolute accuracy (pre-registered; `e6_dmrg_extrap_40q.py`) |
 | **38q CrO audit (CAS(18,19), executed)** | **−3.784 mHa BELOW** same-CAS DMRG(χ=400) | reference *corrected*: χ=800/1200 descend toward QSCI from above (+1.06/+0.36 mHa), never cross — truncation-error mechanism at three χ |
 | **38q Sn₂O₂ EUV motif (E4, executed)** | **−0.399 mHa BELOW** same-CAS DMRG(χ=400) | a second reference correction, on the real tin-oxo chemistry (524,764 dets, 7.4 h) |
-| **EUV-motif trust curve (Sn₂O₂ cleavage)** | in-active-space CCSD(T) 0.14→5.49 mHa (~40×); QSCI ≤0.47 mHa | Sn–O bridge 2.05→3.28 Å; dominant-det weight collapses 0.95→0.53 (`sn2o2_dissociation.py`) |
-| **Real trapped-ion QPU (AQT ibex-q1, decoded)** | device-sampled +20.4/+11.1 mHa; device-seeded QSCI → exact FCI | genuine 12q trapped-ion silicon (2,000 shots/job, decoded 2026-07-20); qir-sv sim tier +2.0/+2.4 mHa PASS |
+| **EUV-motif trust curve (Sn₂O₂ cleavage)** | in-active-space CCSD(T) 0.14→5.49 mHa (~40×); QSCI ≤0.48 mHa | Sn–O bridge 2.05→3.28 Å; dominant-det weight collapses 0.95→0.53 (`sn2o2_dissociation.py`) |
+| **Real trapped-ion QPU (AQT ibex-q1, decoded)** | device-sampled +20.4/+11.1 mHa; device-seeded QSCI → exact FCI | genuine 12q trapped-ion silicon (2,000 shots/job, decoded 2026-07-20); qir-sv sim tier +2.0 mHa PASS |
 | HamLib validation, 28/32/40q | exact | term counts match (27,735 / 47,489 / 116,577); coefficients agree to ~15 sig figs, differing only by a spectrum-invariant orbital-phase gauge |
 | Noise robustness, 20q | ≤3.3 mHa at 30% corrupted measurements | graceful degradation |
 | Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.45 / 0.18–0.23 across environments) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
@@ -131,8 +131,8 @@ paper/      Phase 3 write-up (PDF + DOCX build scripts) + Phase 2 submission ret
 src/        analysis code — GQE, QSCI, integrated GQE→QSCI, noise, DMRG, Sn-oxides, transition-metal
             oxides, HamLib validation, classical baselines, and src/encoder/ (conditional-encoder test)
 results/    computational-result JSONs (every headline number traces to one of these)
-docs/       project context + Phase 3 strategy: plan_to_win, spec_intake, classical_baselines,
-            writeup_draft, reproducibility_audit, novelty_assessment, version-discrepancy resolution
+docs/       claims_ledger (per-claim traceability), reproduce_transcript, classical_baselines,
+            reproducibility_audit, encoder_design, wall_clock_table, outlook_roadmap, value_case
 ```
 
 ## Reproduce (CPU — verified)
