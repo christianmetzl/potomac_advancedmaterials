@@ -5,14 +5,17 @@
   "dmrg_schedule": "frozen E1/make_ref: n_sweeps=8, bond_dims=[100,150,200,chi*5], noises=[1e-4,1e-5,1e-6,1e-7,0,0,0,0], thrds=[1e-8]*8, SU(2) \u2014 identical to e1_chi800_counteraudit.run_dmrg (chi=400/800 rungs reproduce committed refs)",
   "chi_ladder": [
     400,
-    800
+    800,
+    1200,
+    1600,
+    2400
   ],
   "rungs": [
     {
-      "E_dmrg": -10.292237466170704,
+      "E_dmrg": -10.292240978313892,
       "chi": 400,
-      "dw": 0.0001291647756481524,
-      "wall_s": 65.2,
+      "dw": 0.00012955854914918323,
+      "wall_s": 63.8,
       "bond_dims": [
         100,
         150,
@@ -25,10 +28,10 @@
       ]
     },
     {
-      "E_dmrg": -10.293164243966594,
+      "E_dmrg": -10.29316295429529,
       "chi": 800,
-      "dw": 4.6856333878291246e-05,
-      "wall_s": 269.2,
+      "dw": 4.685958695931324e-05,
+      "wall_s": 273.4,
       "bond_dims": [
         100,
         150,
@@ -39,23 +42,71 @@
         800,
         800
       ]
+    },
+    {
+      "E_dmrg": -10.293353511952994,
+      "chi": 1200,
+      "dw": 2.4257462621121283e-05,
+      "wall_s": 715.9,
+      "bond_dims": [
+        100,
+        150,
+        200,
+        1200,
+        1200,
+        1200,
+        1200,
+        1200
+      ]
+    },
+    {
+      "E_dmrg": -10.293433313189446,
+      "chi": 1600,
+      "dw": 1.4815576669669447e-05,
+      "wall_s": 1472.6,
+      "bond_dims": [
+        100,
+        150,
+        200,
+        1600,
+        1600,
+        1600,
+        1600,
+        1600
+      ]
+    },
+    {
+      "E_dmrg": -10.293498298696647,
+      "chi": 2400,
+      "dw": 7.071057179558412e-06,
+      "wall_s": 3644.7,
+      "bond_dims": [
+        100,
+        150,
+        200,
+        2400,
+        2400,
+        2400,
+        2400,
+        2400
+      ]
     }
   ],
   "extrapolation": {
     "model": "linear E = E0 + slope * x",
-    "abscissa": "inv_chi_squared (dw unavailable)",
-    "E_fci_40q_estimate_Ha": -10.293473169898556,
-    "E_fci_uncertainty_mHa": 0.0,
-    "slope": 197.71259645663537,
-    "R2": 1.0,
+    "abscissa": "discarded_weight",
+    "E_fci_40q_estimate_Ha": -10.293598760256321,
+    "E_fci_uncertainty_mHa": 0.022,
+    "slope": 10.355507341208416,
+    "R2": 0.996606,
     "fit_gate": ">= 3 rungs and R2 >= 0.98",
-    "fit_gate_pass": false
+    "fit_gate_pass": true
   },
   "certification": {
     "E_var_committed_Ha": -10.292009148892564,
     "E_var_source_iter": 5,
     "E_var_source": "results/e3_certificate_evidence.json (box A committed, latest iteration)",
-    "absolute_error_mHa": 1.464,
+    "absolute_error_mHa": 1.5896,
     "chemical_accuracy_1p6": true,
     "prediction_i_equiv_0p5": false,
     "note": "absolute_error is E_var measured against an INDEPENDENT near-exact DMRG-extrapolated reference (not the self-consistent PT2 estimate). As box A grows, E_var descends and this gap closes; reported as-measured against whichever E_var is committed at read time."
