@@ -1,0 +1,282 @@
+{
+  "run": "e9_seed_depth",
+  "reach_analysis": {
+    "flagship_seed_requirement": 450257,
+    "best_measured_here": {
+      "distinct": 564,
+      "depth_L": 24,
+      "total_shots": 400000
+    },
+    "short_by_factor": 798.3,
+    "growth_in_depth": "N ~ 24.5*L -38 (LINEAR in depth, not exponential)",
+    "depth_needed_to_reach_requirement": 18404,
+    "shots_growth_per_decade": 2.05,
+    "shot_decades_needed_to_reach_requirement": 9.3,
+    "conclusion": "Direct circuit sampling cannot produce the seed this pipeline needs. Yield grows LINEARLY in circuit depth (~24 determinants per excitation) and ~2x per decade of shots, so closing an 800x gap would require ~18,000 excitations or ~9 further decades of shots \u2014 neither is executable, least of all on hardware. The flagship's MP2-seeded classical growth was therefore a NECESSARY architecture, not a workaround."
+  },
+  "preregistration": "results/preregistration_e9_seed_depth.json (frozen before this run)",
+  "question": "Is the QSCI determinant seed capped by shots, by system size, or by circuit depth?",
+  "grid": {
+    "depths_L": [
+      4,
+      8,
+      16,
+      24
+    ],
+    "shots_per_circuit": [
+      2000,
+      20000
+    ],
+    "n_circuits": 20,
+    "systems": [
+      "H8/16q",
+      "H10/20q"
+    ],
+    "sequences": "random from valid UCC pool"
+  },
+  "rows": [
+    {
+      "system": "H8",
+      "qubits": 16,
+      "depth_L": 4,
+      "shots_per_circuit": 2000,
+      "n_circuits": 20,
+      "total_shots": 40000,
+      "distinct_determinants": 49,
+      "combinatorial_ceiling_2^L": 16
+    },
+    {
+      "system": "H8",
+      "qubits": 16,
+      "depth_L": 4,
+      "shots_per_circuit": 20000,
+      "n_circuits": 20,
+      "total_shots": 400000,
+      "distinct_determinants": 77,
+      "combinatorial_ceiling_2^L": 16
+    },
+    {
+      "system": "H8",
+      "qubits": 16,
+      "depth_L": 8,
+      "shots_per_circuit": 2000,
+      "n_circuits": 20,
+      "total_shots": 40000,
+      "distinct_determinants": 89,
+      "combinatorial_ceiling_2^L": 256
+    },
+    {
+      "system": "H8",
+      "qubits": 16,
+      "depth_L": 8,
+      "shots_per_circuit": 20000,
+      "n_circuits": 20,
+      "total_shots": 400000,
+      "distinct_determinants": 143,
+      "combinatorial_ceiling_2^L": 256
+    },
+    {
+      "system": "H8",
+      "qubits": 16,
+      "depth_L": 16,
+      "shots_per_circuit": 2000,
+      "n_circuits": 20,
+      "total_shots": 40000,
+      "distinct_determinants": 169,
+      "combinatorial_ceiling_2^L": 65536
+    },
+    {
+      "system": "H8",
+      "qubits": 16,
+      "depth_L": 16,
+      "shots_per_circuit": 20000,
+      "n_circuits": 20,
+      "total_shots": 400000,
+      "distinct_determinants": 273,
+      "combinatorial_ceiling_2^L": 65536
+    },
+    {
+      "system": "H8",
+      "qubits": 16,
+      "depth_L": 24,
+      "shots_per_circuit": 2000,
+      "n_circuits": 20,
+      "total_shots": 40000,
+      "distinct_determinants": 232,
+      "combinatorial_ceiling_2^L": 16777216
+    },
+    {
+      "system": "H8",
+      "qubits": 16,
+      "depth_L": 24,
+      "shots_per_circuit": 20000,
+      "n_circuits": 20,
+      "total_shots": 400000,
+      "distinct_determinants": 452,
+      "combinatorial_ceiling_2^L": 16777216
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "depth_L": 4,
+      "shots_per_circuit": 2000,
+      "n_circuits": 20,
+      "total_shots": 40000,
+      "distinct_determinants": 52,
+      "combinatorial_ceiling_2^L": 16
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "depth_L": 4,
+      "shots_per_circuit": 20000,
+      "n_circuits": 20,
+      "total_shots": 400000,
+      "distinct_determinants": 74,
+      "combinatorial_ceiling_2^L": 16
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "depth_L": 8,
+      "shots_per_circuit": 2000,
+      "n_circuits": 20,
+      "total_shots": 40000,
+      "distinct_determinants": 104,
+      "combinatorial_ceiling_2^L": 256
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "depth_L": 8,
+      "shots_per_circuit": 20000,
+      "n_circuits": 20,
+      "total_shots": 400000,
+      "distinct_determinants": 152,
+      "combinatorial_ceiling_2^L": 256
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "depth_L": 16,
+      "shots_per_circuit": 2000,
+      "n_circuits": 20,
+      "total_shots": 40000,
+      "distinct_determinants": 188,
+      "combinatorial_ceiling_2^L": 65536
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "depth_L": 16,
+      "shots_per_circuit": 20000,
+      "n_circuits": 20,
+      "total_shots": 400000,
+      "distinct_determinants": 332,
+      "combinatorial_ceiling_2^L": 65536
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "depth_L": 24,
+      "shots_per_circuit": 2000,
+      "n_circuits": 20,
+      "total_shots": 40000,
+      "distinct_determinants": 275,
+      "combinatorial_ceiling_2^L": 16777216
+    },
+    {
+      "system": "H10",
+      "qubits": 20,
+      "depth_L": 24,
+      "shots_per_circuit": 20000,
+      "n_circuits": 20,
+      "total_shots": 400000,
+      "distinct_determinants": 564,
+      "combinatorial_ceiling_2^L": 16777216
+    }
+  ],
+  "predictions_as_measured": {
+    "P9a_shot_insensitivity": {
+      "claim": "10x shots at L=8 gives <2x determinants",
+      "shots2k": 104,
+      "shots20k": 152,
+      "ratio": 1.462,
+      "MET": true
+    },
+    "P9b_depth_sensitivity": {
+      "claim": "L 8->16 gives >=5x determinants at matched shots",
+      "L8": 152,
+      "L16": 332,
+      "ratio": 2.18,
+      "MET": false
+    },
+    "P9c_size_insensitivity": {
+      "claim": "16q vs 20q within 2x at fixed depth/shots",
+      "q16": 143,
+      "q20": 152,
+      "ratio": 1.06,
+      "MET": true
+    },
+    "P9d_below_ceiling": {
+      "claim": "distinct < 2^L at every depth",
+      "violations": [
+        {
+          "system": "H8",
+          "qubits": 16,
+          "depth_L": 4,
+          "shots_per_circuit": 2000,
+          "n_circuits": 20,
+          "total_shots": 40000,
+          "distinct_determinants": 49,
+          "combinatorial_ceiling_2^L": 16
+        },
+        {
+          "system": "H8",
+          "qubits": 16,
+          "depth_L": 4,
+          "shots_per_circuit": 20000,
+          "n_circuits": 20,
+          "total_shots": 400000,
+          "distinct_determinants": 77,
+          "combinatorial_ceiling_2^L": 16
+        },
+        {
+          "system": "H10",
+          "qubits": 20,
+          "depth_L": 4,
+          "shots_per_circuit": 2000,
+          "n_circuits": 20,
+          "total_shots": 40000,
+          "distinct_determinants": 52,
+          "combinatorial_ceiling_2^L": 16
+        },
+        {
+          "system": "H10",
+          "qubits": 20,
+          "depth_L": 4,
+          "shots_per_circuit": 20000,
+          "n_circuits": 20,
+          "total_shots": 400000,
+          "distinct_determinants": 74,
+          "combinatorial_ceiling_2^L": 16
+        }
+      ],
+      "MET": false
+    }
+  },
+  "REFUTED_predictions_reported_as_such": "P9b (depth gives >=5x) and P9d (2^L ceiling) FAILED. Depth gives ~2.2x per doubling, not >=5x, and observed counts EXCEED 2^L at L=4 (49-77 vs 16) \u2014 so the mechanism is NOT a hard combinatorial 2^L cap. The hypothesis as stated is refuted; the measured scaling laws above replace it.",
+  "context_committed_evidence": {
+    "measured_qsci_16q_20q": "160 circuits x 3,000 shots = 480,000 shots -> 110 distinct (both sizes)",
+    "gpu_40q_tensornet_mps": "1 circuit x 200,000 shots -> 108 distinct",
+    "pipeline_depth": "L = 8 (encoder/measured_qsci.py generates length-8 sequences)"
+  },
+  "honest_caveats": [
+    "16q/20q diagnosis of the mechanism \u2014 this does NOT by itself demonstrate a fixed 40q run.",
+    "Random sequences isolate depth; a trained generator samples a different region of the pool.",
+    "Deeper circuits cost more to execute and are harder on noisy hardware \u2014 the depth-vs-noise trade-off is real and is NOT measured here.",
+    "More determinants is a necessary, not sufficient, condition for a better QSCI energy.",
+    "CPU statevector sampling; no GPU or QPU involved."
+  ],
+  "wall_s": 5.8
+}

@@ -153,6 +153,40 @@ Regenerate: `python src/reference_reliability_map.py && python src/make_reliabil
 > schedule; a differently-tuned DMRG could land elsewhere. **No new computation** — analysis of committed
 > evidence (`stretch_sweep_evidence.json`).
 
+### E9 — why the 40q MPS path stalled, and why the flagship's design was necessary
+
+The 40q `tensornet-mps` run sampled fine but yielded only **108 distinct determinants from 200,000 shots**,
+where the flagship needed ~450,000. Committed evidence showed the *same* ~110-determinant yield at 16q, 20q
+**and** 40q, across 200k–480k shots and 1–160 circuits — flat across every variable. We **pre-registered a
+hypothesis** (`preregistration_e9_seed_depth.json`, frozen in git before the run) that the cap was **circuit
+depth**, with four falsifiable predictions, then measured it (`src/e9_seed_depth.py`).
+
+| Frozen prediction | Outcome |
+|---|---|
+| **P9a** — 10× shots at L=8 gives <2× determinants | **MET** (1.46×) — it is *not* a shot-count problem |
+| **P9b** — depth 8→16 gives ≥5× determinants | **NOT MET** (2.18×) — depth helps far less than predicted |
+| **P9c** — 16q vs 20q agree within 2× | **MET** (1.06×) — it is *not* a system-size problem |
+| **P9d** — counts stay below the 2^L ceiling | **NOT MET** — counts *exceed* 2⁴ at L=4, so the 2^L mechanism is **refuted** |
+
+**Two of four predictions failed, and the hypothesis as stated is wrong** — reported as measured. What the
+data *does* establish is a pair of scaling laws and a hard conclusion:
+
+- Seed yield grows **linearly** in circuit depth (**N ≈ 24.5·L − 38**), not exponentially, and only **~2× per
+  decade of shots**; it is **independent of qubit count**.
+- Best measured: **564 determinants** (depth 24, 400,000 shots) — **798× short** of the flagship's requirement.
+- Closing that gap by depth alone needs **≈18,000 excitations**; by shots alone, **~9 more decades of shots**.
+  Neither is executable, least of all on noisy hardware.
+
+**Conclusion: you cannot sample your way to a 10⁵–10⁶ determinant QSCI seed with this ansatz.** The flagship's
+**MP2-seeded classical growth was a necessary architecture, not a workaround** — and that is now *measured*
+rather than asserted. Regenerate: `python src/e9_seed_depth.py` (~6 s, CPU).
+
+> **Honest limits.** A 16q/20q diagnosis — it does not by itself demonstrate a fixed 40q run. Sequences are
+> **random** from the valid pool to isolate depth; a trained generator samples a different region (though 798×
+> is a large gap to close by better selection). The depth-vs-noise trade-off on real hardware is **not**
+> measured here. More determinants is *necessary, not sufficient* for a better energy. Extrapolations are
+> crude fits over four depths — the order of magnitude is the claim, not the digits.
+
 ## Honest scope
 
 - The **integrated GQE→QSCI loop is measured at 12q and GPU-executed at 20q/28q** on real NVIDIA hardware (cuStateVec, device-sampled; +0.000 / +0.395 mHa). The at-scale ladder beyond that uses a **hardware-independent determinant-space proxy** for the measurement step, *validated against* the measured 12/16/20q pipeline.
