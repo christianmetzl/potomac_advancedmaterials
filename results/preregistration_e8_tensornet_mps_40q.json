@@ -1,0 +1,26 @@
+{
+  "protocol_id": "E8",
+  "title": "40q tensornet-mps single-point evaluation — the one owed deliverable, pre-registered",
+  "frozen_before_run": true,
+  "purpose": "Close the single remaining gap flagged by the HPC/CUDA-Q reviewer: prove CUDA-Q's tensornet-mps backend actually samples QSCI determinants at the full 40-qubit scale on one GPU. This is the SAMPLER-at-scale proof, NOT a full growth-to-chemical-accuracy run (that is the expensive multi-day version, scoped separately below and deliberately not pre-committed).",
+  "system": "H20 chain, 40 qubits, STO-6G, Jordan-Wigner — identical Hamiltonian to E3/E6 (same committed integrals).",
+  "what_runs": "Load the committed 40q Hamiltonian; prepare an MP2-seeded UCC state; sample the dominant determinant subspace via CUDA-Q tensornet-mps (bond dimension chi=400, the measured chemical-accuracy target from mps_bonddim_study.py) on one 80GB GPU; diagonalize H in that subspace (QSCI); compare to the committed block2 DMRG(chi=400) reference that predates access.",
+  "predictions": {
+    "P8a_backend_runs_at_40q": "tensornet-mps sampling completes at 40 qubits without exceeding 80 GB device memory (the whole point of MPS vs the ~16 TB exact statevector).",
+    "P8b_energy_consistency": "the tensornet-mps-sampled QSCI energy at a matched determinant budget lands within +/-1.6 mHa of the incremental-engine value the flagship already committed at the same budget (seed/sampler-path independence, already validated at 20q/28q where the device sampler was exact).",
+    "P8c_memory": "peak device memory < 8 GB at chi=400 (consistent with the crossover_study.py projection of ~0.2 GB MPS footprint)."
+  },
+  "reference": "results/gpu_run1_h20_mp2seed_evidence.json (committed flagship, +1.226 mHa vs DMRG chi=400 at 450,257 dets) and the committed block2 DMRG(chi=400) energy -10.29219417780498 Ha.",
+  "resource_ceiling": {
+    "max_wall_clock_h": 6,
+    "abort_gate": "hard stop at 6 h GPU wall-clock regardless of state; report as-measured (pass, partial, or DNF) exactly like E2/E3/E5.",
+    "instance": "one NVIDIA A100/H100 (80 GB) on qBraid; CUDAQ_TARGET=tensornet-mps"
+  },
+  "cost_estimate_committed_ratecard": {
+    "basis": "qBraid GPU on-demand ~= 6.40 cr/min class instance (published rate card in src/cost_audit.py); credit-to-USD from the committed OpenQuantum conversion ~$0.010/cr.",
+    "single_point_eval": "<= 6 h ceiling => <= ~2,300 cr => ~$23 worst-case; a clean run is expected in ~1-3 h (~600-1,150 cr, ~$6-12).",
+    "full_growth_to_chem_acc_NOT_committed": "a full 40q tensornet-mps growth-to-chemical-accuracy run is the multi-day version the flagship deliberately pivoted away from (MPS-contraction cost at 40q); realistic 2-7 GPU-days => ~28k-97k cr => ~$280-970, with real risk of not converging inside budget. Not pre-committed here; flagged so the spend is a conscious choice."
+  },
+  "honesty_clause": "Outcome reported exactly as measured — pass, partial, or DNF — with the same discipline as E2-E6. A DNF (e.g. MPS contraction too slow at 40q) is itself the honest, publishable finding that motivated the MP2-seed engine, and does not retroactively weaken any committed result.",
+  "note": "Pre-registration only. Freezing this protocol is not a commitment to run it; it exists so that IF run on qBraid, thresholds and reference are fixed in git beforehand, exactly like preregistration_v2 / _e67."
+}
