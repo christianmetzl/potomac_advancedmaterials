@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MATGEN-Q — judge re-run replay (26/26)</title>
+<title>MATGEN-Q — Phase 3 findings + judge re-run (26/26)</title>
 <style>
   :root{
     --ink:#080B14; --panel:#0E1422; --panelhi:#131A2B;
@@ -21,7 +21,7 @@
     color:var(--text);
     font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
     -webkit-font-smoothing:antialiased; min-height:100vh;
-    display:flex; align-items:center; justify-content:center; padding:clamp(14px,3vw,40px);
+    display:flex; align-items:flex-start; justify-content:center; padding:clamp(14px,3vw,40px);
   }
   .wrap{width:100%; max-width:940px}
   .eyebrow{
@@ -97,14 +97,64 @@
   .cap{margin-top:16px; color:var(--faint); font-size:12px; line-height:1.5; max-width:70ch}
   .cap code{color:var(--dim)}
   @media (max-width:560px){ .dt{display:none} .tm{margin-left:auto} }
+
+  /* core findings */
+  .sec{font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--violet); font-weight:600; margin:34px 2px 14px}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:14px}
+  .card{
+    background:linear-gradient(180deg,var(--panelhi),var(--panel)); border:1px solid var(--line);
+    border-radius:12px; padding:16px 17px; display:flex; flex-direction:column; gap:6px; min-width:0;
+  }
+  .card .k{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:26px; font-weight:700; letter-spacing:-.01em; line-height:1.05; color:#EAF0FB}
+  .card .k.g{color:var(--pass)} .card .k.c{color:var(--cyan)} .card .k.v{color:var(--violet)} .card .k.a{color:var(--audit)}
+  .card .lab{font-size:13.5px; font-weight:650; color:#DDE6F5}
+  .card .d{font-size:12.5px; color:var(--dim); line-height:1.5}
+  .card .src{margin-top:auto; padding-top:6px; font-family:ui-monospace,monospace; font-size:10.5px; color:var(--faint)}
+  .scope{
+    margin-top:20px; border:1px dashed var(--line); border-radius:12px; padding:14px 17px;
+    background:rgba(233,184,74,.05);
+  }
+  .scope b{color:var(--audit); font-weight:650; font-size:12.5px; letter-spacing:.02em}
+  .scope ul{margin:8px 0 0; padding-left:18px; color:var(--dim); font-size:12.5px; line-height:1.6}
+  .scope li{margin:2px 0}
+  .replayhead{font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--cyan); font-weight:600; margin:34px 2px 14px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <p class="eyebrow">Reproducibility · one command</p>
-  <h1>The judges re-run our results — live</h1>
-  <p class="sub">A replay of the actual <b>reproduce.py</b> run from a clean checkout: <b>17 headline scripts re-executed</b> and checked against committed values, plus <b>9 audits</b> of the GPU/QPU/one-shot evidence a laptop can't re-run. Nothing here is typed by hand — every line is real output.</p>
+  <p class="eyebrow">Team EIGENNEXUS · GIC 2026 Phase 3 · Advanced Materials (Mitsubishi Chemical &amp; AIST)</p>
+  <h1>MATGEN-Q — a generative quantum eigensolver, scaled to 40 qubits and re-runnable end-to-end</h1>
+  <p class="sub">A two-stage GQE → QSCI pipeline on NVIDIA CUDA-Q for strongly-correlated EUV-photoresist chemistry. Below: the <b>core executed findings</b>, then a live replay of the one-command reproducibility run. Every number traces to a committed evidence file.</p>
 
+  <div class="sec">Core findings — executed at scale</div>
+  <div class="grid">
+    <div class="card"><span class="k c">40 qubits</span><span class="lab">40q flagship, executed</span><span class="d"><b style="color:#DDE6F5">+1.226 mHa</b> vs DMRG(χ=400) = pre-registered P1 chemical-accuracy PASS, at 450,257 determinants on real NVIDIA GPU (qBraid).</span><span class="src">gpu_run1_h20_mp2seed_evidence.json</span></div>
+    <div class="card"><span class="k g">+1.59 mHa</span><span class="lab">40q absolute accuracy anchor (E6)</span><span class="d">Flagship sits +1.59 mHa from the DMRG-extrapolated FCI(40q) — at the 1 kcal/mol edge, <b style="color:#DDE6F5">jackknife-robust to ±0.05 mHa</b>, by a route independent of the PT2 certificate.</span><span class="src">e6_dmrg_extrap_40q.json · e6_jackknife.py</span></div>
+    <div class="card"><span class="k g">+0.000 / +0.395</span><span class="lab">20q / 28q on GPU (cuStateVec)</span><span class="d">20q reproduces full CI exactly; 28q device-sampled QSCI reaches +0.395 mHa vs DMRG(χ=400) — both meet pre-registered energy + memory criteria.</span><span class="src">gpu_run1_h10/h14_nvidia_evidence.json</span></div>
+    <div class="card"><span class="k a">−3.784 / −0.399</span><span class="lab">38q reference corrections</span><span class="d">On CrO and the Sn₂O₂ EUV motif, QSCI drops <em>below</em> the same-CAS DMRG(χ=400) reference; χ=800/1200 confirm it's DMRG truncation error, not QSCI error.</span><span class="src">gpu_run4_cas19 · e4_sn2o2_38q_evidence.json</span></div>
+    <div class="card"><span class="k v">16 → 56q</span><span class="lab">Train-small, deploy-large transfer</span><span class="d">One generator trained on 8q+12q, deployed zero-shot: <b style="color:#DDE6F5">43/48 paired wins, p&lt;0.0001</b> (8 seeds), ~3.6× tighter than random, positive through 56q.</span><span class="src">scaling_ladder_wide8_evidence.json</span></div>
+    <div class="card"><span class="k">real QPU</span><span class="lab">Trapped-ion silicon, decoded</span><span class="d">AQT ibex-q1 (2,000 shots/job) decoded; number-conserving post-selection, and device-seeded QSCI growth recovers exact FCI (0.000 mHa).</span><span class="src">qpu_aqt_evidence.json</span></div>
+  </div>
+
+  <div class="sec" style="color:var(--pass)">Core findings — accuracy &amp; trust</div>
+  <div class="grid">
+    <div class="card"><span class="k g">0.038 / 0.197</span><span class="lab">Open-shell multireference oxides (20q)</span><span class="d">CrO ⁵Π and NiO ³Σ⁻ to chemical accuracy vs exact CASCI — the regime where DFT and single-reference CCSD(T) both fail.</span><span class="src">transition_metal_qsci_evidence.json</span></div>
+    <div class="card"><span class="k g">quintet ✓</span><span class="lab">CrO spin-state sign (CAS-robust)</span><span class="d">B3LYP alone gives the <em>wrong</em> (triplet) ground state; CASCI/QSCI give the quintet X⁵Π matching experiment — and the sign holds across CAS(10,10)/12/14.</span><span class="src">cro_spin_gap · candidate_decision_larger_cas.json</span></div>
+    <div class="card"><span class="k a">217 mHa</span><span class="lab">Trust under strong correlation</span><span class="d">At dissociation CCSD(T) collapses non-variationally 217 mHa <em>below</em> exact FCI (confidently wrong); selected-CI/QSCI stays a variational bound, chem-acc throughout.</span><span class="src">selected_ci_strongcorr_evidence.json</span></div>
+    <div class="card"><span class="k c">26 / 26</span><span class="lab">One-command reproducibility</span><span class="d">17 headline scripts re-executed + 9 evidence audits — pre-registered, git-timestamped, cost-audited. Replay below.</span><span class="src">docs/reproduce_transcript.txt</span></div>
+  </div>
+
+  <div class="scope">
+    <b>⚑ Honest scope (non-negotiable)</b>
+    <ul>
+      <li>No quantum-<em>advantage</em> claim: at ≤40q classical FCI/DMRG still solve these instances — we show correctness, favourable scaling, and executed hardware, not a head-to-head speed win.</li>
+      <li>Large-scale QSCI beyond 20q uses a determinant-space <em>proxy</em>, validated against real circuit-sampled shots at 12/16/20q.</li>
+      <li>The 40q absolute result is <em>at</em> the chemical-accuracy edge, not comfortably inside; the full 40q tensornet-mps growth run remains owed.</li>
+      <li>A two-candidate CrO-vs-NiO <em>ranking</em> was tested and <em>withdrawn</em> — it did not survive a larger active space (the single-molecule sign above does).</li>
+    </ul>
+  </div>
+
+  <div class="replayhead">Reproducibility · the judges re-run it, live</div>
   <div class="term" role="img" aria-label="Terminal replay of reproduce.py ending in 26 of 26 checks passing">
     <div class="titlebar">
       <div class="dots"><i></i><i></i><i></i></div>
