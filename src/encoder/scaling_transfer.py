@@ -578,8 +578,9 @@ def main_ladder():
     for t in targets:
         log(f"  H{t['n_atoms']} {t['nq']}q: ref({t['ref_kind']})={t['e_fci']:.5f}")
     NGEN, K = 200, 96
+    _seeds = tuple(int(x) for x in os.environ.get("LADDER_SEEDS", "0,1,2").split(",") if x != "")
     per_size = {t["nq"]: {"trained": [], "random": []} for t in targets}
-    for seed in (0, 1, 2):
+    for seed in _seeds:
         model = train_gptqe_multi(recs_train, tokens, seed=seed, log=log if seed == 0 else None)
         for t in targets:
             pool, valid = build_realized_pool(tokens, t["ne"], t["nq"])
@@ -605,7 +606,7 @@ def main_ladder():
                    all_sizes_positive=bool(all(r["advantage_mHa"] > 0 for r in rows)))
     json.dump(dict(train="H4+H6", targets_q=[t["nq"] for t in targets], n_gen=NGEN, K=K,
                    per_size={str(k): v for k, v in per_size.items()}, summary=summary),
-              open(os.path.join(OUT, "scaling_ladder_evidence.json"), "w"), indent=2)
+              open(os.path.join(OUT, os.environ.get("LADDER_OUT", "scaling_ladder_evidence.json")), "w"), indent=2)
     log("\n======== SCALING LADDER (train-small, deploy-large) ========")
     for r in rows:
         log(f"  {r['qubits']:2d}q [{r['ref_kind']:7s}]: trained {r['trained_mHa']:7.2f} vs random "
