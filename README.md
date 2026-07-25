@@ -72,11 +72,11 @@ dollar framework: [`docs/value_case.md`](docs/value_case.md).
 > claims were removed. The value case above depends on **neither** — only on the CCSD(T) non-variational
 > collapse, which is independent of functional, SCF guess, and active space.
 
-### A convergence oracle — we caught a silent error in the classical reference
+### A convergence oracle — our method caught a silent error in the classical reference
 
 ![Correcting the classical reference at 38 qubits](results/chi_ladder_correction.png)
 
-*At 38 qubits our QSCI energy landed **below** the committed classical DMRG(χ=400) reference on **two
+*At 38 qubits our QSCI-method energy landed **below** the committed classical DMRG(χ=400) reference on **two
 independent systems** — CrO (−3.784 mHa) and the real Sn₂O₂ EUV motif (−0.399 mHa). This is not a judgment
 call: **both methods are variational upper bounds on the identical CAS(18,19) Hamiltonian**, so by
 Rayleigh–Ritz the lower energy is **strictly** the more accurate one. Escalating the classical bond dimension
@@ -85,14 +85,16 @@ never crosses it. The reference setting that would have shipped carried a **sile
 
 **Why this matters beyond the number.** DMRG gives you no internal signal that your bond dimension is large
 enough — you stop when it *looks* converged. An independent variational method that comes in **lower** is
-proof that you hadn't. That makes a quantum-selected solver useful **today, without any quantum-advantage
-claim**: not as a replacement for the classical pipeline, but as an **independent second opinion that tells
-you when to escalate it**. Regenerate: `python src/make_chi_ladder_figure.py`.
+proof that you hadn't. That makes an independent determinant-selection solver useful **today, without any
+quantum-advantage claim**: not as a replacement for the classical pipeline, but as an **independent second
+opinion that tells you when to escalate it**. Regenerate: `python src/make_chi_ladder_figure.py`.
 
 > **Honest limits on this result.** It is **not cheaper** — the QSCI run took 19.1 h where classically
 > escalating to χ=1200 took ~15 min. The value is the *trigger*, not the compute: the cheap classical
 > double-check is one you would never run, because a converged-looking reference gives you no reason to
-> doubt it. And **n = 2** — two audits, both finding the reference in error. That is a pattern worth
+> doubt it. **And this is the method, not the hardware:** at 38q the determinant selection ran *classically*
+> (the disclosed proxy) — it is the same selection step a quantum device performs, validated device-sampled at
+> 20q/28q, but **this particular result is not a quantum-hardware result**. And **n = 2** — two audits, both finding the reference in error. That is a pattern worth
 > investigating, **not a measured rate**. Reported exactly as pre-registered: this outcome is the P4
 > criterion *failing* as-measured, because P4 assumed DMRG(χ=400) was truth.
 

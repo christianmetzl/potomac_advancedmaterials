@@ -171,7 +171,7 @@ card(s, 0.75, 6.2, 11.8, 0.95, PANEL2, { line: LINE });
 s.addText([{ text: "Why it matters:  ", options: { bold: true, color: GREEN } },
            { text: "DMRG gives you no signal that your bond dimension is big enough — you stop when it looks converged. An independent variational method coming in lower is proof you hadn't. Useful today, with no quantum-advantage claim.", options: { color: TEXT } }],
   { x: 1.1, y: 6.2, w: 11.1, h: 0.95, fontFace: BF, fontSize: 12.5, valign: "middle", lineSpacing: 17, margin: 0 });
-s.addText("Honest limits: not cheaper (19.1 h vs ~15 min to escalate χ classically) — the value is the trigger, not the compute. n = 2: a pattern worth investigating, not a measured rate. Reported as the pre-registered P4 criterion failing as-measured, because P4 assumed DMRG(χ=400) was truth.",
+s.addText("Honest limits: this is the METHOD, not the hardware — at 38q the determinant selection ran classically (the disclosed proxy; device-sampled selection is validated at 20q/28q). Not cheaper (19.1 h vs ~15 min to escalate χ classically) — the value is the trigger, not the compute. n = 2: a pattern, not a measured rate. Reported as the pre-registered P4 criterion failing as-measured.",
   { x: 7.95, y: 4.62, w: 4.6, h: 1.45, fontFace: BF, color: FAINT, fontSize: 10, lineSpacing: 14, margin: 0 });
 
 /* ---------------- 6 · scientific value ---------------- */
