@@ -1,14 +1,19 @@
-"""CrO spin-state DECISION TABLE: DFT functionals disagree (1.9 eV spread, B3LYP flips the
-ground state); a single multireference value (CASCI / QSCI in a fixed active space) breaks the tie.
+"""CrO spin-state table (CASCI/QSCI quintet ground = experiment) — DFT SIGN-FLIP CLAIM WITHDRAWN.
 
-gap = E(triplet) - E(quintet)  [eV].  gap>0  => quintet (5-Pi) is the ground state.
-Gas-phase CrO ground term is experimentally X 5-Pi (quintet), so a positive gap agrees with
-experiment and any functional giving gap<0 (here B3LYP) predicts the WRONG ground state.
+*** CORRECTION / WITHDRAWN ***: the earlier headline here — "DFT spans 1.9 eV and B3LYP flips the ground
+state to the wrong triplet" — was an SCF-CONVERGENCE ARTIFACT. The committed B3LYP gap of -0.076 eV came
+from a single default (minao) SCF guess that under-converged the CrO quintet by ~0.9 eV. With the
+variationally-LOWEST SCF solution (multi-guess; see src/dft_baseline.py and the corrected
+dft_functional_spread_evidence.json), B3LYP gives +0.835 eV and EVERY functional tested gives the CORRECT
+quintet sign; the real functional spread is small. B3LYP does NOT flip CrO's ground state. This DFT
+decision-value claim is withdrawn everywhere (paper, README, value_case). What survives, and what the value
+case now rests on, is the CCSD(T) non-variational collapse under strong correlation (cro_dissociation.py) —
+independent of functional, SCF guess, and active space.
 
-HONEST SCOPE: CAS(10,10)/def2-SVP is a fixed, modest active space; the CASCI/QSCI number is
-'the single value DFT functionals scatter around', NOT a benchmark-quality experimental gap.
-The defensible claim: DFT spans 1.9 eV and even flips the ordering; the multireference treatment
-gives ONE consistent answer, and that answer agrees with the experimental quintet ground term.
+--- original description (context for the withdrawn claim) ---
+gap = E(triplet) - E(quintet)  [eV].  gap>0  => quintet (5-Pi) is the ground state (CASCI/QSCI, correct).
+Gas-phase CrO ground term is experimentally X 5-Pi (quintet). CASCI/QSCI give the correct quintet sign;
+the CASCI/QSCI accuracy vs the in-CAS reference is the surviving, valid part of this script.
 """
 import os, json, numpy as np
 from pyscf import gto, scf, mcscf, ao2mo
@@ -92,14 +97,16 @@ out={"system":"CrO  quintet (5-Pi) vs triplet, R=1.621 A, CAS(10,10)=20q",
      "wrong_functionals":[f for f,g in dft.items() if g<0],
      "casci_gap_eV":round(gap_casci,3),"qsci_gap_eV":round(gap_qsci,3),
      "decision_table":table,
-     "key_finding":f"DFT functionals span {max(dft.values())-min(dft.values()):.2f} eV and B3LYP flips the "
-                   f"ground state to triplet; CASCI/QSCI give one consistent quintet ground state, agreeing "
-                   f"with the experimental X 5-Pi term. A B3LYP-only screen would carry the wrong spin ground state.",
+     "key_finding":f"CASCI/QSCI give the quintet (X 5-Pi) ground state, agreeing with experiment. With "
+                   f"variationally-lowest SCF, DFT functionals span {max(dft.values())-min(dft.values()):.2f} eV "
+                   f"and ALL give the correct quintet sign ({int(sum(1 for g in dft.values() if g<0))} wrong-sign). "
+                   f"NOTE: an earlier version reported a B3LYP sign-flip / 1.9 eV spread; that was an SCF-under-"
+                   f"convergence artifact (default guess), now corrected -- see src/dft_baseline.py.",
      "honest_caveats":[
-        "CAS(10,10)/def2-SVP is a fixed modest active space; the CASCI/QSCI gap is the single value DFT scatters around, not a benchmark-quality experimental gap.",
+        "CAS(10,10)/def2-SVP is a fixed modest active space; the CASCI/QSCI gap is not a benchmark-quality experimental gap.",
         "Each spin state uses CASCI on its own ROHF orbitals (standard), not state-averaged CASSCF.",
-        "The robust, defensible claim is the SIGN/ordering agreement with experiment and the 1.9 eV DFT spread, not the precise gap magnitude."]}
+        "The 'B3LYP flips the sign / 1.9 eV spread' decision-value claim is WITHDRAWN (SCF artifact). The surviving valid content here is the CASCI/QSCI quintet sign agreeing with experiment; the value case rests on CCSD(T) non-variational collapse (cro_dissociation.py), not DFT."]}
 json.dump(out,open(os.path.join(_RES,"cro_spin_gap_evidence.json"),"w"),indent=2)
-print(f"\nDFT spread={out['dft_spread_eV']} eV; B3LYP gap={dft['B3LYP']} eV (WRONG sign).")
+print(f"\nDFT spread={out['dft_spread_eV']} eV (lowest-SCF); B3LYP gap={dft['B3LYP']} eV (correct quintet sign); wrong-sign functionals={out['n_functionals_wrong_sign']}.")
 print(f"CASCI gap={gap_casci:+.3f} eV -> {gs(gap_casci)};  QSCI gap={gap_qsci:+.3f} eV -> {gs(gap_qsci)}")
 print("saved results/cro_spin_gap_evidence.json")

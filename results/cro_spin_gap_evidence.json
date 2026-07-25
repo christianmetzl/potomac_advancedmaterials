@@ -2,11 +2,9 @@
   "system": "CrO  quintet (5-Pi) vs triplet, R=1.621 A, CAS(10,10)=20q",
   "gap_definition": "E(triplet) - E(quintet) [eV]; gap>0 => quintet ground (agrees with experiment X 5-Pi)",
   "experimental_ground_term": "X 5-Pi (quintet) [gas-phase CrO]",
-  "dft_spread_eV": 1.913,
-  "n_functionals_wrong_sign": 1,
-  "wrong_functionals": [
-    "B3LYP"
-  ],
+  "dft_spread_eV": 0.278,
+  "n_functionals_wrong_sign": 0,
+  "wrong_functionals": [],
   "casci_gap_eV": 1.89,
   "qsci_gap_eV": 1.893,
   "decision_table": [
@@ -30,19 +28,19 @@
     },
     {
       "method": "B3LYP",
-      "gap_eV": -0.076,
-      "predicted_GS": "triplet",
-      "correct": false
+      "gap_eV": 0.835,
+      "predicted_GS": "quintet (5-Pi)",
+      "correct": true
     },
     {
       "method": "PBE0",
-      "gap_eV": 1.837,
+      "gap_eV": 1.095,
       "predicted_GS": "quintet (5-Pi)",
       "correct": true
     },
     {
       "method": "TPSSh",
-      "gap_eV": 1.089,
+      "gap_eV": 1.113,
       "predicted_GS": "quintet (5-Pi)",
       "correct": true
     },
@@ -59,10 +57,10 @@
       "correct": true
     }
   ],
-  "key_finding": "DFT functionals span 1.91 eV and B3LYP flips the ground state to triplet; CASCI/QSCI give one consistent quintet ground state, agreeing with the experimental X 5-Pi term. A B3LYP-only screen would carry the wrong spin ground state.",
+  "key_finding": "CASCI/QSCI give the quintet (X 5-Pi) ground state, agreeing with experiment. With variationally-lowest SCF, DFT functionals span 0.28 eV and ALL give the correct quintet sign (0 wrong-sign). NOTE: an earlier version reported a B3LYP sign-flip / 1.9 eV spread; that was an SCF-under-convergence artifact (default guess), now corrected -- see src/dft_baseline.py.",
   "honest_caveats": [
-    "CAS(10,10)/def2-SVP is a fixed modest active space; the CASCI/QSCI gap is the single value DFT scatters around, not a benchmark-quality experimental gap.",
+    "CAS(10,10)/def2-SVP is a fixed modest active space; the CASCI/QSCI gap is not a benchmark-quality experimental gap.",
     "Each spin state uses CASCI on its own ROHF orbitals (standard), not state-averaged CASSCF.",
-    "The robust, defensible claim is the SIGN/ordering agreement with experiment and the 1.9 eV DFT spread, not the precise gap magnitude."
+    "The 'B3LYP flips the sign / 1.9 eV spread' decision-value claim is WITHDRAWN (SCF artifact). The surviving valid content here is the CASCI/QSCI quintet sign agreeing with experiment; the value case rests on CCSD(T) non-variational collapse (cro_dissociation.py), not DFT."
   ]
 }

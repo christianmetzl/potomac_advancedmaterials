@@ -1,6 +1,6 @@
 {
   "title": "DFT functional-dependence: spin-state splitting of open-shell TM oxides",
-  "note": "Gap = E(low-spin) - E(high-spin), eV. Spread across functionals = functional-choice uncertainty, the error a single quantum/multireference number removes.",
+  "note": "Gap = E(low-spin) - E(high-spin), eV, from the VARIATIONALLY-LOWEST SCF solution per state (multi-guess). CORRECTION: an earlier version used a single default SCF guess, which under-converged the CrO B3LYP quintet and spuriously reported a sign flip / ~1.9 eV spread; with the lowest solution all functionals give the correct sign. Residual spread across functionals = uncertainty, the error a single quantum/multireference number removes.",
   "functionals": [
     "PBE",
     "BP86",
@@ -16,11 +16,11 @@
         "PBE": 0.963,
         "BP86": 0.926,
         "TPSS": 1.018,
-        "B3LYP": -0.076,
-        "PBE0": 1.837,
-        "TPSSh": 1.089
+        "B3LYP": 0.835,
+        "PBE0": 1.095,
+        "TPSSh": 1.113
       },
-      "spread_eV": 1.913,
+      "spread_eV": 0.278,
       "n_functionals": 6
     },
     "NiO": {

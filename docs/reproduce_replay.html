@@ -139,7 +139,7 @@
   <div class="sec" style="color:var(--pass)">Core findings — accuracy &amp; trust</div>
   <div class="grid">
     <div class="card"><span class="k g">0.038 / 0.197</span><span class="lab">Open-shell multireference oxides (20q)</span><span class="d">CrO ⁵Π and NiO ³Σ⁻ to chemical accuracy vs exact CASCI — the regime where DFT and single-reference CCSD(T) both fail.</span><span class="src">transition_metal_qsci_evidence.json</span></div>
-    <div class="card"><span class="k g">quintet ✓</span><span class="lab">CrO spin-state sign (CAS-robust)</span><span class="d">B3LYP alone gives the <em>wrong</em> (triplet) ground state; CASCI/QSCI give the quintet X⁵Π matching experiment — and the sign holds across CAS(10,10)/12/14.</span><span class="src">cro_spin_gap · candidate_decision_larger_cas.json</span></div>
+    <div class="card"><span class="k g">self-certifying</span><span class="lab">EN-PT2 error certificate</span><span class="d">QSCI is variational (a rigorous upper bound) and brackets its own error to FCI — so unlike CCSD(T) it <em>never</em> returns a confidently-wrong answer: it is certified-converged, or it tells you it isn't.</span><span class="src">encoder/selci_pt2.py</span></div>
     <div class="card"><span class="k a">217 mHa</span><span class="lab">Trust under strong correlation</span><span class="d">At dissociation CCSD(T) collapses non-variationally 217 mHa <em>below</em> exact FCI (confidently wrong); selected-CI/QSCI stays a variational bound, chem-acc throughout.</span><span class="src">selected_ci_strongcorr_evidence.json</span></div>
     <div class="card"><span class="k c">26 / 26</span><span class="lab">One-command reproducibility</span><span class="d">17 headline scripts re-executed + 9 evidence audits — pre-registered, git-timestamped, cost-audited. Replay below.</span><span class="src">docs/reproduce_transcript.txt</span></div>
   </div>
@@ -150,7 +150,7 @@
       <li>No quantum-<em>advantage</em> claim: at ≤40q classical FCI/DMRG still solve these instances — we show correctness, favourable scaling, and executed hardware, not a head-to-head speed win.</li>
       <li>Large-scale QSCI beyond 20q uses a determinant-space <em>proxy</em>, validated against real circuit-sampled shots at 12/16/20q.</li>
       <li>The 40q absolute result is <em>at</em> the chemical-accuracy edge, not comfortably inside; the full 40q tensornet-mps growth run remains owed.</li>
-      <li>A two-candidate CrO-vs-NiO <em>ranking</em> was tested and <em>withdrawn</em> — it did not survive a larger active space (the single-molecule sign above does).</li>
+      <li>Two DFT-based decision claims were tested and <em>withdrawn</em> (reported, not buried): a CrO-vs-NiO <em>ranking</em> (inverted at larger active space) and a "B3LYP flips CrO's spin sign" claim (an SCF-convergence artifact — proper SCF gives the correct sign). The value case rests only on the CCSD(T) non-variational collapse, which is independent of functional/SCF/active-space.</li>
     </ul>
   </div>
 

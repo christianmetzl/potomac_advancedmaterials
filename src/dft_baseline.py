@@ -28,18 +28,33 @@ SYSTEMS = {
 
 
 def uks_energy(atom, basis, mult, xc):
+    """Variationally-LOWEST converged UKS energy across several SCF initial guesses.
+    Open-shell TM-oxide spin states are SCF-initial-guess sensitive: a single default guess can land on a
+    poor local solution (e.g. the earlier CrO B3LYP quintet was ~0.9 eV too high with the minao default,
+    spuriously flipping the gap sign). Taking the lowest of {minao, atom, huckel} per state removes that
+    artifact and gives the physical B3LYP number."""
     spin = mult - 1                                   # number of unpaired electrons (2S)
-    mol = gto.M(atom=atom, basis=basis, spin=spin, charge=0, verbose=0)
-    mf = dft.UKS(mol); mf.xc = xc
-    mf = mf.density_fit()                             # RI for speed/robustness
-    mf.conv_tol = 1e-8; mf.max_cycle = 200
-    e = mf.kernel()
-    return float(e) if mf.converged else None
+    best = None
+    for guess in ("minao", "atom", "huckel"):
+        try:
+            mol = gto.M(atom=atom, basis=basis, spin=spin, charge=0, verbose=0)
+            mf = dft.UKS(mol); mf.xc = xc
+            mf = mf.density_fit()                     # RI for speed (sub-mHa on the gap)
+            mf.conv_tol = 1e-8; mf.max_cycle = 200; mf.init_guess = guess
+            e = mf.kernel()
+            if mf.converged and (best is None or e < best):
+                best = float(e)
+        except Exception:
+            pass
+    return best                                       # lowest converged energy, or None
 
 
 def main():
     out = {"title": "DFT functional-dependence: spin-state splitting of open-shell TM oxides",
-           "note": "Gap = E(low-spin) - E(high-spin), eV. Spread across functionals = functional-choice "
+           "note": "Gap = E(low-spin) - E(high-spin), eV, from the VARIATIONALLY-LOWEST SCF solution per state "
+                   "(multi-guess). CORRECTION: an earlier version used a single default SCF guess, which under-"
+                   "converged the CrO B3LYP quintet and spuriously reported a sign flip / ~1.9 eV spread; with "
+                   "the lowest solution all functionals give the correct sign. Residual spread across functionals = "
                    "uncertainty, the error a single quantum/multireference number removes.",
            "functionals": FUNCTIONALS, "systems": {}}
     for name, spec in SYSTEMS.items():

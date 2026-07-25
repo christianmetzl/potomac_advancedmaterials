@@ -41,7 +41,6 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | Noise robustness, 20q | ≤3.3 mHa at 30% corrupted measurements | graceful degradation |
 | Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.13 / 0.13–0.23 across PySCF versions; version-sensitive, `sno_version_sensitivity.json`) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
 | **CrO ⁵Π / NiO ³Σ⁻ (20q)** | **0.038 / 0.197 mHa** | open-shell multireference oxides vs CASCI (`transition_metal_oxide_qsci.py`) |
-| **CrO spin-state decision (sign, CAS-robust)** | DFT spans 1.9 eV and **B3LYP alone gives the wrong sign** (triplet); CASCI/QSCI give a **quintet (⁵Π) ground = experimental X⁵Π**, and the sign holds across CAS(10,10)/12/14 (gap +1.89→+0.85→+0.88 eV — magnitude drops but stays positive) | the robust decision-value result: which spin state, not the gap size (`cro_spin_gap.py` at CAS(10,10); CAS(12/14) points from `candidate_decision_larger_cas.py`) |
 | **Candidate ranking (CrO vs NiO) — tested, NOT robust, withdrawn** | at CAS(10,10) the multireference ranks CrO>NiO, but this **inverts to NiO>CrO at CAS(12,12)/CAS(14,14)** (CrO's gap was unconverged); we therefore **withdraw the two-candidate ranking claim** and rely only on the CAS-robust single-molecule sign above | honesty over headline — the ranking did not survive an active-space robustness check (`candidate_decision_larger_cas.py`) |
 | **CrO dissociation trust (real oxide)** | in-active-space CCSD(T) erratic / non-convergent (to ~140 mHa vs CASCI); QSCI variational ≤2.8 mHa | the strong-correlation trust story on a real Cr–O bond, not toy H₁₀ (`cro_dissociation.py`) |
 | EN-PT2 error certificate | E_var (rigorous upper bound) + E_var+PT2 (estimate, converges to FCI from above); equilibrium extrapolation → FCI +4.1 mHa (R²=0.999) | certifies convergence, CIPSI standard (`encoder/selci_pt2.py`) |
@@ -53,20 +52,25 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | **Blind one-shot holdout (VO)** | pre-registered predictions **held**: QSCI 0.167/0.133 mHa; quartet ground = experimental X⁴Σ⁻ | frozen code (SHA pre-committed), untouched molecule, single run reported as-is; `src/blind_holdout_vo.py` |
 | **QSCI under real CUDA-Q noise channel** | H₄ holds chemical accuracy to **5% per-gate depolarizing** (density-matrix-cpu) | physical noise channel via the CUDA-Q SDK — hardware-representative QPU stand-in; `src/cudaq_noise.py` |
 
-### Decision value — where DFT gets a spin state backwards
+### Decision value — not paying for a confidently-wrong classical prediction
 
-The robust, CAS-checked decision-value result is a **single-molecule sign error**: on CrO, **B3LYP assigns the
-wrong (triplet) ground state** (gap −0.08 eV) while CASCI/QSCI — and 5 of the other 6 functionals — give the
-**quintet (⁵Π) ground that matches the experimental X⁵Π term**, and that sign holds across CAS(10,10)/12/14.
-A materials screen built on B3LYP would carry the wrong magnetic ground state for this candidate into
-synthesis; a quantum-accurate check catches it. The dollar framework for what that interception is worth:
-[`docs/value_case.md`](docs/value_case.md).
+The value case rests on a **textbook, unarguable** classical failure mode. For strongly-correlated
+metal-oxide chemistry the gold-standard **CCSD(T) collapses non-variationally** — it returns an energy
+*below* the exact answer, confidently, with **no internal error signal**. On a real Cr–O bond stretch its
+error grows to **~140 mHa and goes non-convergent**; on the Sn₂O₂ EUV motif under cleavage it grows
+**0.14→5.49 mHa (~40×)**. The variational, self-certifying selected-CI/QSCI selector stays within chemical
+accuracy throughout and carries its own EN-PT2 error certificate — so it **never returns a confidently-wrong
+answer** (it is either certified-converged or it tells you it is not). A screen that trusts CCSD(T) can commit
+months of synthesis to a wrong lead; the quantum-accurate check catches it at the pre-synthesis gate. The
+dollar framework: [`docs/value_case.md`](docs/value_case.md).
 
-> **Honesty note (robustness check).** We also tested a *two-candidate* version — ranking CrO vs NiO by
-> high-spin preference. At CAS(10,10) the multireference ranked CrO>NiO, but an active-space robustness check
-> (`candidate_decision_larger_cas.py`) shows that ranking **inverts to NiO>CrO at CAS(12,12) and CAS(14,14)**
-> — CrO's CAS(10,10) gap was unconverged. We therefore **withdraw the two-candidate ranking claim** and keep
-> only the CAS-robust single-molecule sign result above. The finding is reported rather than buried.
+> **Honesty note — two claims tested and withdrawn (we report, not bury).** (1) A two-candidate CrO-vs-NiO
+> *ranking* inverted at larger active space (`candidate_decision_larger_cas.py`, NiO>CrO by CAS(12,12)) and was
+> withdrawn. (2) A "B3LYP flips CrO's spin ground state / 1.9 eV functional spread" claim turned out to be an
+> **SCF-convergence artifact**: with the variationally-lowest SCF solution, B3LYP — and every functional tested —
+> gives the **correct** quintet sign (the committed −0.076 eV came from an under-converged default guess). Both
+> claims were removed. The value case above depends on **neither** — only on the CCSD(T) non-variational
+> collapse, which is independent of functional, SCF guess, and active space.
 
 ## Honest scope
 
