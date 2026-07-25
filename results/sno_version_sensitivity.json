@@ -1,0 +1,12 @@
+{
+  "title": "SnO / SnO2 QSCI-error version sensitivity — provenance for the stated observed range",
+  "why": "The QSCI-vs-FCI(CASCI) error on the Sn-oxide active spaces drifts across PySCF versions / runs (RHF/ECP numerics shift the 3rd decimal). This records the actual observations behind the 'observed range' quoted in the paper/README/ledger, so the range is traceable rather than asserted. The robust claim is the <=0.6 mHa assertion enforced by reproduce.py; the exact value is version-sensitive.",
+  "observations": [
+    {"env": "committed lock-file environment", "source": "results/materials_evidence.json", "SnO_err_mHa": 0.113, "SnO2_err_mHa": 0.225},
+    {"env": "container pyscf 2.14.0 (reproduce.py harness)", "source": "src/reproduce.py re-execution 2026-07-25", "SnO_err_mHa": 0.126, "SnO2_err_mHa": 0.224},
+    {"env": "container pyscf 2.14.0 (direct script run)", "source": "python src/sno_demo.py / sno2_demo.py 2026-07-25", "SnO_err_mHa": 0.111, "SnO2_err_mHa": 0.129}
+  ],
+  "observed_range_mHa": {"SnO": [0.11, 0.13], "SnO2": [0.13, 0.23]},
+  "robust_bound_mHa": 0.6,
+  "note": "All observations are within chemical accuracy (<=1.6 mHa) and within the reproduce.py <=0.6 assertion. The earlier '0.45 / 0.18' endpoints were not reproducible in any environment on hand and have been dropped in favor of the observed, traceable span."
+}

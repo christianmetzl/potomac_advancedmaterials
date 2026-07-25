@@ -3,7 +3,7 @@
 **Scaling a conditional Generative Quantum Eigensolver (GQE) for EUV photoresist discovery with NVIDIA CUDA-Q.**
 
 Team **EIGENNEXUS** — Global Industry Challenge (GIC) 2026, *Advanced Materials* track (Mitsubishi Chemical Group & AIST).
-**Phase 1 winner · Phase 3 finalist.**
+**Shortlisted through Phases 1 and 2 · Phase 3 finalist.**
 
 [![Launch on qBraid](https://qbraid-static.s3.amazonaws.com/logos/Launch_on_qBraid_white.png)](https://account.qbraid.com/?gitHubUrl=https://github.com/christianmetzl/potomac_advancedmaterials.git)
 
@@ -39,7 +39,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | **Real trapped-ion QPU (AQT ibex-q1, decoded)** | device-sampled +20.4/+11.1 mHa; device-seeded QSCI → exact FCI | genuine 12q trapped-ion silicon (2,000 shots/job, decoded 2026-07-20); qir-sv sim tier +2.0 mHa PASS |
 | HamLib validation, 28/32/40q | exact | term counts match (27,735 / 47,489 / 116,577); coefficients agree to ~15 sig figs, differing only by a spectrum-invariant orbital-phase gauge |
 | Noise robustness, 20q | ≤3.3 mHa at 30% corrupted measurements | graceful degradation |
-| Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.45 / 0.18–0.23 across environments) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
+| Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.13 / 0.13–0.23 across PySCF versions; version-sensitive, `sno_version_sensitivity.json`) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
 | **CrO ⁵Π / NiO ³Σ⁻ (20q)** | **0.038 / 0.197 mHa** | open-shell multireference oxides vs CASCI (`transition_metal_oxide_qsci.py`) |
 | **CrO spin-state decision** | DFT spans 1.9 eV, B3LYP flips the sign; CASCI/QSCI **+1.89 eV quintet = experimental X⁵Π** | turns "DFT mis-ranks the candidate" into a worked decision (`cro_spin_gap.py`) |
 | **Candidate ranking-flip (CrO vs NiO)** | QSCI/CASCI rank **CrO > NiO** by high-spin preference (1.89 vs 1.66 eV) → **synthesize CrO**; **B3LYP inverts it** (picks NiO) via its CrO sign-error | a DFT-only screen advances the *wrong* candidate; the multireference selector is decision-robust (`candidate_decision.py`) |

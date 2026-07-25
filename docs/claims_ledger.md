@@ -19,7 +19,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
 | 3 | Measured QSCI 16q / 20q | 28.1 / 50.4 mHa | `src/encoder/measured_qsci.py` | `measured_qsci_evidence.json` | — | circuit-sampled |
 | 3b | measured-vs-proxy (16q/20q) | trained 26.6↔28.1 / 49.3↔50.4; **measured-random 24.0 / 46.7** (edges trained at low shot budget — coverage effect) | `measured_qsci.py` | `measured_qsci_evidence.json` | — | proxy validated vs circuit-sampled; measured-random disclosed |
 | 4 | CrO ⁵Π / NiO ³Σ⁻ 20q | 0.038 / 0.197 mHa | `src/transition_metal_oxide_qsci.py` | `transition_metal_qsci_evidence.json` | PASS | executed-CPU (CASCI ref) |
-| 5 | SnO / SnO₂ | chemical accuracy (≤0.6 asserted; SnO 0.11–0.45, SnO₂ 0.18–0.23 across runs/versions) | `src/sno_demo.py`, `src/sno2_demo.py` | `materials_evidence.json` | PASS (≤0.6 mHa) | executed-CPU; exact value PySCF-version sensitive |
+| 5 | SnO / SnO₂ | chemical accuracy (≤0.6 asserted; SnO 0.11–0.13, SnO₂ 0.13–0.23 across runs/versions) | `src/sno_demo.py`, `src/sno2_demo.py` | `materials_evidence.json` | PASS (≤0.6 mHa) | executed-CPU; exact value PySCF-version sensitive |
 | 6 | QSCI scaling 20q / 28q (+40q operational) | 0.57 / 1.21 mHa (3.8% / 0.15% of CI); 40q runs, converging through ~39 mHa (not chem-acc; GPU deliverable) | `src/qsci_vec.py` | `qsci_scaling_evidence.json` | — | proxy (perturbative selection) |
 | 7 | HamLib match 28/32/40q | exact term-count + one-norm (~1e-13) | `src/hamlib_validate.py` | `hamlib_validation_large.json` | PASS (28q) | executed-CPU |
 | 8 | Noise robustness 20q | ≤3.3 mHa @ 30% corrupt, 2×10⁶ shots | `src/noise_demo2.py` | `noise_evidence.json` | — | executed-CPU |
@@ -88,7 +88,7 @@ in the paper is asserted without a traceable, rerunnable source. Status legend:
   target-specific cost, not beating MP2.
 - Cross-chemistry transfer is **partial (4/6)** and fails on SnO.
 - Scaling is **exponential with a smaller base** (vanishing FCI fraction), **not polynomial**.
-- SnO's precise QSCI value is **PySCF-version sensitive** (0.11–0.45 mHa across runs); the claim is
+- SnO's precise QSCI value is **PySCF-version sensitive** (0.11–0.13 mHa across runs/versions; `sno_version_sensitivity.json`); the claim is
   chemical accuracy, which `reproduce.py` asserts robustly (≤0.6 mHa).
 - **40q absolute accuracy:** P1's PASS is against its frozen χ=400 reference; our own χ=800
   counter-audit puts the absolute gap at +2.19 mHa (> 1.6). Stated wherever the flagship is claimed;
