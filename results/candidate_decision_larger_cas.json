@@ -1,0 +1,74 @@
+{
+  "run": "candidate_decision_larger_cas",
+  "question": "Does the CrO>NiO multireference ranking (and the high-spin-ground sign) survive a larger active space?",
+  "method": "per-state ROHF -> CASCI, def2-SVP; CAS grown 10->12->14 orbitals (+1 alpha,+1 beta per step, spin fixed).",
+  "per_cas": [
+    {
+      "ncas": 10,
+      "qubits": 20,
+      "CrO_gap_eV": 1.89,
+      "CrO_nelecas_hi": [
+        7,
+        3
+      ],
+      "CrO_scf_converged": true,
+      "NiO_gap_eV": 1.657,
+      "NiO_nelecas_hi": [
+        6,
+        4
+      ],
+      "NiO_scf_converged": true,
+      "ranking": "CrO>NiO",
+      "both_high_spin_ground": true,
+      "pick_to_synthesize": "CrO"
+    },
+    {
+      "ncas": 12,
+      "qubits": 24,
+      "CrO_gap_eV": 0.851,
+      "CrO_nelecas_hi": [
+        8,
+        4
+      ],
+      "CrO_scf_converged": true,
+      "NiO_gap_eV": 1.602,
+      "NiO_nelecas_hi": [
+        7,
+        5
+      ],
+      "NiO_scf_converged": true,
+      "ranking": "NiO>CrO",
+      "both_high_spin_ground": true,
+      "pick_to_synthesize": "NiO"
+    },
+    {
+      "ncas": 14,
+      "qubits": 28,
+      "CrO_gap_eV": 0.878,
+      "CrO_nelecas_hi": [
+        9,
+        5
+      ],
+      "CrO_scf_converged": true,
+      "NiO_gap_eV": 1.268,
+      "NiO_nelecas_hi": [
+        8,
+        6
+      ],
+      "NiO_scf_converged": true,
+      "ranking": "NiO>CrO",
+      "both_high_spin_ground": true,
+      "pick_to_synthesize": "NiO"
+    }
+  ],
+  "ranking_holds_all_cas": false,
+  "high_spin_ground_sign_holds_all_cas": true,
+  "verdict": "CrO>NiO ranking DOES NOT hold and the high-spin-ground sign holds across CAS(10,10)/12,12/14,14 (20/24/28q). The decision-level claim (which candidate to synthesize, and that B3LYP inverts it) is NOT robust \u2014 reported as-measured.",
+  "honest_caveats": [
+    "CASCI on per-state ROHF orbitals (not state-averaged CASSCF); def2-SVP fixed basis.",
+    "Growing the CAS adds frontier orbitals around the Fermi level; not an orbital-optimized (CASSCF) space.",
+    "The claim tested is the ranking SIGN / which-candidate, not a benchmark-quality gap magnitude.",
+    "gap magnitudes shift with CAS size (expected); the decision (CrO>NiO, both high-spin ground) is the invariant checked."
+  ],
+  "wall_s": 837.5
+}
