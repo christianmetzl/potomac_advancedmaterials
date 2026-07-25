@@ -1,0 +1,24 @@
+{
+  "protocol_id": "E9",
+  "title": "Why the QSCI seed saturates at ~110 determinants — is it shots, size, or CIRCUIT DEPTH?",
+  "frozen_before_run": true,
+  "frozen_utc": "2026-07-25",
+  "motivation": "The 40q tensornet-mps path stalled because MPS sampling yielded only 108 distinct determinants from 200,000 shots (gpu_run1_h20_mps_CHECKPOINT_evidence.json), while the flagship's classical growth needed ~450,000. Committed evidence shows the SAME ~110-determinant yield at 16q and 20q from 160 circuits x 3,000 shots = 480,000 shots (measured_qsci_evidence.json). A yield that is flat across 16q/20q/40q and across 200k-480k shots is not a shot-count saturation — it points at a structural cap.",
+  "hypothesis": "The distinct-determinant yield is capped by CIRCUIT DEPTH, not by shot count or qubit count. A circuit applying L excitations to the HF reference can reach at most ~2^L determinants; at the pipeline's L=8 that is 256, consistent with the ~110 observed. If so, the 40q seed problem is a circuit-design problem and is fixed by depth, not by GPU time.",
+  "predictions_frozen_before_running": {
+    "P9a_shot_insensitivity": "At fixed depth L=8, increasing shots 10x increases distinct determinants by LESS THAN 2x.",
+    "P9b_depth_sensitivity": "Increasing depth L from 8 to 16 increases distinct determinants by AT LEAST 5x at matched total shots.",
+    "P9c_size_insensitivity": "At fixed depth and shots, the distinct-determinant counts at 16q and 20q agree within a factor of 2.",
+    "P9d_ceiling": "Observed distinct determinants stay BELOW the combinatorial ceiling 2^L at every depth tested."
+  },
+  "method": "H8 (16q) and H10 (20q), STO-6G, Jordan-Wigner. UCC single/double excitation pool (src/gqe_scaling.build_pool). Circuits are sequences of L excitations applied to HF and sampled with qml.sample on lightning.qubit (the same measured-sampling code path as encoder/measured_qsci.py). Sequences are drawn at RANDOM from the valid pool rather than from a trained generator, to isolate depth as the variable; the cap under test is a property of the circuit ansatz, not of generator quality. Determinants are number-conserving-filtered. Grid: L in {4, 8, 16, 24} x shots-per-circuit in {2000, 20000} x 20 circuits.",
+  "primary_metric": "number of DISTINCT number-conserving determinants pooled across the circuit ensemble",
+  "honesty_clause": "Outcome reported exactly as measured, pass or fail, with the same discipline as E2-E6. A refutation (e.g. depth does NOT lift the yield) is a publishable negative and would mean the 40q seed problem is something else.",
+  "scope_and_limits_stated_in_advance": [
+    "This diagnoses the mechanism at 16q/20q where exact simulation is possible; it does NOT by itself demonstrate a fixed 40q run.",
+    "Random sequences isolate depth; a trained generator may sample a different region, and deeper circuits cost more to execute and are harder on real hardware (depth vs noise is a real trade-off not measured here).",
+    "More determinants is a necessary, not sufficient, condition for a better QSCI energy.",
+    "CPU/statevector sampling; no GPU or QPU involved."
+  ],
+  "note": "Pre-registration written and committed BEFORE the experiment was run."
+}
