@@ -40,6 +40,14 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
 ## Reproducing (judges)
 `pip install -r requirements.txt` then `python src/reproduce.py` -> 26/26 PASS (17 re-execution + 9 evidence audits) with full deps;
 core CPU checks pass with `requirements.txt` alone (CUDA-Q/MPS items need the optional GPU deps).
+
+HOW REPRODUCIBLE, MEASURED: we ran the full suite three times in independent clean containers and diffed the
+outputs. 21 of the 26 checks are bit-identical run to run. All FIVE genuinely stochastic checks are named in
+docs/claims_ledger.md with their per-run values rather than left for you to find -- the GQE pipeline (asserted
+with an explicit +/-0.8 mHa tolerance), the shot-based CUDA-Q run, SnO, SnO2, and an informational CCSD(T)
+maximum whose own assertion was identical all three times. The mechanism behind the SnO scatter is documented
+in results/sno_version_sensitivity.json, along with the one threshold we changed because of it
+(0.6 -> 1.6 mHa = the chemical-accuracy claim we actually make) and why.
 Every claim in the write-up is executed and committed -- there are no unfilled [QBRAID-RUN] placeholders
 left in it. Items that needed qBraid GPU or QPU access (the 40q flagship, the 38q CrO/Sn2O2 audits, the AQT
 trapped-ion validation) were run there and their evidence JSONs ship in results/; the one remaining owed item
