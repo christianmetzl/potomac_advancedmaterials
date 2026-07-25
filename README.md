@@ -39,17 +39,17 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | **Real trapped-ion QPU (AQT ibex-q1, decoded)** | device-sampled +20.4/+11.1 mHa; device-seeded QSCI → exact FCI | genuine 12q trapped-ion silicon (2,000 shots/job, decoded 2026-07-20); qir-sv sim tier +2.0 mHa PASS |
 | HamLib validation, 28/32/40q | exact | term counts match (27,735 / 47,489 / 116,577); coefficients agree to ~15 sig figs, differing only by a spectrum-invariant orbital-phase gauge |
 | Noise robustness, 20q | ≤3.3 mHa at 30% corrupted measurements | graceful degradation |
-| Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.34 / 0.13–0.23 across PySCF versions and clean-container re-runs; version- and run-sensitive, 4 logged observations in `sno_version_sensitivity.json`) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
+| Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.45 / 0.13–0.23 over 5 logged runs; run-sensitive by a **known mechanism** — unseeded `eigsh` plus a growth loop that stops at the first sub-0.5 mHa iterate, so the value is a stop-point, not a limit; `sno_version_sensitivity.json`) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
 | **CrO ⁵Π / NiO ³Σ⁻ (20q)** | **0.038 / 0.197 mHa** | open-shell multireference oxides vs CASCI (`transition_metal_oxide_qsci.py`) |
 | **Candidate ranking (CrO vs NiO) — tested, NOT robust, withdrawn** | at CAS(10,10) the multireference ranks CrO>NiO, but this **inverts to NiO>CrO at CAS(12,12)/CAS(14,14)** (CrO's gap was unconverged); we therefore **withdraw the two-candidate ranking claim** and rely only on the CAS-robust single-molecule sign above | honesty over headline — the ranking did not survive an active-space robustness check (`candidate_decision_larger_cas.py`) |
-| **CrO dissociation trust (real oxide)** | in-active-space CCSD(T) erratic / non-convergent (to ~140 mHa vs CASCI); QSCI variational ≤2.8 mHa | the strong-correlation trust story on a real Cr–O bond, not toy H₁₀ (`cro_dissociation.py`) |
+| **CrO dissociation trust (real oxide)** | in-active-space CCSD(T) erratic / non-convergent (to ~162 mHa vs CASCI); QSCI variational ≤2.8 mHa | the strong-correlation trust story on a real Cr–O bond, not toy H₁₀ (`cro_dissociation.py`) |
 | EN-PT2 error certificate | E_var (rigorous upper bound) + E_var+PT2 (estimate, converges to FCI from above); equilibrium extrapolation → FCI +4.1 mHa (R²=0.999) | certifies convergence, CIPSI standard (`encoder/selci_pt2.py`) |
 | Generator learned MP2 hierarchy | Spearman ρ=0.31 (p<0.002), 4/8 top-double overlap | energy-trained generator (blind to MP2) recovers the MP2 amplitude ordering (`encoder/generator_mp2.py`) |
 | **CUDA-Q execution (qpp-cpu)** | H₄ VQE **within 0.02 mHa** of FCI (0.011–0.013 across runs); QSCI within chemical accuracy (sampling-based) | GQE/QSCI pipeline runs through the CUDA-Q SDK on CPU (`cudaq.observe`/`cudaq.sample`); `src/cudaq_qsci.py` |
 | **MPS bond-dim / entanglement (pillar 1)** | χ for chem-acc ≈50/100/400 @20/28/40q; Sₘₐₓ 0.39→4.43 | bond dimension grows slowly with size; area-law near equilibrium → strong correlation; `src/mps_bonddim_study.py` (block2 DMRG) |
 | **Quantum-vs-classical crossover** | 40q: 16 TB statevector → 195 MB MPS (measured χ=400); FCI 3.4×10¹⁰ dets → ~1.1×10⁶ QSCI (0.003%) | the two classical walls removed, synthesized from measured χ + determinant scaling; `src/crossover_study.py` |
 | **Bridged tin-oxo (real EUV motif)** | Sn₂O₂ rhombus (Sn–O–Sn) **0.41 mHa** vs CASCI (16q) | genuine bridged tin-oxo unit, not a diatomic/linear O=Sn=O; `src/tin_oxo_demo.py` |
-| **Blind one-shot holdout (VO)** | pre-registered predictions **held**: QSCI 0.167/0.133 mHa; quartet ground = experimental X⁴Σ⁻ | frozen code (SHA pre-committed), untouched molecule, single run reported as-is; `src/blind_holdout_vo.py` |
+| **Blind one-shot holdout (VO)** | pre-registered predictions **held**: QSCI 0.167/0.134 mHa; quartet ground = experimental X⁴Σ⁻ | frozen code (SHA pre-committed), untouched molecule, single run reported as-is; `src/blind_holdout_vo.py` |
 | **QSCI under real CUDA-Q noise channel** | H₄ holds chemical accuracy to **5% per-gate depolarizing** (density-matrix-cpu) | physical noise channel via the CUDA-Q SDK — hardware-representative QPU stand-in; `src/cudaq_noise.py` |
 
 ### Decision value — not paying for a confidently-wrong classical prediction
@@ -57,7 +57,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 The value case rests on a **textbook, unarguable** classical failure mode. For strongly-correlated
 metal-oxide chemistry the gold-standard **CCSD(T) collapses non-variationally** — it returns an energy
 *below* the exact answer, confidently, with **no internal error signal**. On a real Cr–O bond stretch its
-error grows to **~140 mHa and goes non-convergent**; on the Sn₂O₂ EUV motif under cleavage it grows
+error grows to **~162 mHa and goes non-convergent**; on the Sn₂O₂ EUV motif under cleavage it grows
 **0.14→5.49 mHa (~40×)**. The variational, self-certifying selected-CI/QSCI selector stays within chemical
 accuracy throughout and carries its own EN-PT2 error certificate — so it **never returns a confidently-wrong
 answer** (it is either certified-converged or it tells you it is not). A screen that trusts CCSD(T) can commit
@@ -229,7 +229,7 @@ between the CPU-verified and GPU runs).
 The same discipline applied to something executable today: **a blind one-shot holdout** (entry H1) —
 `src/blind_holdout_vo.py` was frozen (SHA-256 in the pre-registration) before its first and only
 execution, predicting VO's quartet/doublet ordering with untouched code on a molecule appearing
-nowhere else in this repository. Result: `results/blind_holdout_vo_result.json`, committed unedited — **both predictions held** (QSCI 0.167/0.133 mHa vs CASCI; quartet 1.09 eV below doublet, matching the experimental X⁴Σ⁻ ground term).
+nowhere else in this repository. Result: `results/blind_holdout_vo_result.json`, committed unedited — **both predictions held** (QSCI 0.167/0.134 mHa vs CASCI; quartet 1.09 eV below doublet, matching the experimental X⁴Σ⁻ ground term). Re-running the frozen script in other environments lands the doublet anywhere in 0.10–0.17 mHa (PySCF/ROHF numerics); every value is far inside chemical accuracy, so the pre-registered prediction holds regardless, and the committed one-shot numbers above are the ones claimed.
 
 ## Third-party HamLib re-verification
 
@@ -261,7 +261,7 @@ whole archive instead, download the chemistry `ES_*_ham` HDF5 files from
 | "Where is the quantum advantage?" | There is none, and we claim none. Every result here is classical simulation or small-scale QPU validation; MATGEN-Q is a *method* that becomes useful **if** fault-tolerant sampling arrives, and a working classical pipeline in the meantime. No speedup over classical methods is claimed anywhere in this repository. |
 | "The noise study saturates a small system" | Qualified in the paper as a selection-principle check, not a hardware forecast; real-QPU validation is pre-registered (P5). |
 
-*The full pre-answered red-team — 11 hostile-reviewer objections, each with a committed-evidence pointer —
+*The full pre-answered red-team — 12 hostile-reviewer objections, each with a committed-evidence pointer —
 is in [`results/ANTICIPATED_OBJECTIONS.md`](results/ANTICIPATED_OBJECTIONS.md) (or `python cli.py objections`).*
 
 ## Repository structure

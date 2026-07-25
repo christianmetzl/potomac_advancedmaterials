@@ -79,7 +79,7 @@ s.addText("On strongly-correlated bonds, CCSD(T) collapses non-variationally: it
   { x: 0.75, y: 1.9, w: 11.8, h: 0.85, fontFace: BF, color: TEXT, fontSize: 16, lineSpacing: 24, margin: 0 });
 const fails = [
   ["217 mHa", "below the exact energy", "H₁₀ stretched to dissociation — an unphysical, confidently-wrong number.", "strong_correlation.py"],
-  ["~140 mHa", "and non-convergent", "A real Cr–O bond stretch, in the identical active space as the exact reference.", "cro_dissociation.py"],
+  ["~162 mHa", "and non-convergent", "A real Cr–O bond stretch, in the identical active space as the exact reference.", "cro_dissociation.py"],
   ["40× error growth", "0.14 → 5.49 mHa", "The real Sn₂O₂ EUV motif under bridge cleavage — QSCI stays ≤0.48 mHa.", "sn2o2_dissociation.py"],
 ];
 let fx = 0.75;
@@ -115,7 +115,7 @@ card(s, 6.8, 3.95, 5.75, 2.35, PANEL);
 s.addText("Where QSCI stands", { x: 7.1, y: 4.15, w: 5.15, h: 0.4, fontFace: HF, color: GREEN, fontSize: 18, bold: true, margin: 0 });
 s.addText("A rigorous bound, with its own error certificate — and on the real oxides it stays within chemical accuracy throughout (≤2.8 mHa on CrO, ≤0.48 mHa on Sn₂O₂).",
   { x: 7.1, y: 4.62, w: 5.15, h: 1.4, fontFace: BF, color: MUTED, fontSize: 13.5, lineSpacing: 20, margin: 0 });
-srcline(s, "EN-PT2 certificate: encoder/selci_pt2.py — equilibrium extrapolation reproduces FCI to ~4 mHa, R² = 0.999.");
+srcline(s, "EN-PT2 certificate: encoder/selci_pt2.py — extrapolation hits FCI to ~4 mHa at equilibrium, ~54 mHa stretched (disclosed); the bracket is rigorous either way.");
 
 /* ---------------- 5 · three contributions ---------------- */
 s = slide();
@@ -126,7 +126,7 @@ const contrib = [
    ["A classical GPT-style transformer writes the quantum circuits — it is not a quantum model.",
     "Trained on 8q+12q only, deployed zero-shot to 56 qubits: 43/48 paired wins, p<0.0001 (8 seeds).",
     "Trained on energy alone, it recovers the MP2 amplitude hierarchy it was never shown (ρ=0.31)."]],
-  [CYAN, "QUANTUM", "Executed at scale, on real hardware",
+  [CYAN, "QUANTUM", "Executed at scale — and on real devices",
    ["40 qubits, chemically accurate vs its frozen reference (+1.226 mHa, pre-registered pass).",
     "20q / 28q on NVIDIA GPU; trapped-ion QPU silicon decoded and driving the same solver.",
     "Two 38q runs that CORRECT their classical DMRG reference — verified at three bond dimensions."]],
@@ -216,7 +216,7 @@ try {
 } catch (e) { /* optional */ }
 s.addText("A cross-validated benchmark other groups can cite:", { x: 7.75, y: 5.0, w: 4.8, h: 0.3, fontFace: BF, color: MUTED, fontSize: 11.5, margin: 0 });
 s.addText("FCI(H₂₀, 40q, STO-6G) ≈ −10.29361 Ha", { x: 7.75, y: 5.32, w: 4.8, h: 0.42, fontFace: BF, color: GREEN, fontSize: 15, bold: true, margin: 0 });
-s.addText("Both routes are extrapolations, not exact FCI; Route B is fit-window dependent (full spread reported). No new computation — analysis of already-committed evidence.",
+s.addText("Both routes are extrapolations, not exact FCI; we quote the WORST fit window, not the best. No new computation — analysis of already-committed evidence.",
   { x: 7.75, y: 5.85, w: 4.8, h: 1.3, fontFace: BF, color: FAINT, fontSize: 10, lineSpacing: 14, margin: 0 });
 
 /* ---------------- 6 · scientific value ---------------- */
