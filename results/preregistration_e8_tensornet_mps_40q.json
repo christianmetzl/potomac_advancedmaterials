@@ -1,9 +1,9 @@
 {
   "protocol_id": "E8",
-  "title": "40q tensornet-mps single-point evaluation — the one owed deliverable, pre-registered",
+  "title": "40q tensornet-mps single-point evaluation \u2014 the one owed deliverable, pre-registered",
   "frozen_before_run": true,
   "purpose": "Close the single remaining gap flagged by the HPC/CUDA-Q reviewer: prove CUDA-Q's tensornet-mps backend actually samples QSCI determinants at the full 40-qubit scale on one GPU. This is the SAMPLER-at-scale proof, NOT a full growth-to-chemical-accuracy run (that is the expensive multi-day version, scoped separately below and deliberately not pre-committed).",
-  "system": "H20 chain, 40 qubits, STO-6G, Jordan-Wigner — identical Hamiltonian to E3/E6 (same committed integrals).",
+  "system": "H20 chain, 40 qubits, STO-6G, Jordan-Wigner \u2014 identical Hamiltonian to E3/E6 (same committed integrals).",
   "what_runs": "Load the committed 40q Hamiltonian; prepare an MP2-seeded UCC state; sample the dominant determinant subspace via CUDA-Q tensornet-mps (bond dimension chi=400, the measured chemical-accuracy target from mps_bonddim_study.py) on one 80GB GPU; diagonalize H in that subspace (QSCI); compare to the committed block2 DMRG(chi=400) reference that predates access.",
   "predictions": {
     "P8a_backend_runs_at_40q": "tensornet-mps sampling completes at 40 qubits without exceeding 80 GB device memory (the whole point of MPS vs the ~16 TB exact statevector).",
@@ -19,8 +19,11 @@
   "cost_estimate_committed_ratecard": {
     "basis": "qBraid GPU on-demand ~= 6.40 cr/min class instance (published rate card in src/cost_audit.py); credit-to-USD from the committed OpenQuantum conversion ~$0.010/cr.",
     "single_point_eval": "<= 6 h ceiling => <= ~2,300 cr => ~$23 worst-case; a clean run is expected in ~1-3 h (~600-1,150 cr, ~$6-12).",
-    "full_growth_to_chem_acc_NOT_committed": "a full 40q tensornet-mps growth-to-chemical-accuracy run is the multi-day version the flagship deliberately pivoted away from (MPS-contraction cost at 40q); realistic 2-7 GPU-days => ~28k-97k cr => ~$280-970, with real risk of not converging inside budget. Not pre-committed here; flagged so the spend is a conscious choice."
+    "full_growth_to_chem_acc_NOT_committed": "a full 40q tensornet-mps growth-to-chemical-accuracy run is the multi-day version the flagship deliberately pivoted away from (MPS-contraction cost at 40q); realistic 2-7 GPU-days => ~28k-97k cr => ~$280-970, with real risk of not converging inside budget. Not pre-committed here; flagged so the spend is a conscious choice.",
+    "CORRECTION": "The original '~1-3 h, ~$6-12, clean run expected' estimate was TOO OPTIMISTIC and is contradicted by the committed checkpoint (sampling alone is ~2.65 h; convergence needs >30 h and still falls short). Reported here rather than silently amended."
   },
-  "honesty_clause": "Outcome reported exactly as measured — pass, partial, or DNF — with the same discipline as E2-E6. A DNF (e.g. MPS contraction too slow at 40q) is itself the honest, publishable finding that motivated the MP2-seed engine, and does not retroactively weaken any committed result.",
-  "note": "Pre-registration only. Freezing this protocol is not a commitment to run it; it exists so that IF run on qBraid, thresholds and reference are fixed in git beforehand, exactly like preregistration_v2 / _e67."
+  "honesty_clause": "Outcome reported exactly as measured \u2014 pass, partial, or DNF \u2014 with the same discipline as E2-E6. A DNF (e.g. MPS contraction too slow at 40q) is itself the honest, publishable finding that motivated the MP2-seed engine, and does not retroactively weaken any committed result.",
+  "note": "Pre-registration only. Freezing this protocol is not a commitment to run it; it exists so that IF run on qBraid, thresholds and reference are fixed in git beforehand, exactly like preregistration_v2 / _e67.",
+  "STATUS_2026-07-25": "SUPERSEDED / NOT RECOMMENDED AS SCOPED. This protocol was written without accounting for results/gpu_run1_h20_mps_CHECKPOINT_evidence.json, which shows the 40q tensornet-mps path was ALREADY executed: MPS sampling completed in 9,548.7 s (~2.65 h) at 12.06 GB device memory \u2014 so predictions P8a (backend runs at 40q) and the memory question are already answered by committed evidence. What is NOT achieved is convergence through that path, for a measured reason: the sampler yielded only 108 distinct determinants from 200,000 shots, and QSCI growth is CPU-bound with steeply rising per-iteration cost (11 s -> 1,678 s), so the requested schedule needs >30 h and its geometric tail asymptotes ~13 mHa short of chemical accuracy. A 6-hour run would therefore reproduce the existing checkpoint, not close the gap.",
+  "what_would_actually_be_needed": "Not more GPU time. The binding constraint is the 108-determinant yield of MPS sampling on a shallow MP2-seeded UCC state \u2014 a circuit/sampling-strategy question (deeper or more entangling state, or a different selection scheme), which is research rather than a scoped verification run."
 }
