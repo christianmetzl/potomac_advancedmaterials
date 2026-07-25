@@ -146,6 +146,34 @@ contrib.forEach(([col, tag, head, bullets]) => {
 });
 srcline(s, "GQE (Nakaji et al. 2024) and QSCI (Kanno et al. 2023) are prior art we build on and cite; the pairing at scale, the transfer generator and the executed results are ours.");
 
+/* ---------------- 5b · the convergence oracle ---------------- */
+s = slide();
+eyebrow(s, "THE RESULT WE ALMOST FILED AS A FAILURE", GREEN);
+title(s, "We caught a silent error in the reference");
+s.addText("At 38 qubits our answer came in BELOW the trusted classical reference — on two independent systems. Both are variational upper bounds on the identical Hamiltonian, so the lower energy is strictly more accurate.",
+  { x: 0.75, y: 1.9, w: 7.05, h: 1.25, fontFace: BF, color: TEXT, fontSize: 15.5, lineSpacing: 23, margin: 0 });
+try {
+  s.addImage({ path: path.join(ROOT, "results", "chi_ladder_correction.png"), x: 7.95, y: 1.85, w: 4.6, h: 2.66 });
+} catch (e) { /* figure optional */ }
+const oracle = [
+  ["−3.784 / −0.399 mHa", GREEN, "Two independent corrections", "CrO and the real Sn₂O₂ EUV motif — both below their committed same-CAS DMRG(χ=400) reference."],
+  ["χ=400 → 800 → 1200", CYAN, "The mechanism, proven", "Escalating the classical bond dimension walks DMRG down toward our energy (+3.78 → +1.06 → +0.36 mHa) and never crosses it."],
+];
+let oy = 3.3;
+oracle.forEach(([big, col, head, body]) => {
+  card(s, 0.75, oy, 7.05, 1.35, PANEL);
+  s.addText(big, { x: 1.05, y: oy + 0.13, w: 3.3, h: 0.4, fontFace: BF, color: col, fontSize: 17, bold: true, margin: 0 });
+  s.addText(head, { x: 4.4, y: oy + 0.15, w: 3.2, h: 0.35, fontFace: BF, color: WHITE, fontSize: 12.5, bold: true, margin: 0 });
+  s.addText(body, { x: 1.05, y: oy + 0.58, w: 6.5, h: 0.7, fontFace: BF, color: MUTED, fontSize: 11.5, lineSpacing: 16, margin: 0 });
+  oy += 1.45;
+});
+card(s, 0.75, 6.2, 11.8, 0.95, PANEL2, { line: LINE });
+s.addText([{ text: "Why it matters:  ", options: { bold: true, color: GREEN } },
+           { text: "DMRG gives you no signal that your bond dimension is big enough — you stop when it looks converged. An independent variational method coming in lower is proof you hadn't. Useful today, with no quantum-advantage claim.", options: { color: TEXT } }],
+  { x: 1.1, y: 6.2, w: 11.1, h: 0.95, fontFace: BF, fontSize: 12.5, valign: "middle", lineSpacing: 17, margin: 0 });
+s.addText("Honest limits: not cheaper (19.1 h vs ~15 min to escalate χ classically) — the value is the trigger, not the compute. n = 2: a pattern worth investigating, not a measured rate. Reported as the pre-registered P4 criterion failing as-measured, because P4 assumed DMRG(χ=400) was truth.",
+  { x: 7.95, y: 4.62, w: 4.6, h: 1.45, fontFace: BF, color: FAINT, fontSize: 10, lineSpacing: 14, margin: 0 });
+
 /* ---------------- 6 · scientific value ---------------- */
 s = slide();
 eyebrow(s, "THE SCIENTIFIC VALUE", GREEN);

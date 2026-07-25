@@ -33,8 +33,8 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | **GPU-executed 28q H₁₄ (cuStateVec)** | **+0.395 mHa** vs DMRG(χ=400), 2.82 GB device | device-sampled QSCI grown to 64,212 dets; meets pre-registered P1/P3 |
 | **40q H₂₀ flagship (executed)** | **+1.226 mHa** vs DMRG(χ=400), 450,257 dets | P1 PASS; MP2-seeded, seed-independence-validated engine (~16 h, H100 host). Frozen E3 certificate reached terminal it5 (external pod kill during it6 growth): **E_var +0.185 mHa vs χ=400** (prediction ii MET), 750,257 dets (iii MET), \|PT2\| trace to 1.31 mHa; \|PT2\|≤0.5 (i) unreached, as-measured |
 | **40q absolute anchor (E6, DMRG extrap.)** | FCI(40q) = **−10.293599 ± 0.022 mHa** (R²=0.997); E3 it5 E_var **+1.59 mHa** — at the 1 kcal/mol edge, jackknife-robust to ±0.05 mHa | independent DMRG χ=400→2400 truncation-error extrapolation; leave-one-out over the χ rungs spans +1.55→+1.61 mHa (`e6_dmrg_extrap_40q.py`, `e6_jackknife.py`) |
-| **38q CrO audit (CAS(18,19), executed)** | **−3.784 mHa BELOW** same-CAS DMRG(χ=400) | reference *corrected*: χ=800/1200 descend toward QSCI from above (+1.06/+0.36 mHa), never cross — truncation-error mechanism at three χ |
-| **38q Sn₂O₂ EUV motif (E4, executed)** | **−0.399 mHa BELOW** same-CAS DMRG(χ=400) | a second reference correction, on the real tin-oxo chemistry (524,764 dets, 7.4 h) |
+| **38q CrO — we corrected the classical reference** | **−3.784 mHa BELOW** same-CAS DMRG(χ=400) | both are *variational upper bounds on the identical Hamiltonian*, so lower is **strictly** more accurate; χ=800/1200 descend toward QSCI (+1.06/+0.36 mHa) and never cross — the committed reference carried a silent truncation error |
+| **38q Sn₂O₂ EUV motif (E4, executed)** | **−0.399 mHa BELOW** same-CAS DMRG(χ=400) | the same correction, independently, on the real tin-oxo chemistry (524,764 dets, 7.4 h) |
 | **EUV-motif trust curve (Sn₂O₂ cleavage)** | in-active-space CCSD(T) 0.14→5.49 mHa (~40×); QSCI ≤0.48 mHa | Sn–O bridge 2.05→3.28 Å; dominant-det weight collapses 0.95→0.53 (`sn2o2_dissociation.py`) |
 | **Real trapped-ion QPU (AQT ibex-q1, decoded)** | device-sampled +20.4/+11.1 mHa; device-seeded QSCI → exact FCI | genuine 12q trapped-ion silicon (2,000 shots/job, decoded 2026-07-20); qir-sv sim tier +2.0 mHa PASS |
 | HamLib validation, 28/32/40q | exact | term counts match (27,735 / 47,489 / 116,577); coefficients agree to ~15 sig figs, differing only by a spectrum-invariant orbital-phase gauge |
@@ -71,6 +71,30 @@ dollar framework: [`docs/value_case.md`](docs/value_case.md).
 > gives the **correct** quintet sign (the committed −0.076 eV came from an under-converged default guess). Both
 > claims were removed. The value case above depends on **neither** — only on the CCSD(T) non-variational
 > collapse, which is independent of functional, SCF guess, and active space.
+
+### A convergence oracle — we caught a silent error in the classical reference
+
+![Correcting the classical reference at 38 qubits](results/chi_ladder_correction.png)
+
+*At 38 qubits our QSCI energy landed **below** the committed classical DMRG(χ=400) reference on **two
+independent systems** — CrO (−3.784 mHa) and the real Sn₂O₂ EUV motif (−0.399 mHa). This is not a judgment
+call: **both methods are variational upper bounds on the identical CAS(18,19) Hamiltonian**, so by
+Rayleigh–Ritz the lower energy is **strictly** the more accurate one. Escalating the classical bond dimension
+confirms the mechanism — DMRG walks down toward our answer (+3.78 → +1.06 → +0.36 mHa at χ=400/800/1200) and
+never crosses it. The reference setting that would have shipped carried a **silent truncation error**.*
+
+**Why this matters beyond the number.** DMRG gives you no internal signal that your bond dimension is large
+enough — you stop when it *looks* converged. An independent variational method that comes in **lower** is
+proof that you hadn't. That makes a quantum-selected solver useful **today, without any quantum-advantage
+claim**: not as a replacement for the classical pipeline, but as an **independent second opinion that tells
+you when to escalate it**. Regenerate: `python src/make_chi_ladder_figure.py`.
+
+> **Honest limits on this result.** It is **not cheaper** — the QSCI run took 19.1 h where classically
+> escalating to χ=1200 took ~15 min. The value is the *trigger*, not the compute: the cheap classical
+> double-check is one you would never run, because a converged-looking reference gives you no reason to
+> doubt it. And **n = 2** — two audits, both finding the reference in error. That is a pattern worth
+> investigating, **not a measured rate**. Reported exactly as pre-registered: this outcome is the P4
+> criterion *failing* as-measured, because P4 assumed DMRG(χ=400) was truth.
 
 ## Honest scope
 
