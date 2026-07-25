@@ -4,8 +4,9 @@
 is NOT robust. An active-space robustness check (src/candidate_decision_larger_cas.py ->
 results/candidate_decision_larger_cas.json) shows the multireference ranking INVERTS to NiO>CrO at
 CAS(12,12) and CAS(14,14) (CrO's CAS(10,10) high-spin gap was unconverged). We therefore DO NOT claim the
-"synthesize CrO / B3LYP advances the wrong candidate" ranking. What SURVIVES and is claimed elsewhere is the
-CAS-robust single-molecule CrO SIGN result (CrO quintet/⁵Π ground, B3LYP alone wrong-sign; see cro_spin_gap.py).
+"synthesize CrO / B3LYP advances the wrong candidate" ranking. What SURVIVES is that CASCI/QSCI give CrO's experimentally-correct quintet
+(⁵Π) ground state. NOTE: an earlier 'B3LYP alone gives the wrong sign' claim was ALSO withdrawn (an SCF
+artifact; with lowest-solution SCF every functional gives the correct sign — see src/dft_baseline.py).
 This script + evidence are retained only as the CAS(10,10) provenance behind that withdrawn claim.
 
 --- original description (context for the withdrawn ranking) ---
@@ -148,9 +149,11 @@ def main():
         "cas_robustness": "CrO gap +1.89 (CAS10) -> +0.85 (CAS12) -> +0.88 (CAS14) eV; NiO ~1.6 -> ranking inverts to NiO>CrO. See candidate_decision_larger_cas.json.",
         "decision_table": rows,
         "functionals_that_inverted_at_cas10": inverted,
-        "surviving_robust_claim": (f"Single-molecule SIGN only: {A} is quintet(⁵Π)-ground (gap > 0) at CAS(10/12/14), "
-                        f"matching its experimental X 5-Pi term, while B3LYP alone gives the wrong triplet sign. "
-                        f"The two-candidate RANKING is withdrawn (not robust)."),
+        "surviving_robust_claim": (f"{A} is quintet(⁵Π)-ground (gap > 0) at CAS(10/12/14), matching its experimental X 5-Pi "
+                        f"term. The two-candidate RANKING is withdrawn (not robust). NOTE: the DFT gaps in this file "
+                        f"are the ORIGINAL single-guess SCF values and are SUPERSEDED by the lowest-solution values in "
+                        f"dft_functional_spread_evidence.json (B3LYP CrO = +0.835 eV, correct sign); the 'B3LYP inverts' "
+                        f"reading below is an SCF artifact and is withdrawn."),
         "honest_caveats": [
             "RANKING WITHDRAWN: not robust to active-space size (inverts by CAS(12,12)); do not cite CrO>NiO.",
             "CAS(10,10)/def2-SVP is a fixed modest active space; CASCI on per-state ROHF orbitals (not state-averaged CASSCF).",

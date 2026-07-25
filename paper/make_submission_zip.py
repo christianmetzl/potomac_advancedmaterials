@@ -40,17 +40,26 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
 ## Reproducing (judges)
 `pip install -r requirements.txt` then `python src/reproduce.py` -> 26/26 PASS (17 re-execution + 9 evidence audits) with full deps;
 core CPU checks pass with `requirements.txt` alone (CUDA-Q/MPS items need the optional GPU deps).
-GPU/at-scale items (40q MPS, near-38q CrO/NiO, QPU validation) are marked [QBRAID-RUN] in the write-up and
-are the qBraid GPU deliverable; everything else is executed and reproducible on CPU.
+Every claim in the write-up is executed and committed -- there are no unfilled [QBRAID-RUN] placeholders
+left in it. Items that needed qBraid GPU or QPU access (the 40q flagship, the 38q CrO/Sn2O2 audits, the AQT
+trapped-ion validation) were run there and their evidence JSONs ship in results/; the one remaining owed item
+is the full 40q tensornet-mps *growth* run (the MPS backend itself did execute -- see the honest status below).
 
 ## Honest status
 Executed (CPU/circuit-sampled): two-stage GQE, integrated GQE->QSCI (measured to 20q), CrO/NiO & Sn-oxides
-at 20q, the CrO spin-state decision (DFT spans 1.9 eV / B3LYP wrong sign vs CASCI/QSCI +1.89 eV = experimental
-X5Pi), the real-oxide CrO dissociation trust curve (CCSD(T) breaks down vs variational QSCI), the EN-PT2
+at 20q, the CrO/NiO multireference energies vs exact CASCI, the real-oxide CrO dissociation trust curve (CCSD(T) breaks down vs variational QSCI), the EN-PT2
 two-sided bracket, generator-MP2 interpretability, HamLib equivalence, noise robustness, DFT functional-spread,
-classical baselines, strong-correlation selected-CI, operator-pool compression, scaling law. Proxy (validated vs measurement at 16/20q): the
-16->56q transfer ladder, cross-chemistry, budget sweep. Owed (qBraid GPU): the 40q MPS run and QPU
-validation. No result is overstated; see docs/claims_ledger.md.
+classical baselines, strong-correlation selected-CI, operator-pool compression, scaling law, and real
+trapped-ion QPU validation (AQT ibex-q1, decoded 2026-07-20). Proxy (validated vs measurement at 16/20q): the
+16->56q transfer ladder, cross-chemistry, budget sweep. Owed: convergence of the 40q tensornet-mps growth run
+(the backend executed -- 2.65 h, 12.06 GB device memory -- but yielded only 108 distinct determinants from
+200,000 shots; E9 measures why, and it is a sampling-strategy research question, not GPU hours).
+
+NO QUANTUM ADVANTAGE IS CLAIMED. Every result is classical simulation, GPU-hosted determinant-space
+computation, or small-scale QPU validation; nothing here beats a classical method on time or reach. Device
+CIRCUIT sampling was used for the 20q/28q seeds and the AQT run; the 40q flagship and the 38q audits ran in
+determinant space on GPU hosts, which their evidence files state explicitly. No result is overstated; see
+docs/claims_ledger.md.
 """
 
 

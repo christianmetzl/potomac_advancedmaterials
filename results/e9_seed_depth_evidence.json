@@ -1,18 +1,19 @@
 {
   "run": "e9_seed_depth",
   "reach_analysis": {
-    "flagship_seed_requirement": 450257,
-    "best_measured_here": {
-      "distinct": 564,
+    "same_system_20q": {
+      "best_measured_distinct": 564,
       "depth_L": 24,
-      "total_shots": 400000
+      "total_shots": 400000,
+      "requirement_for_chem_acc_at_20q": 2401,
+      "short_by_factor": 4.3,
+      "note": "Like-for-like: both numbers are H10/20q."
     },
-    "short_by_factor": 798.3,
-    "growth_in_depth": "N ~ 24.5*L -38 (LINEAR in depth, not exponential)",
-    "depth_needed_to_reach_requirement": 18404,
-    "shots_growth_per_decade": 2.05,
-    "shot_decades_needed_to_reach_requirement": 9.3,
-    "conclusion": "Direct circuit sampling cannot produce the seed this pipeline needs. Yield grows LINEARLY in circuit depth (~24 determinants per excitation) and ~2x per decade of shots, so closing an 800x gap would require ~18,000 excitations or ~9 further decades of shots \u2014 neither is executable, least of all on hardware. The flagship's MP2-seeded classical growth was therefore a NECESSARY architecture, not a workaround."
+    "why_it_compounds_with_size": "Yield is SIZE-INSENSITIVE (P9c: 16q vs 20q within 1.06x), but the determinant requirement GROWS ~1.38x per qubit (committed scaling_law_evidence.json). So the same ~500-determinant yield meets a requirement of 2,401 at 20q (4.3x short) and 450,257 at 40q (798x short). The 40q figure is a CROSS-SYSTEM comparison, licensed by the measured size-insensitivity of the yield \u2014 stated explicitly rather than implied.",
+    "growth_in_depth": "N ~ 24.5*L -38 over L=4..24 (approximately linear; a power law N ~ 15.1*L^1.13 fits the same four points slightly better)",
+    "shots_growth_per_decade": "~1.5-2x per 10x shots (P9a)",
+    "WHY_WE_DO_NOT_EXTRAPOLATE_TO_A_REQUIRED_DEPTH": "An earlier version of this file solved the linear fit for the depth that would reach 450,257 determinants and reported L ~ 18,000. That number is INCOHERENT and has been removed: the H10/20q number-conserving sector contains only C(20,10) = 184,756 determinants in total, and only 8,750 valid UCC excitations exist (drawn without replacement), so neither the target nor the depth is constructible at this system size. The fit is not extrapolable that far. Reported here rather than silently amended.",
+    "conclusion": "Direct circuit sampling is far too slow a route to a large QSCI seed. At 20q, tripling the pipeline's circuit depth (L=8 -> 24) and using 400,000 shots yields ~564 determinants against a 2,401-determinant requirement \u2014 still 4.3x short \u2014 while yield is flat in system size and the requirement grows exponentially with it. The flagship's MP2-seeded classical growth was therefore a NECESSARY architecture, not a workaround. We do NOT claim a specific depth or shot count at which sampling would succeed; the measured scaling simply does not get there."
   },
   "preregistration": "results/preregistration_e9_seed_depth.json (frozen before this run)",
   "question": "Is the QSCI determinant seed capped by shots, by system size, or by circuit depth?",
@@ -278,5 +279,5 @@
     "More determinants is a necessary, not sufficient, condition for a better QSCI energy.",
     "CPU statevector sampling; no GPU or QPU involved."
   ],
-  "wall_s": 5.8
+  "wall_s": 6.3
 }

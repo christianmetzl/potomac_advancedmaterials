@@ -1,27 +1,21 @@
-# reproduce.py — full-dependency transcript
-# captured 2026-07-24T20:31:45Z on the build container (all optional deps installed:
-#   openfermionpyscf, pennylane, torch, block2, cudaq — so NO checks auto-skip).
-# One command: python src/reproduce.py
-# ================================================================================
-
 MATGEN-Q reproducibility driver — CPU headline results
 ============================================================
-  PASS    two-stage GQE (H2/H4/H6)           0.0~0.0; 0.009~0.009; 0.297~0.297  [23s]
-  PASS    integrated GQE->QSCI (H6 12q)      1.054~1.054  [33s]
-  PASS    SnO chem-acc (16q)                 0.121 mHa < 0.6  [4s]
-  PASS    SnO2 chem-acc (20q)                0.222 mHa < 0.6  [6s]
+  PASS    two-stage GQE (H2/H4/H6)           0.0~0.0; 0.009~0.009; 0.297~0.297  [22s]
+  PASS    integrated GQE->QSCI (H6 12q)      1.054~1.054  [36s]
+  PASS    SnO chem-acc (16q)                 0.335 mHa < 0.6  [3s]
+  PASS    SnO2 chem-acc (20q)                0.201 mHa < 0.6  [7s]
   PASS    CrO/NiO (20q)                      0.038~0.038; 0.197~0.197  [14s]
   PASS    bridged tin-oxo Sn2O2 (16q)        0.411<1.6  [6s]
-  PASS    HamLib equivalence (28q)           27735 terms ==27735  [14s]
-  PASS    classical baselines (Hn FCI)       0.0002~0.0  [7s]
-  PASS    CrO dissociation trust             0.038<0.5; CCSD(T) max|err|=144mHa nonconv=True; selCI all<5mHa (max 2.77)  [58s]
-  PASS    CrO spin-gap decision              1.89>1.0; 1.893>1.0; 1.913>1.5; 1==1  [10s]
-  PASS    EN-PT2 two-sided bracket           E_var≥FCI ∀ 12 pts; 4.133|.|<10.0; 0.99922>0.99  [67s]
-  PASS    blind holdout VO re-run (frozen script) 0.167<1.6; 0.16<1.6; True==1  [9s]
-  PASS    CUDA-Q execution (qpp-cpu)         0.012|.|<1.6; 0.022|.|<1.6  [537s]
-  PASS    MPS bond-dim & entanglement        50<100; Smax 0.39->4.43  [182s]
-  PASS    integral engine selftest (SC vs JW + FCI) 'INTEGRAL ENGINE VALID' printed  [3s]
-  PASS    engine equivalence (fast vs orig vs FCI) 7.993605777301127e-12<0.0001; 0.0<1.6  [4s]
+  PASS    HamLib equivalence (28q)           27735 terms ==27735  [15s]
+  PASS    classical baselines (Hn FCI)       0.0002~0.0  [8s]
+  PASS    CrO dissociation trust             0.038<0.5; CCSD(T) max|err|=144mHa nonconv=True; selCI all<5mHa (max 2.77)  [61s]
+  PASS    CrO spin-gap decision              1.89>1.0; 1.893>1.0; 0==0  [10s]
+  PASS    EN-PT2 two-sided bracket           E_var≥FCI ∀ 12 pts; 4.133|.|<10.0; 0.99922>0.99  [70s]
+  PASS    blind holdout VO re-run (frozen script) 0.167<1.6; 0.142<1.6; True==1  [10s]
+  PASS    CUDA-Q execution (qpp-cpu)         0.012|.|<1.6; 0.042|.|<1.6  [540s]
+  PASS    MPS bond-dim & entanglement        50<100; Smax 0.39->4.43  [217s]
+  PASS    integral engine selftest (SC vs JW + FCI) 'INTEGRAL ENGINE VALID' printed  [4s]
+  PASS    engine equivalence (fast vs orig vs FCI) 1.1546319456101628e-11<0.0001; 0.0<1.6  [4s]
   PASS    cost audit (published pricing × committed configs) 'COST AUDIT: PASS' printed  [0s]
   PASS    AUDIT: 20q GPU exact anchor (cuStateVec) err consistent (Δ=0.0000 mHa); 0.0|.|<1.6; 0.44<8.0  [0s]
   PASS    AUDIT: 28q GPU converged (cuStateVec) err consistent (Δ=0.0005 mHa); 0.395|.|<1.6; 2.82<8.0; 64212>30000  [0s]

@@ -39,20 +39,41 @@
   "chem_acc_mHa": 1.5936,
   "inside_chemical_accuracy_by": "25x (worst window)",
   "calibration_20q_known_FCI": {
-    "system": "H10/20q R=0.74",
-    "exact_FCI_Ha": -5.202826400621641,
-    "extrapolated_Ha": -5.1986925970556,
-    "error_mHa": 4.134,
-    "deepest_PT2_mHa": -44.731,
-    "deepest_ndet": 26,
-    "note": "Calibration only. This 20q trace stops at |PT2| ~ 45 mHa on 26 determinants \u2014 ~34x shallower than the 40q trace (|PT2| = 1.31 mHa on 750,257 dets). It bounds the extrapolator FAR from convergence; it does not bound it in the 40q regime."
+    "traces": [
+      {
+        "R_ang": 0.74,
+        "deepest_abs_PT2_mHa": 44.731,
+        "deepest_ndet": 26,
+        "exact_FCI_Ha": -5.202826400621641,
+        "extrapolated_Ha": -5.1986925970556,
+        "error_mHa": 4.134
+      },
+      {
+        "R_ang": 1.8,
+        "deepest_abs_PT2_mHa": 46.838,
+        "deepest_ndet": 219,
+        "exact_FCI_Ha": -4.858523243731102,
+        "extrapolated_Ha": -4.7221883312517505,
+        "error_mHa": 136.335
+      },
+      {
+        "R_ang": 2.4,
+        "deepest_abs_PT2_mHa": 1.084,
+        "deepest_ndet": 468,
+        "exact_FCI_Ha": -4.731589443230025,
+        "extrapolated_Ha": -4.677676254415349,
+        "error_mHa": 53.913
+      }
+    ],
+    "note": "HONEST LIMIT \u2014 the extrapolator is NOT uniformly reliable. Its error at 20q tracks CORRELATION STRENGTH, not merely convergence depth: at R=0.74 (equilibrium, the geometry of the H20/40q flagship) it errs +4.1 mHa, but at R=2.4 (heavily stretched) it errs +53.9 mHa even though that trace reaches |PT2| = 1.08 mHa, i.e. essentially the SAME depth as the 40q trace (1.31 mHa). An earlier version of this file defended the 40q extrapolation on convergence depth alone; that defense is REFUTED by the R=2.4 trace in this same evidence file and has been withdrawn. The defensible statement is narrower: the 40q system is at equilibrium geometry, where the extrapolator calibrates well; we do NOT claim it would be reliable on a stretched 40q geometry. The PRIMARY evidence for the 40q value is not this calibration but the mutual agreement of two methodologically independent routes on that specific system."
   },
-  "headline": "Two independent routes to FCI(H20/40q) agree to 0.064 mHa in the worst fit window and 0.004 mHa in the best \u2014 i.e. ~25x inside chemical accuracy. Consensus value: -10.293610 Ha.",
+  "uncertainty_note": "Route A also carries its own jackknife spread (e6_jackknife_robustness.json). Combining both, the honest worst-case route disagreement is ~0.10 mHa (~15x inside chemical accuracy), not the 25x implied by the worst fit window alone.",
+  "headline": "Two independent routes to FCI(H20/40q) agree to 0.064 mHa in the WORST fit window (best 0.004; Route B window-mean vs Route A = 0.022 mHa) \u2014 i.e. ~25x inside chemical accuracy on the worst window. QUOTE THE WORST WINDOW, not the best. Consensus value: -10.293610 Ha.",
   "honest_caveats": [
     "BOTH routes are extrapolations; neither is an exact FCI calculation (FCI at 40q is intractable).",
     "Route B's value depends on the fit window; the full window spread is reported, not just the best fit.",
     "The routes share the same Hamiltonian by necessity (that is what makes them comparable); they share no solver, no extrapolation variable, and no code path.",
-    "The 20q calibration errs by ~4 mHa, but at ~34x shallower convergence than the 40q trace \u2014 it bounds the extrapolator far from convergence, not in this regime.",
+    "The 20q calibration is NOT a clean bound: at equilibrium geometry (R=0.74, the flagship's regime) the extrapolator errs +4.1 mHa, but on a heavily stretched geometry (R=2.4) it errs +53.9 mHa at essentially the same convergence depth. We therefore do NOT claim the extrapolator is uniformly reliable; the 40q claim rests on the two routes' mutual agreement on that specific system.",
     "This is analysis of already-committed evidence: no new computation, nothing re-run or re-tuned.",
     "E3's pre-registered criterion (|PT2| <= 0.5 mHa) still FAILED as-measured; that is unchanged. This result is additional value extracted from the trace that run did produce, not a re-scored outcome."
   ]

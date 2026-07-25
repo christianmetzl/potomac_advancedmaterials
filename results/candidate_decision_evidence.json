@@ -33,21 +33,21 @@
     },
     {
       "method": "B3LYP",
-      "CrO_gap_eV": -0.076,
+      "CrO_gap_eV": 0.835,
       "NiO_gap_eV": 0.413,
-      "ranks_higher": "NiO",
-      "inverts_multireference": true
+      "ranks_higher": "CrO",
+      "inverts_multireference": false
     },
     {
       "method": "PBE0",
-      "CrO_gap_eV": 1.837,
+      "CrO_gap_eV": 1.095,
       "NiO_gap_eV": 0.438,
       "ranks_higher": "CrO",
       "inverts_multireference": false
     },
     {
       "method": "TPSSh",
-      "CrO_gap_eV": 1.089,
+      "CrO_gap_eV": 1.113,
       "NiO_gap_eV": 0.365,
       "ranks_higher": "CrO",
       "inverts_multireference": false
@@ -67,10 +67,8 @@
       "inverts_multireference": false
     }
   ],
-  "functionals_that_inverted_at_cas10": [
-    "B3LYP"
-  ],
-  "surviving_robust_claim": "Single-molecule SIGN only: CrO is quintet(\u2075\u03a0)-ground (gap > 0) at CAS(10/12/14), matching its experimental X 5-Pi term, while B3LYP alone gives the wrong triplet sign. The two-candidate RANKING is withdrawn (not robust).",
+  "functionals_that_inverted_at_cas10": [],
+  "surviving_robust_claim": "CrO is quintet(\u2075\u03a0)-ground (gap > 0) at CAS(10/12/14), matching its experimental X 5-Pi term. The two-candidate RANKING is withdrawn (not robust). NOTE: the DFT gaps in this file are the ORIGINAL single-guess SCF values and are SUPERSEDED by the lowest-solution values in dft_functional_spread_evidence.json (B3LYP CrO = +0.835 eV, correct sign); the 'B3LYP inverts' reading below is an SCF artifact and is withdrawn.",
   "honest_caveats": [
     "RANKING WITHDRAWN: not robust to active-space size (inverts by CAS(12,12)); do not cite CrO>NiO.",
     "CAS(10,10)/def2-SVP is a fixed modest active space; CASCI on per-state ROHF orbitals (not state-averaged CASSCF).",

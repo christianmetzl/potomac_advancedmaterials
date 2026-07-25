@@ -97,26 +97,45 @@ def main():
                               "MET": all(r["distinct_determinants"] < r["combinatorial_ceiling_2^L"] for r in rows)}
 
     # ---- how far can sampling actually get you? (the question that matters) ----
+    from math import comb
     r20 = [x for x in rows if x["system"] == "H10" and x["shots_per_circuit"] == 20000]
     Ls = np.array([x["depth_L"] for x in r20], float)
     Ns = np.array([x["distinct_determinants"] for x in r20], float)
     slope, icept = np.polyfit(Ls, Ns, 1)
-    lo24 = [x for x in rows if x["system"] == "H10" and x["depth_L"] == 24 and x["shots_per_circuit"] == 2000][0]["distinct_determinants"]
-    hi24 = int(Ns[-1]); NEED = 450257
-    import math
+    hi24 = int(Ns[-1])
+    SECTOR_20Q = comb(20, 10)          # 184,756 number-conserving determinants at H10/20q
+    POOL_20Q = 8750                    # valid UCC excitations available (build_pool(20,10))
+    NEED_20Q = 2401                    # committed: dets for chemical accuracy at 20q (qsci scaling)
+    NEED_40Q = 450257                  # committed: 40q flagship final_space
     reach = {
-        "flagship_seed_requirement": NEED,
-        "best_measured_here": {"distinct": hi24, "depth_L": 24, "total_shots": 400000},
-        "short_by_factor": round(NEED / hi24, 1),
-        "growth_in_depth": f"N ~ {slope:.1f}*L {icept:+.0f} (LINEAR in depth, not exponential)",
-        "depth_needed_to_reach_requirement": int((NEED - icept) / slope),
-        "shots_growth_per_decade": round(hi24 / lo24, 2),
-        "shot_decades_needed_to_reach_requirement": round(math.log(NEED / hi24) / math.log(hi24 / lo24), 1),
-        "conclusion": ("Direct circuit sampling cannot produce the seed this pipeline needs. Yield grows "
-                       "LINEARLY in circuit depth (~24 determinants per excitation) and ~2x per decade of "
-                       "shots, so closing an 800x gap would require ~18,000 excitations or ~9 further decades "
-                       "of shots — neither is executable, least of all on hardware. The flagship's MP2-seeded "
-                       "classical growth was therefore a NECESSARY architecture, not a workaround."),
+        "same_system_20q": {
+            "best_measured_distinct": hi24, "depth_L": 24, "total_shots": 400000,
+            "requirement_for_chem_acc_at_20q": NEED_20Q,
+            "short_by_factor": round(NEED_20Q / hi24, 1),
+            "note": "Like-for-like: both numbers are H10/20q."},
+        "why_it_compounds_with_size": (
+            f"Yield is SIZE-INSENSITIVE (P9c: 16q vs 20q within 1.06x), but the determinant requirement "
+            f"GROWS ~1.38x per qubit (committed scaling_law_evidence.json). So the same ~500-determinant "
+            f"yield meets a requirement of {NEED_20Q:,} at 20q ({NEED_20Q/hi24:.1f}x short) and {NEED_40Q:,} "
+            f"at 40q ({NEED_40Q/hi24:.0f}x short). The 40q figure is a CROSS-SYSTEM comparison, licensed by "
+            f"the measured size-insensitivity of the yield — stated explicitly rather than implied."),
+        "growth_in_depth": f"N ~ {slope:.1f}*L {icept:+.0f} over L=4..24 (approximately linear; a power law "
+                           f"N ~ 15.1*L^1.13 fits the same four points slightly better)",
+        "shots_growth_per_decade": "~1.5-2x per 10x shots (P9a)",
+        "WHY_WE_DO_NOT_EXTRAPOLATE_TO_A_REQUIRED_DEPTH": (
+            f"An earlier version of this file solved the linear fit for the depth that would reach {NEED_40Q:,} "
+            f"determinants and reported L ~ 18,000. That number is INCOHERENT and has been removed: the "
+            f"H10/20q number-conserving sector contains only C(20,10) = {SECTOR_20Q:,} determinants in total, "
+            f"and only {POOL_20Q:,} valid UCC excitations exist (drawn without replacement), so neither the "
+            f"target nor the depth is constructible at this system size. The fit is not extrapolable that far. "
+            f"Reported here rather than silently amended."),
+        "conclusion": (
+            "Direct circuit sampling is far too slow a route to a large QSCI seed. At 20q, tripling the "
+            "pipeline's circuit depth (L=8 -> 24) and using 400,000 shots yields ~564 determinants against a "
+            f"{NEED_20Q:,}-determinant requirement — still {NEED_20Q/hi24:.1f}x short — while yield is flat in "
+            "system size and the requirement grows exponentially with it. The flagship's MP2-seeded classical "
+            "growth was therefore a NECESSARY architecture, not a workaround. We do NOT claim a specific depth "
+            "or shot count at which sampling would succeed; the measured scaling simply does not get there."),
     }
 
     out = {

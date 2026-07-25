@@ -30,7 +30,7 @@ def main():
     # plot RELATIVE to Route A so the agreement is read directly (0 = Route A)
     rel = (y - routeA) * 1000.0
     E0_rel = (E0 - routeA) * 1000.0
-    fig, ax = plt.subplots(figsize=(7.6, 4.4))
+    fig, (ax, ins) = plt.subplots(1, 2, figsize=(9.6, 4.4), gridspec_kw={"width_ratios": [1.7, 1]})
     ax.axhspan(-routeA_unc * 1000, routeA_unc * 1000, color="#2B6CB0", alpha=0.20, zorder=1)
     ax.axhline(0, color="#2B6CB0", lw=2.2, zorder=2,
                label="Route A — classical DMRG, discarded weight → 0 (E6)")
@@ -42,18 +42,42 @@ def main():
     for p, xi, yi in zip(use, x, rel):
         ax.annotate(f"{p['dets']//1000}k dets", (xi, yi), textcoords="offset points",
                     xytext=(7, -13), fontsize=8, color="0.42")
-    ax.annotate(f"the two routes meet:\nΔ = {E0_rel:+.3f} mHa", (0, E0_rel),
-                textcoords="offset points", xytext=(34, 78), fontsize=9.2, color="#22543D", fontweight="bold",
+    # every fit window, not just the favourable one — the honest claim is the WORST window
+    wins = xv["agreement_routeB_minus_routeA_mHa"]
+    worst_k = max(wins, key=lambda k: abs(wins[k]))
+    ax.annotate("the two routes meet\n(right panel: by how much)", (0, E0_rel),
+                textcoords="offset points", xytext=(26, 92), fontsize=9.2,
+                color="#22543D", fontweight="bold",
                 arrowprops=dict(arrowstyle="->", color="#22543D", lw=1.1))
-    ax.set_xlabel("|PT2| — distance from the converged limit  [mHa]   (← more determinants)", fontsize=10)
-    ax.set_ylabel("energy relative to Route A  [mHa]", fontsize=10)
+    ax.set_xlabel("|PT2| — distance from the converged limit  [mHa]   (← more determinants)", fontsize=9.6)
+    ax.set_ylabel("energy relative to Route A  [mHa]", fontsize=9.6)
     ax.set_xlim(-0.2, x.max() * 1.08); ax.set_ylim(-0.55, rel.max() * 1.15)
-    ax.set_title("Pinning the 40-qubit exact energy twice, independently\n"
-                 "Two different method classes, two different extrapolation variables — same answer",
-                 fontsize=10.5)
-    ax.legend(fontsize=8.8, loc="upper left", framealpha=0.95)
+    ax.set_title("Pinning the 40-qubit exact energy twice, independently", fontsize=10.5)
+    ax.legend(fontsize=8.4, loc="upper left", framealpha=0.95)
     ax.grid(True, alpha=0.25)
-    fig.tight_layout()
+
+    # right panel: the intercept at true scale — EVERY fit window, plus Route A's own jackknife spread
+    jk = json.load(open(os.path.join(_RES, "e6_jackknife_robustness.json")))["jackknife_halfspread_mHa"]
+    ins.axhspan(-jk, jk, color="#2B6CB0", alpha=0.20)
+    ins.axhline(0, color="#2B6CB0", lw=1.8)
+    ks = list(wins)
+    ins.plot(range(len(ks)), [wins[k] for k in ks], "o", color="#C05621", ms=9)
+    for i, k in enumerate(ks):
+        ins.annotate(f"{wins[k]:+.3f}", (i, wins[k]), textcoords="offset points",
+                     xytext=(0, 11), ha="center", fontsize=8.4,
+                     color="#7B341E", fontweight="bold")
+    ins.annotate(f"worst window: {wins[worst_k]:+.3f} mHa\n→ ~{1.5936/abs(wins[worst_k]):.0f}× inside chemical accuracy",
+                 (1.0, -0.099), ha="center", fontsize=8.0, color="#22543D", fontweight="bold")
+    ins.set_xticks(range(len(ks))); ins.set_xticklabels(ks, fontsize=8.0)
+    ins.set_xlim(-0.5, len(ks) - 0.5); ins.set_ylim(-0.118, 0.075)
+    ins.tick_params(axis="y", labelsize=8.0)
+    ins.set_ylabel("Route B − Route A  [mHa]", fontsize=8.8)
+    ins.set_title(f"EVERY Route-B fit window (none omitted)\nblue band = Route A jackknife ±{jk} mHa",
+                  fontsize=8.6, pad=4)
+    ins.grid(True, alpha=0.25)
+    fig.suptitle("Two method classes, two extrapolation variables, no shared code path — same answer",
+                 fontsize=9.4, y=0.985, color="0.30")
+    fig.tight_layout(rect=[0, 0, 1, 0.965])
     out = os.path.join(_RES, "crossvalidation_40q.png")
     fig.savefig(out, dpi=160)
     print(f"wrote {os.path.relpath(out)}  |  RouteA={routeA:.9f}  RouteB(it2-it5)={E0:.9f}  Δ={(E0-routeA)*1000:+.4f} mHa")

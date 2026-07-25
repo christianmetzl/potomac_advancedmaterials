@@ -39,7 +39,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | **Real trapped-ion QPU (AQT ibex-q1, decoded)** | device-sampled +20.4/+11.1 mHa; device-seeded QSCI → exact FCI | genuine 12q trapped-ion silicon (2,000 shots/job, decoded 2026-07-20); qir-sv sim tier +2.0 mHa PASS |
 | HamLib validation, 28/32/40q | exact | term counts match (27,735 / 47,489 / 116,577); coefficients agree to ~15 sig figs, differing only by a spectrum-invariant orbital-phase gauge |
 | Noise robustness, 20q | ≤3.3 mHa at 30% corrupted measurements | graceful degradation |
-| Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.13 / 0.13–0.23 across PySCF versions; version-sensitive, `sno_version_sensitivity.json`) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
+| Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — ≤0.6 mHa asserted by reproduce.py (observed 0.11–0.34 / 0.13–0.23 across PySCF versions and clean-container re-runs; version- and run-sensitive, 4 logged observations in `sno_version_sensitivity.json`) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
 | **CrO ⁵Π / NiO ³Σ⁻ (20q)** | **0.038 / 0.197 mHa** | open-shell multireference oxides vs CASCI (`transition_metal_oxide_qsci.py`) |
 | **Candidate ranking (CrO vs NiO) — tested, NOT robust, withdrawn** | at CAS(10,10) the multireference ranks CrO>NiO, but this **inverts to NiO>CrO at CAS(12,12)/CAS(14,14)** (CrO's gap was unconverged); we therefore **withdraw the two-candidate ranking claim** and rely only on the CAS-robust single-molecule sign above | honesty over headline — the ranking did not survive an active-space robustness check (`candidate_decision_larger_cas.py`) |
 | **CrO dissociation trust (real oxide)** | in-active-space CCSD(T) erratic / non-convergent (to ~140 mHa vs CASCI); QSCI variational ≤2.8 mHa | the strong-correlation trust story on a real Cr–O bond, not toy H₁₀ (`cro_dissociation.py`) |
@@ -83,20 +83,26 @@ on the identical Hamiltonian, by two methodologically independent routes:*
 | Route | Method class | Extrapolation variable | FCI(40q) estimate |
 |---|---|---|---|
 | **A** (E6) | classical tensor network (block2 DMRG, χ=400→2400) | discarded weight → 0 | **−10.293599 Ha** ± 0.022 mHa |
-| **B** (E3) | determinant selection (selected-CI/QSCI, 750,257 dets) | Epstein–Nesbet PT2 → 0 (standard CIPSI) | **−10.293606 Ha** |
+| **B** (E3) | determinant selection (selected-CI/QSCI, 750,257 dets) | Epstein–Nesbet PT2 → 0 (standard CIPSI) | **−10.293621 Ha** (window mean; −10.293595…−10.293662) |
 
-**They agree to 0.007 mHa** (0.064 mHa across all reasonable fit windows) — **~25× inside chemical
-accuracy**, from two routes sharing no solver, no extrapolation variable and no code path. Each corroborates
-the other, and together they give a **cross-validated benchmark value for a 40-qubit exact energy**:
-**FCI(H₂₀, 40q, STO-6G) ≈ −10.29360 Ha**. Regenerate: `python src/e3_cipsi_crossvalidation.py`.
+**They agree to 0.064 mHa in the *worst* fit window** (0.004 mHa in the best) — **~25× inside chemical
+accuracy**, from two routes sharing no solver, no extrapolation variable and no code path. Folding in Route A's
+own leave-one-out spread (±0.028 mHa), the honest worst-case route disagreement is **~0.10 mHa, ~15× inside
+chemical accuracy** — that is the number to quote. Each route corroborates the other, and together they give a
+**cross-validated benchmark value for a 40-qubit exact energy**: **FCI(H₂₀, 40q, STO-6G) ≈ −10.29361 Ha**.
+Regenerate: `python src/e3_cipsi_crossvalidation.py`.
 
 > **Honest limits.** *Both* routes are extrapolations — neither is an exact FCI calculation. Route B's value
-> depends on the fit window (−10.293595 to −10.293662 across windows); we report the full spread, not the best
-> fit. Calibrating the same extrapolator at 20q, where FCI *is* known, gives a ~4 mHa error — but at ~34×
-> shallower convergence (|PT2| ≈ 45 mHa on 26 determinants, vs 1.31 mHa on 750,257 here), so it bounds the
-> method far from convergence, not in this regime. **No new computation**: this is analysis of already-committed
-> evidence. And E3's pre-registered criterion (|PT2| ≤ 0.5 mHa) still **failed as-measured** — unchanged; this
-> is additional value extracted from the trace that run did produce, not a re-scored outcome.
+> depends on the fit window (−10.293595 to −10.293662 across windows); we quote the **worst** window, not the
+> best. Calibrating the same extrapolator at 20q, where FCI *is* known, shows it is **not uniformly reliable**:
+> at equilibrium geometry (R=0.74 Å — the flagship's regime) it errs +4.1 mHa, but on a heavily stretched
+> geometry (R=2.4 Å) it errs **+53.9 mHa** at essentially the same convergence depth (|PT2| = 1.08 mHa vs 1.31
+> mHa here). An earlier version of this section defended the extrapolation on convergence depth alone; that
+> defense is **refuted by our own committed 20q evidence and has been withdrawn**. The defensible claim is
+> narrower — the 40q system is at equilibrium geometry, and the primary evidence is the *mutual agreement of
+> two independent routes on that specific system*, not the calibration. **No new computation**: this is analysis
+> of already-committed evidence. And E3's pre-registered criterion (|PT2| ≤ 0.5 mHa) still **failed as-measured**
+> — unchanged; this is additional value extracted from the trace that run did produce, not a re-scored outcome.
 
 ### A convergence oracle — our method caught a silent error in the classical reference
 
@@ -173,23 +179,31 @@ data *does* establish is a pair of scaling laws and a hard conclusion:
 
 - Seed yield grows **linearly** in circuit depth (**N ≈ 24.5·L − 38**), not exponentially, and only **~2× per
   decade of shots**; it is **independent of qubit count**.
-- Best measured: **564 determinants** (depth 24, 400,000 shots) — **798× short** of the flagship's requirement.
-- Closing that gap by depth alone needs **≈18,000 excitations**; by shots alone, **~9 more decades of shots**.
-  Neither is executable, least of all on noisy hardware.
+- Best measured, **like-for-like at 20q**: **564 determinants** (depth 24, 400,000 shots) against a
+  **2,401-determinant** chemical-accuracy requirement at that size — **4.3× short**, both numbers H₁₀/20q.
+- The **cross-system** gap to the 40q flagship's 450,257 determinants is **~798×**. That factor is licensed by
+  the *measured* size-insensitivity of the yield (P9c) combined with the committed ~1.38×/qubit growth of the
+  determinant requirement — stated as a cross-system comparison, **not measured at 40q**.
+- We deliberately do **not** report a required depth. An earlier version of this analysis solved the linear fit
+  for the depth reaching 450,257 determinants and reported L ≈ 18,000; that number is **incoherent and has been
+  withdrawn** — the H₁₀/20q number-conserving sector holds only C(20,10) = 184,756 determinants in total and
+  only 8,750 valid UCC excitations exist, so neither the target nor the depth is constructible at that size.
+  The retraction is recorded in the evidence file rather than silently amended.
 
 **Conclusion: you cannot sample your way to a 10⁵–10⁶ determinant QSCI seed with this ansatz.** The flagship's
 **MP2-seeded classical growth was a necessary architecture, not a workaround** — and that is now *measured*
 rather than asserted. Regenerate: `python src/e9_seed_depth.py` (~6 s, CPU).
 
 > **Honest limits.** A 16q/20q diagnosis — it does not by itself demonstrate a fixed 40q run. Sequences are
-> **random** from the valid pool to isolate depth; a trained generator samples a different region (though 798×
-> is a large gap to close by better selection). The depth-vs-noise trade-off on real hardware is **not**
+> **random** from the valid pool to isolate depth; a trained generator samples a different region (though a
+> 4.3× same-size gap is already large to close by better selection). The depth-vs-noise trade-off on real hardware is **not**
 > measured here. More determinants is *necessary, not sufficient* for a better energy. Extrapolations are
 > crude fits over four depths — the order of magnitude is the claim, not the digits.
 
 ## Honest scope
 
-- The **integrated GQE→QSCI loop is measured at 12q and GPU-executed at 20q/28q** on real NVIDIA hardware (cuStateVec, device-sampled; +0.000 / +0.395 mHa). The at-scale ladder beyond that uses a **hardware-independent determinant-space proxy** for the measurement step, *validated against* the measured 12/16/20q pipeline.
+- **No quantum advantage is claimed anywhere in this repository.** Every result here is classical simulation, GPU-hosted determinant-space computation, or small-scale QPU validation. Nothing here runs faster than, or solves anything unreachable by, classical methods. MATGEN-Q is a *method* — a pipeline that is useful today as a classical selected-CI/QSCI workflow and that becomes a quantum workflow **if and when** fault-tolerant sampling arrives. Any reading of these results as a demonstrated quantum speedup is a misreading.
+- The **integrated GQE→QSCI loop is measured at 12q and GPU-executed at 20q/28q** on real NVIDIA hardware (cuStateVec). Precisely: the *seed* is device-sampled (100k shots → 103 determinants at 20q; 150k shots → 212 at 28q) and the subsequent QSCI *growth* is classical (48,103 / 64,212 determinants; +0.000 / +0.395 mHa). The at-scale ladder beyond that uses a **hardware-independent determinant-space proxy** for the measurement step, *validated against* the measured 12/16/20q pipeline.
 - The 40q flagship is **executed and chemically accurate relative to its pre-registered DMRG(χ=400) reference** (+1.226 mHa, P1 PASS). Absolute 40q certification is the frozen **E3** protocol, terminal at **it5** (ended by an external pod kill during it6 growth, disclosed): prediction ii MET (E_var +0.185 mHa vs χ=400) at 750,257 dets (iii MET), a clean converging \|PT2\| trace to 1.31 mHa; the \|PT2\|≤0.5 mHa point (~it10–11) was unreached, reported as-is. A pre-registered independent DMRG-extrapolation anchor (**E6**) closes the gap the killed PT2 run left: high-χ DMRG (χ=400→2400) extrapolated on discarded weight gives **FCI(40q) = −10.293599 ± 0.022 mHa (R²=0.997)**, placing E3's committed it5 E_var **+1.59 mHa from the near-exact limit — right at the 1 kcal/mol chemical-accuracy threshold, and robust to ±0.05 mHa under a leave-one-out jackknife of the χ rungs** (folds span +1.55→+1.61 mHa; `e6_jackknife.py`), by a classical route independent of the PT2 certificate. It is *at* the edge, not comfortably inside — reported as such.
 
 ![E6 — DMRG truncation-error extrapolation anchoring the 40q flagship](results/e6_dmrg_extrapolation.png)
@@ -239,10 +253,12 @@ whole archive instead, download the chemistry `ES_*_ham` HDF5 files from
 
 | Objection | Where it stands |
 |---|---|
-| "No real GPU/QPU execution" | Resolved — executed: 20q/28q on NVIDIA GPU (cuStateVec, +0.000/+0.395 mHa), the 40q flagship (+1.226 mHa vs χ=400), the 38q CrO + Sn₂O₂ audits, and real AQT trapped-ion silicon (decoded 2026-07-20). The remaining owed piece is the full 40q `tensornet-mps` growth run, not platform viability. |
+| "No real GPU/QPU execution" | Resolved — **device-sampled**: 20q/28q on NVIDIA GPU (cuStateVec, +0.000/+0.395 mHa) and real AQT trapped-ion silicon (decoded 2026-07-20). **Run on GPU hosts but in determinant space, not device-sampled**: the 40q flagship (+1.226 mHa vs χ=400) and the 38q CrO + Sn₂O₂ audits — the evidence files record this distinction explicitly (`peak_device_mem_gb: null`, "no MPS sampling here"). The remaining owed piece is the full 40q `tensornet-mps` growth run, not platform viability. |
 | "Large-scale numbers are a proxy, not circuit-sampled" | True and disclosed; proxy validated against measured QSCI at 12/16/20q, incl. an unflattering measured-random result we published anyway. |
 | "CASCI in a modest CAS ≠ physical truth" | Correct — our accuracy claims are vs the in-CAS reference; the spin-state *ordering* claim additionally matches the experimental X⁵Π term (and is hedged to sign, not magnitude). |
-| "Transfer statistics are thin (3 seeds, p≈0.05)" | Disclosed verbatim in the paper; the robust claims are the variance reduction and paired-wins count, not the mean curve. |
+| "Transfer statistics are thin" | Answered by re-running wider: **8 seeds, 43/48 paired wins, p<0.0001** (the original 3-seed pre-check was p≈0.05 and is retained in the ledger). The robust claims remain the variance reduction and the paired-wins count, not the mean curve; the advantage still narrows into run-to-run noise beyond ~28q. |
+| "Cross-chemistry transfer is oversold" | Partly fair, and now stated as measured: **3 of 6 targets are clear wins, BeO is a statistical tie (+0.17 mHa vs 2.83 mHa seed SD, counted as no effect), both SnO targets are losses.** |
+| "Where is the quantum advantage?" | There is none, and we claim none. Every result here is classical simulation or small-scale QPU validation; MATGEN-Q is a *method* that becomes useful **if** fault-tolerant sampling arrives, and a working classical pipeline in the meantime. No speedup over classical methods is claimed anywhere in this repository. |
 | "The noise study saturates a small system" | Qualified in the paper as a selection-principle check, not a hardware forecast; real-QPU validation is pre-registered (P5). |
 
 *The full pre-answered red-team — 11 hostile-reviewer objections, each with a committed-evidence pointer —

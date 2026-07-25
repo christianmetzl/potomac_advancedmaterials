@@ -128,9 +128,9 @@
 
   <div class="sec">Core findings — executed at scale</div>
   <div class="grid">
-    <div class="card"><span class="k c">40 qubits</span><span class="lab">40q flagship, executed</span><span class="d"><b style="color:#DDE6F5">+1.226 mHa</b> vs DMRG(χ=400) = pre-registered P1 chemical-accuracy PASS, at 450,257 determinants on real NVIDIA GPU (qBraid).</span><span class="src">gpu_run1_h20_mp2seed_evidence.json</span></div>
+    <div class="card"><span class="k c">40 qubits</span><span class="lab">40q flagship, executed</span><span class="d"><b style="color:#DDE6F5">+1.226 mHa</b> vs DMRG(χ=400) = pre-registered P1 chemical-accuracy PASS, at 450,257 determinants on the qBraid H100 instance. Honest scope: this is <em>determinant-space</em> QSCI (MP2-seeded, engine <code>qsci_fast</code>) — the evidence records no device circuit sampling for this run; device-sampled QSCI is the 20q/28q result below.</span><span class="src">gpu_run1_h20_mp2seed_evidence.json</span></div>
     <div class="card"><span class="k g">+1.59 mHa</span><span class="lab">40q absolute accuracy anchor (E6)</span><span class="d">Flagship sits +1.59 mHa from the DMRG-extrapolated FCI(40q) — at the 1 kcal/mol edge, <b style="color:#DDE6F5">jackknife-robust to ±0.05 mHa</b>, by a route independent of the PT2 certificate.</span><span class="src">e6_dmrg_extrap_40q.json · e6_jackknife.py</span></div>
-    <div class="card"><span class="k g">+0.000 / +0.395</span><span class="lab">20q / 28q on GPU (cuStateVec)</span><span class="d">20q reproduces full CI exactly; 28q device-sampled QSCI reaches +0.395 mHa vs DMRG(χ=400) — both meet pre-registered energy + memory criteria.</span><span class="src">gpu_run1_h10/h14_nvidia_evidence.json</span></div>
+    <div class="card"><span class="k g">+0.000 / +0.395</span><span class="lab">20q / 28q on GPU (cuStateVec)</span><span class="d">Device-sampled <em>seed</em> (100k shots → 103 dets at 20q; 150k → 212 at 28q), then classical QSCI growth: 20q reproduces full CI exactly, 28q reaches +0.395 mHa vs DMRG(χ=400). Both meet pre-registered energy + memory criteria.</span><span class="src">gpu_run1_h10/h14_nvidia_evidence.json</span></div>
     <div class="card"><span class="k a">−3.784 / −0.399</span><span class="lab">38q reference corrections</span><span class="d">On CrO and the Sn₂O₂ EUV motif, QSCI drops <em>below</em> the same-CAS DMRG(χ=400) reference; χ=800/1200 confirm it's DMRG truncation error, not QSCI error.</span><span class="src">gpu_run4_cas19 · e4_sn2o2_38q_evidence.json</span></div>
     <div class="card"><span class="k v">16 → 56q</span><span class="lab">Train-small, deploy-large transfer</span><span class="d">One generator trained on 8q+12q, deployed zero-shot: <b style="color:#DDE6F5">43/48 paired wins, p&lt;0.0001</b> (8 seeds), ~3.6× tighter than random, positive through 56q.</span><span class="src">scaling_ladder_wide8_evidence.json</span></div>
     <div class="card"><span class="k">real QPU</span><span class="lab">Trapped-ion silicon, decoded</span><span class="d">AQT ibex-q1 (2,000 shots/job) decoded; number-conserving post-selection, and device-seeded QSCI growth recovers exact FCI (0.000 mHa).</span><span class="src">qpu_aqt_evidence.json</span></div>
@@ -138,9 +138,9 @@
 
   <div class="sec" style="color:var(--violet)">Core findings — what the evidence itself revealed</div>
   <div class="grid">
-    <div class="card"><span class="k g">0.007 mHa</span><span class="lab">FCI(40q) pinned twice, independently</span><span class="d">Classical DMRG (discarded weight→0) and selected-CI/QSCI (PT2→0) — two method classes, two extrapolation variables, no shared code path — agree to <b style="color:#DDE6F5">0.007 mHa</b> (0.064 across fit windows): ~25× inside chemical accuracy. A cross-validated benchmark where exact FCI is intractable.</span><span class="src">e3_cipsi_crossvalidation.py</span></div>
+    <div class="card"><span class="k g">0.064 mHa</span><span class="lab">FCI(40q) pinned twice, independently</span><span class="d">Classical DMRG (discarded weight→0) and selected-CI/QSCI (PT2→0) — two method classes, two extrapolation variables, no shared code path — agree to <b style="color:#DDE6F5">0.064 mHa in the worst fit window</b> (0.004 best). Folding in Route A's own jackknife spread: ~0.10 mHa, ~15× inside chemical accuracy. A cross-validated benchmark where exact FCI is intractable.</span><span class="src">e3_cipsi_crossvalidation.py</span></div>
     <div class="card"><span class="k a">≈2000×</span><span class="lab">When a classical reference silently fails</span><span class="d">Against <em>exact FCI</em> at 20q, DMRG truncation error at fixed χ grows ~2000× from equilibrium into strong correlation. And χ=400 — exact at 20q at every geometry — is <b style="color:#DDE6F5">≥0.92 mHa off at 40q</b>. A χ validated on a smaller system does not transfer.</span><span class="src">reference_reliability_map.py</span></div>
-    <div class="card"><span class="k v">798× short</span><span class="lab">E9 — why the 40q MPS path stalled</span><span class="d">Pre-registered, then <em>2 of 4 predictions refuted</em> and published as such. Seed yield grows only linearly in circuit depth and ~2× per shot-decade: 564 determinants where 450,257 were needed. The MP2-seeded classical growth was a <b style="color:#DDE6F5">necessary architecture</b>, not a workaround.</span><span class="src">e9_seed_depth.py</span></div>
+    <div class="card"><span class="k v">4.3× short</span><span class="lab">E9 — why the 40q MPS path stalled</span><span class="d">Pre-registered, then <em>2 of 4 predictions refuted</em> and published as such. Like-for-like at 20q: 400,000 shots at 3× the pipeline depth yield <b style="color:#DDE6F5">564 distinct determinants against a 2,401 requirement</b>. Yield is flat in system size while the requirement grows ~1.38×/qubit, so the cross-system gap at 40q is ~798× — stated as cross-system, not measured there. The MP2-seeded classical growth was a <b style="color:#DDE6F5">necessary architecture</b>, not a workaround.</span><span class="src">e9_seed_depth.py</span></div>
   </div>
 
   <div class="sec" style="color:var(--pass)">Core findings — accuracy &amp; trust</div>
@@ -154,7 +154,7 @@
   <div class="scope">
     <b>⚑ Honest scope (non-negotiable)</b>
     <ul>
-      <li>No quantum-<em>advantage</em> claim: at ≤40q classical FCI/DMRG still solve these instances — we show correctness, favourable scaling, and executed hardware, not a head-to-head speed win.</li>
+      <li>No quantum-<em>advantage</em> claim <em>anywhere</em>: classical FCI/DMRG solve every instance here, including the 40q flagship (our own DMRG anchor pins it independently). We show correctness, self-certification, favourable scaling and executed hardware — never a speed or reach win.</li>
       <li>Large-scale QSCI beyond 20q uses a determinant-space <em>proxy</em>, validated against real circuit-sampled shots at 12/16/20q.</li>
       <li>The 40q absolute result is <em>at</em> the chemical-accuracy edge, not comfortably inside; the full 40q tensornet-mps growth run remains owed.</li>
       <li>The 40q tensor-network backend <em>ran</em> (2.65 h, 12.06 GB) but its sampling yields ~108 determinants where ~450,000 are needed — E9 measures why, and it is a sampling-strategy limit, not GPU hours.</li>
@@ -187,32 +187,32 @@
 
 <script>
 const CHECKS = [
-  ["two-stage GQE (H2/H4/H6)","0.0~0.0; 0.009~0.009; 0.297~0.297","30s",0],
-  ["integrated GQE→QSCI (H6 12q)","1.054~1.054","110s",0],
-  ["SnO chem-acc (16q)","0.126 mHa < 0.6","5s",0],
-  ["SnO2 chem-acc (20q)","0.224 mHa < 0.6","7s",0],
-  ["CrO / NiO (20q)","0.038~0.038; 0.197~0.197","14s",0],
-  ["bridged tin-oxo Sn2O2 (16q)","0.411 < 1.6","6s",0],
-  ["HamLib equivalence (28q)","27735 terms == 27735","15s",0],
-  ["classical baselines (Hn FCI)","0.0002~0.0","7s",0],
-  ["CrO dissociation trust","CCSD(T) max|err|=144 mHa nonconv; selCI max 2.77","62s",0],
-  ["CrO spin-gap decision","1.89>1.0; 1.893>1.0; 1.913>1.5","11s",0],
-  ["EN-PT2 two-sided bracket","E_var≥FCI ∀ 12 pts; R²=0.99922","68s",0],
-  ["blind holdout VO (frozen script)","0.167<1.6; 0.101<1.6","9s",0],
-  ["CUDA-Q execution (qpp-cpu)","0.011<1.6; 0.037<1.6","520s",0],
-  ["MPS bond-dim & entanglement","χ 50<100; Smax 0.39→4.43","204s",0],
-  ["integral engine selftest (SC vs JW)","'INTEGRAL ENGINE VALID'","3s",0],
-  ["engine equivalence (fast vs orig vs FCI)","2.4e-11 < 1e-4","3s",0],
-  ["cost audit (pricing × committed configs)","'COST AUDIT: PASS'","0s",0],
-  ["20q GPU exact anchor (cuStateVec)","Δ=0.0000 mHa; 0.0<1.6; 0.44<8.0 GB","0s",1],
-  ["28q GPU converged (cuStateVec)","0.395<1.6; 2.82<8.0 GB; 64212 dets","0s",1],
-  ["40q frontier checkpoint (iter5)","3.222~3.222; 150257 dets","0s",1],
-  ["28q CPU pre-validation","1.219~1.219","0s",1],
-  ["pre-registration integrity","sha256(blind_holdout_vo.py) matches prereg","0s",1],
-  ["qBraid cloud-runtime P5 chain","2.017<5.0; 3 job IDs","0s",1],
-  ["qBraid hosted 20q validation","0.194<1.6","0s",1],
-  ["AQT trapped-ion silicon decode (2 jobs)","Δ=0.0000; keep 28.6% / 25.1%; +20.4 / +11.1 mHa","0s",1],
-  ["crossover walls (memory + dets)","16 TB > 10 TB; 1.383<1.5; 2.0~2.0","0s",1],
+  ["two-stage GQE (H2/H4/H6)","0.0~0.0; 0.009~0.009; 0.297~0.297","22s",0],
+  ["integrated GQE→QSCI (H6 12q)","1.054~1.054","36s",0],
+  ["SnO chem-acc (16q)","0.335 mHa < 0.6","3s",0],
+  ["SnO2 chem-acc (20q)","0.201 mHa < 0.6","7s",0],
+  ["CrO/NiO (20q)","0.038~0.038; 0.197~0.197","14s",0],
+  ["bridged tin-oxo Sn2O2 (16q)","0.411<1.6","6s",0],
+  ["HamLib equivalence (28q)","27735 terms ==27735","15s",0],
+  ["classical baselines (Hn FCI)","0.0002~0.0","8s",0],
+  ["CrO dissociation trust","0.038<0.5; CCSD(T) max|err|=144mHa nonconv=True; selCI all<5mHa (max 2.77)","61s",0],
+  ["CrO spin-gap decision","1.89>1.0; 1.893>1.0; 0==0","10s",0],
+  ["EN-PT2 two-sided bracket","E_var≥FCI ∀ 12 pts; 4.133|.|<10.0; 0.99922>0.99","70s",0],
+  ["blind holdout VO re-run (frozen script)","0.167<1.6; 0.142<1.6; True==1","10s",0],
+  ["CUDA-Q execution (qpp-cpu)","0.012|.|<1.6; 0.042|.|<1.6","540s",0],
+  ["MPS bond-dim & entanglement","50<100; Smax 0.39→4.43","217s",0],
+  ["integral engine selftest (SC vs JW + FCI)","'INTEGRAL ENGINE VALID' printed","4s",0],
+  ["engine equivalence (fast vs orig vs FCI)","1.1546319456101628e-11<0.0001; 0.0<1.6","4s",0],
+  ["cost audit (published pricing × committed configs)","'COST AUDIT: PASS' printed","0s",0],
+  ["20q GPU exact anchor (cuStateVec)","err consistent (Δ=0.0000 mHa); 0.0|.|<1.6; 0.44<8.0","0s",1],
+  ["28q GPU converged (cuStateVec)","err consistent (Δ=0.0005 mHa); 0.395|.|<1.6; 2.82<8.0; 64212>30000","0s",1],
+  ["40q frontier checkpoint (iter5)","err consistent (Δ=0.0004 mHa); 3.222~3.222; 150257>100000","0s",1],
+  ["28q CPU pre-validation","1.219~1.219; True==1","0s",1],
+  ["pre-registration integrity","len=6==6; sha256(blind_holdout_vo.py) matches prereg","0s",1],
+  ["qBraid cloud-runtime P5 chain","2.017|.|<5.0; len=3==3; True==1","0s",1],
+  ["qBraid hosted 20q validation","0.194|.|<1.6; True==1","0s",1],
+  ["AQT trapped-ion silicon decode (2 jobs)","len=2==2; err consistent (Δ=0.0000 mHa); 0.0|.|<1.6; 0.0|.|<1.6; 0.286>0.2; 0.2505>0.2; 20.435~20.435; 11.127~11.127","0s",1],
+  ["crossover walls (memory + dets)","17592186044416>10000000000000.0; 1.383<1.5; 2.0~2.0","0s",1],
 ];
 const screen=document.getElementById('screen'),counter=document.getElementById('counter'),
       caret=document.getElementById('caret'),host=document.getElementById('summaryHost'),

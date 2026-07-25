@@ -45,7 +45,7 @@ s.addText("A bluff-detector for the expensive chemistry decisions.",
   { x: 0.75, y: 2.75, w: 11.8, h: 0.6, fontFace: HF, color: CYAN, fontSize: 26, italic: true, margin: 0 });
 s.addText("Generative AI designs the quantum circuits. A quantum-selected solver returns an answer that is always honest about its own error — so a wrong prediction never reaches the lab.",
   { x: 0.75, y: 3.5, w: 9.6, h: 1.0, fontFace: BF, color: TEXT, fontSize: 16, lineSpacing: 24, margin: 0 });
-const chips = [["40q", "executed on GPU", CYAN], ["26/26", "re-runnable checks", GREEN], ["p<0.0001", "AI transfer to 56q", VIOLET]];
+const chips = [["40q", "executed, pre-reg PASS", CYAN], ["26/26", "re-runnable checks", GREEN], ["p<0.0001", "AI transfer to 56q", VIOLET]];
 let cx = 0.75;
 chips.forEach(([k, l, c]) => {
   card(s, cx, 5.05, 3.6, 1.35, PANEL);
@@ -196,7 +196,7 @@ s.addText("Full CI at 40 qubits is intractable (~3.4×10¹⁰ determinants), so 
   { x: 0.75, y: 1.8, w: 6.8, h: 1.15, fontFace: BF, color: TEXT, fontSize: 14.5, lineSpacing: 22, margin: 0 });
 const routes = [
   ["Route A", CYAN, "classical tensor network", "block2 DMRG χ=400→2400, extrapolated on discarded weight → 0", "−10.293599 Ha"],
-  ["Route B", VIOLET, "determinant selection", "selected-CI/QSCI on 750,257 dets, extrapolated on PT2 → 0", "−10.293606 Ha"],
+  ["Route B", VIOLET, "determinant selection", "selected-CI/QSCI on 750,257 dets, extrapolated on PT2 → 0", "−10.293621 Ha"],
 ];
 let ry2 = 3.05;
 routes.forEach(([tag, col, kind, how, val]) => {
@@ -208,14 +208,14 @@ routes.forEach(([tag, col, kind, how, val]) => {
   ry2 += 1.55;
 });
 card(s, 0.75, 6.15, 6.8, 1.05, PANEL2, { line: LINE });
-s.addText([{ text: "They agree to 0.007 mHa", options: { bold: true, color: GREEN, fontSize: 15 } },
-           { text: "  (0.064 mHa across all fit windows) — ~25× inside chemical accuracy, sharing no solver, no extrapolation variable and no code path.", options: { color: TEXT, fontSize: 12 } }],
+s.addText([{ text: "They agree to 0.064 mHa", options: { bold: true, color: GREEN, fontSize: 15 } },
+           { text: "  in the WORST fit window (0.004 best). With Route A’s own jackknife spread folded in: ~0.10 mHa, ~15× inside chemical accuracy — sharing no solver, no extrapolation variable, no code path.", options: { color: TEXT, fontSize: 12 } }],
   { x: 1.1, y: 6.15, w: 6.1, h: 1.05, fontFace: BF, valign: "middle", lineSpacing: 16, margin: 0 });
 try {
-  s.addImage({ path: path.join(ROOT, "results", "crossvalidation_40q.png"), x: 7.75, y: 2.0, w: 4.8, h: 2.78 });
+  s.addImage({ path: path.join(ROOT, "results", "crossvalidation_40q.png"), x: 7.75, y: 2.30, w: 4.8, h: 2.20 });
 } catch (e) { /* optional */ }
 s.addText("A cross-validated benchmark other groups can cite:", { x: 7.75, y: 5.0, w: 4.8, h: 0.3, fontFace: BF, color: MUTED, fontSize: 11.5, margin: 0 });
-s.addText("FCI(H₂₀, 40q, STO-6G) ≈ −10.29360 Ha", { x: 7.75, y: 5.32, w: 4.8, h: 0.42, fontFace: BF, color: GREEN, fontSize: 15, bold: true, margin: 0 });
+s.addText("FCI(H₂₀, 40q, STO-6G) ≈ −10.29361 Ha", { x: 7.75, y: 5.32, w: 4.8, h: 0.42, fontFace: BF, color: GREEN, fontSize: 15, bold: true, margin: 0 });
 s.addText("Both routes are extrapolations, not exact FCI; Route B is fit-window dependent (full spread reported). No new computation — analysis of already-committed evidence.",
   { x: 7.75, y: 5.85, w: 4.8, h: 1.3, fontFace: BF, color: FAINT, fontSize: 10, lineSpacing: 14, margin: 0 });
 
@@ -244,7 +244,7 @@ s = slide();
 eyebrow(s, "EXECUTED — EVERY NUMBER TRACES TO A COMMITTED FILE");
 title(s, "What actually ran");
 const res = [
-  ["+1.226 mHa", CYAN, "40q flagship on GPU", "Chemically accurate vs its frozen DMRG(χ=400) reference at 450,257 determinants — pre-registered criterion met."],
+  ["+1.226 mHa", CYAN, "40q flagship, executed", "Chemically accurate vs its frozen DMRG(χ=400) reference at 450,257 determinants — pre-registered criterion met. Determinant-space QSCI on the qBraid H100 host; device circuit sampling is the 20q/28q result."],
   ["+1.59 mHa", GREEN, "40q absolute anchor", "Independent DMRG extrapolation to the near-exact limit; robust to ±0.05 mHa under a leave-one-out jackknife."],
   ["−3.784 / −0.399", VIOLET, "38q reference corrections", "CrO and the real Sn₂O₂ EUV motif land below their same-CAS DMRG references — mechanism confirmed at three χ."],
   ["0.038 / 0.197 mHa", GREEN, "Open-shell oxides (20q)", "CrO ⁵Π and NiO ³Σ⁻ to chemical accuracy against exact diagonalization."],
@@ -267,11 +267,11 @@ s = slide();
 eyebrow(s, "HONEST LIMITS — NON-NEGOTIABLE", AMBER);
 title(s, "What we do not claim");
 const lims = [
-  "No quantum ADVANTAGE at these sizes. At ≤40 qubits classical methods still solve these instances. The value is trust and correctness, not speed — the advantage regime is beyond, which the 40q run targets.",
+  "No quantum ADVANTAGE anywhere in this work. Classical FCI/DMRG solve every instance here, including the 40q flagship — our own DMRG anchor pins it independently. The value is trust and correctness, not speed. Where an advantage regime begins is a question we do not answer.",
   "The value case is a framework, not a Mitsubishi ROI. The mechanism is measured here; the dollar inputs are placeholders for your pipeline's own numbers.",
   "Large-ladder results beyond 20q use a determinant-space proxy for the measurement step — validated against real circuit-sampled shots at 12 / 16 / 20 qubits.",
   "The 40q absolute result sits AT the chemical-accuracy threshold, not comfortably inside it.",
-  "The 40q tensor-network backend RAN (2.65 h, 12.06 GB) but yielded only 108 determinants where ~450,000 were needed. E9 measured why — seed yield grows only linearly in depth, leaving it 798× short — so the MP2-seeded classical growth was a NECESSARY architecture, not a workaround. What is owed is a sampling strategy, not GPU hours.",
+  "The 40q tensor-network backend RAN (2.65 h, 12.06 GB) but yielded only 108 determinants where ~450,000 were needed. E9 measured why: like-for-like at 20q, 400k shots at 3× depth give 564 determinants against a 2,401 requirement — 4.3× short — and yield is flat in system size. The MP2-seeded classical growth was a NECESSARY architecture. What is owed is a sampling strategy, not GPU hours.",
   "Two decision claims were tested and withdrawn rather than defended. The value story above depends on neither.",
 ];
 let ly = 1.82;

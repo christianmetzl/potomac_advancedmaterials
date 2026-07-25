@@ -56,20 +56,30 @@ def main():
     best = min(abs(v) for v in agreements.values()); worst = max(abs(v) for v in agreements.values())
 
     # ---- calibration of the same extrapolator at 20q, where exact FCI IS known ----
-    cal = None
+    # Calibrate on EVERY committed 20q trace, not a favourable one. This is where the honest limit lives.
+    cal = {"traces": [], "note": ""}
     try:
-        s = json.load(open(os.path.join(_RES, "encoder", "selci_pt2_evidence.json")))
-        r0 = [r for r in s["results"] if abs(r["R"] - 0.74) < 1e-9][0]
-        pts = r0["points"]
-        E0c, _ = _fit_pt2_to_zero([p["pt2_mHa"] / 1000.0 for p in pts], [p["E_var"] for p in pts])
-        cal = {"system": "H10/20q R=0.74", "exact_FCI_Ha": r0["e_fci"],
-               "extrapolated_Ha": E0c, "error_mHa": round((E0c - r0["e_fci"]) * 1000.0, 3),
-               "deepest_PT2_mHa": pts[-1]["pt2_mHa"], "deepest_ndet": pts[-1]["ndet"],
-               "note": ("Calibration only. This 20q trace stops at |PT2| ~ 45 mHa on 26 determinants — ~34x "
-                        "shallower than the 40q trace (|PT2| = 1.31 mHa on 750,257 dets). It bounds the "
-                        "extrapolator FAR from convergence; it does not bound it in the 40q regime.")}
-    except Exception:
-        pass
+        sp = json.load(open(os.path.join(_RES, "encoder", "selci_pt2_evidence.json")))
+        for r in sp["results"]:
+            pts = r["points"]
+            E0c, _ = _fit_pt2_to_zero([p["pt2_mHa"] / 1000.0 for p in pts], [p["E_var"] for p in pts])
+            cal["traces"].append({
+                "R_ang": r["R"], "deepest_abs_PT2_mHa": round(abs(pts[-1]["pt2_mHa"]), 3),
+                "deepest_ndet": pts[-1]["ndet"], "exact_FCI_Ha": r["e_fci"],
+                "extrapolated_Ha": E0c, "error_mHa": round((E0c - r["e_fci"]) * 1000.0, 3)})
+        cal["note"] = (
+            "HONEST LIMIT — the extrapolator is NOT uniformly reliable. Its error at 20q tracks CORRELATION "
+            "STRENGTH, not merely convergence depth: at R=0.74 (equilibrium, the geometry of the H20/40q "
+            "flagship) it errs +4.1 mHa, but at R=2.4 (heavily stretched) it errs +53.9 mHa even though that "
+            "trace reaches |PT2| = 1.08 mHa, i.e. essentially the SAME depth as the 40q trace (1.31 mHa). "
+            "An earlier version of this file defended the 40q extrapolation on convergence depth alone; that "
+            "defense is REFUTED by the R=2.4 trace in this same evidence file and has been withdrawn. The "
+            "defensible statement is narrower: the 40q system is at equilibrium geometry, where the "
+            "extrapolator calibrates well; we do NOT claim it would be reliable on a stretched 40q geometry. "
+            "The PRIMARY evidence for the 40q value is not this calibration but the mutual agreement of two "
+            "methodologically independent routes on that specific system.")
+    except Exception as e:
+        cal = {"error": str(e)}
 
     out = {
         "run": "e3_cipsi_crossvalidation",
@@ -86,16 +96,22 @@ def main():
         "chem_acc_mHa": CHEM_ACC_MHA,
         "inside_chemical_accuracy_by": f"{CHEM_ACC_MHA / max(worst, 1e-9):.0f}x (worst window)",
         "calibration_20q_known_FCI": cal,
-        "headline": (f"Two independent routes to FCI(H20/40q) agree to {worst:.3f} mHa in the worst fit window "
-                     f"and {best:.3f} mHa in the best — i.e. ~{CHEM_ACC_MHA / max(worst,1e-9):.0f}x inside "
-                     f"chemical accuracy. Consensus value: {(routeA + routeB) / 2:.6f} Ha."),
+        "uncertainty_note": ("Route A also carries its own jackknife spread (e6_jackknife_robustness.json). "
+            "Combining both, the honest worst-case route disagreement is ~0.10 mHa (~15x inside chemical "
+            "accuracy), not the 25x implied by the worst fit window alone."),
+        "headline": (f"Two independent routes to FCI(H20/40q) agree to {worst:.3f} mHa in the WORST fit window "
+                     f"(best {best:.3f}; Route B window-mean vs Route A = {abs(routeB-routeA)*1000:.3f} mHa) — i.e. "
+                     f"~{CHEM_ACC_MHA / max(worst,1e-9):.0f}x inside chemical accuracy on the worst window. "
+                     f"QUOTE THE WORST WINDOW, not the best. Consensus value: {(routeA + routeB) / 2:.6f} Ha."),
         "honest_caveats": [
             "BOTH routes are extrapolations; neither is an exact FCI calculation (FCI at 40q is intractable).",
             "Route B's value depends on the fit window; the full window spread is reported, not just the best fit.",
             "The routes share the same Hamiltonian by necessity (that is what makes them comparable); they share "
             "no solver, no extrapolation variable, and no code path.",
-            "The 20q calibration errs by ~4 mHa, but at ~34x shallower convergence than the 40q trace — it bounds "
-            "the extrapolator far from convergence, not in this regime.",
+            "The 20q calibration is NOT a clean bound: at equilibrium geometry (R=0.74, the flagship's regime) "
+            "the extrapolator errs +4.1 mHa, but on a heavily stretched geometry (R=2.4) it errs +53.9 mHa at "
+            "essentially the same convergence depth. We therefore do NOT claim the extrapolator is uniformly "
+            "reliable; the 40q claim rests on the two routes' mutual agreement on that specific system.",
             "This is analysis of already-committed evidence: no new computation, nothing re-run or re-tuned.",
             "E3's pre-registered criterion (|PT2| <= 0.5 mHa) still FAILED as-measured; that is unchanged. This "
             "result is additional value extracted from the trace that run did produce, not a re-scored outcome."],
@@ -107,9 +123,12 @@ def main():
     for k, v in agreements.items():
         print(f"   window {k:10s}: B-A = {v:+.4f} mHa")
     print(f"\n{out['headline']}")
-    if cal:
-        print(f"20q calibration (known FCI): extrapolator errs {cal['error_mHa']:+.3f} mHa at |PT2|={cal['deepest_PT2_mHa']:.1f} mHa "
-              f"({cal['deepest_ndet']} dets) — far shallower than the 40q trace.")
+    print("\n20q calibration of the SAME extrapolator (exact FCI known):")
+    for t in cal.get("traces", []):
+        print(f"   R={t['R_ang']:>4} Ang: |PT2|={t['deepest_abs_PT2_mHa']:>7.3f} mHa, "
+              f"ndet={t['deepest_ndet']:>4} -> error {t['error_mHa']:+8.3f} mHa")
+    if cal.get("note"):
+        print(f"   {cal['note']}")
     print("saved", os.path.relpath(fn))
 
 
