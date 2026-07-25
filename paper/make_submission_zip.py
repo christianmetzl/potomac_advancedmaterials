@@ -26,6 +26,7 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
 - `results/` — every committed evidence JSON + figures (each headline number traces here).
 - `docs/claims_ledger.md` — per-claim traceability (number -> script -> evidence -> status).
 - `docs/reproduce_transcript.txt` — captured `python src/reproduce.py` -> 26/26 PASS (17 re-execution + 9 evidence audits).
+- `docs/reproduce_replay.html` — open in any browser (offline, no network): a visual replay of the actual 26/26 run.
 - `requirements.txt` (CPU) / `requirements-gpu.txt` (cudaq/quimb/block2 for qBraid GPU).
 
 ## TWO ACTIONS REQUIRED BEFORE UPLOAD (team)
@@ -87,7 +88,7 @@ def main():
     # code + evidence + key docs
     copytree(os.path.join(REPO, "src"), STAGE)
     copytree(os.path.join(REPO, "results"), STAGE)
-    for d in ("claims_ledger.md", "reproduce_transcript.txt"):
+    for d in ("claims_ledger.md", "reproduce_transcript.txt", "reproduce_replay.html"):
         s = os.path.join(REPO, "docs", d)
         if os.path.exists(s):
             os.makedirs(os.path.join(STAGE, "docs"), exist_ok=True)

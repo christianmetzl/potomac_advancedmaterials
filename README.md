@@ -152,6 +152,10 @@ python cli.py verify        # ONE command — prove the whole submission (wraps 
 python src/reproduce.py     # -> 26/26 PASS (17 re-execution + 9 evidence audits; captured: docs/reproduce_transcript.txt)
 python src/cost_audit.py    # re-derives the ENTIRE program cost from published pricing × committed shot/uptime configs
 ```
+
+*Prefer to watch rather than run?* Open [`docs/reproduce_replay.html`](docs/reproduce_replay.html) in any
+browser (offline, no network) for a visual replay of the actual 26/26 run — the 17 re-executions and 9
+evidence audits streaming to `26/26 PASS`.
 Every quantitative claim is traced to its script + evidence JSON + status (executed / circuit-sampled /
 proxy / GPU-owed) in **`docs/claims_ledger.md`**.
 

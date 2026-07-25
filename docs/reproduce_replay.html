@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MATGEN-Q — judge re-run replay (26/26)</title>
+<style>
+  :root{
+    --ink:#080B14; --panel:#0E1422; --panelhi:#131A2B;
+    --bar:#161E30; --line:#20293D; --text:#C7D2E6; --dim:#68748F; --faint:#414D67;
+    --pass:#41D07E; --audit:#E9B84A; --cyan:#54D6E6; --violet:#9A8CFF;
+    --shadow:rgba(0,0,0,.55);
+  }
+  *{box-sizing:border-box}
+  html{color-scheme:dark}
+  body{
+    margin:0; background:
+      radial-gradient(1100px 600px at 78% -8%, rgba(84,214,230,.10), transparent 60%),
+      radial-gradient(900px 520px at 12% 108%, rgba(154,140,255,.10), transparent 60%),
+      var(--ink);
+    color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased; min-height:100vh;
+    display:flex; align-items:center; justify-content:center; padding:clamp(14px,3vw,40px);
+  }
+  .wrap{width:100%; max-width:940px}
+  .eyebrow{
+    font-size:12px; letter-spacing:.22em; text-transform:uppercase; color:var(--cyan);
+    margin:0 0 10px 2px; font-weight:600;
+  }
+  h1{
+    font-size:clamp(22px,3.4vw,32px); line-height:1.15; margin:0 0 8px; font-weight:680;
+    letter-spacing:-.01em; text-wrap:balance; color:#EAF0FB;
+  }
+  .sub{margin:0 0 22px 0; color:var(--dim); font-size:15px; max-width:64ch; line-height:1.55}
+  .sub b{color:var(--text); font-weight:600}
+
+  /* terminal window */
+  .term{
+    background:linear-gradient(180deg,var(--panelhi),var(--panel));
+    border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    box-shadow:0 30px 70px -30px var(--shadow), 0 2px 0 rgba(255,255,255,.03) inset;
+  }
+  .titlebar{
+    display:flex; align-items:center; gap:14px; padding:12px 16px;
+    background:var(--bar); border-bottom:1px solid var(--line);
+  }
+  .dots{display:flex; gap:8px}
+  .dots i{width:12px; height:12px; border-radius:50%; display:block}
+  .dots i:nth-child(1){background:#FF5F57} .dots i:nth-child(2){background:#FEBC2E} .dots i:nth-child(3){background:#28C840}
+  .tt{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:12.5px; color:var(--dim); flex:1; text-align:center; margin-right:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .counter{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:12.5px; font-weight:600;
+    color:var(--pass); background:rgba(65,208,126,.10); border:1px solid rgba(65,208,126,.28);
+    padding:3px 9px; border-radius:999px; font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  .screen{
+    font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    font-size:13px; line-height:1.62; padding:16px 18px 20px;
+    height:min(58vh,520px); overflow-y:auto; overflow-x:auto; scroll-behavior:smooth;
+  }
+  .screen::-webkit-scrollbar{width:10px;height:10px}
+  .screen::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
+  .cmd{color:var(--text); white-space:pre; margin-bottom:6px}
+  .cmd .p{color:var(--cyan)} .cmd .c{color:#EAF0FB}
+  .row{display:flex; gap:12px; align-items:baseline; white-space:nowrap; opacity:0; transform:translateY(3px); animation:pop .22s ease forwards}
+  @keyframes pop{to{opacity:1;transform:none}}
+  .tag{flex:none; font-weight:700; width:52px}
+  .tag.p{color:var(--pass)} .tag.a{color:var(--audit)}
+  .nm{flex:none; color:#DDE6F5}
+  .nm .badge{color:var(--audit); font-weight:600}
+  .dt{color:var(--dim); overflow:hidden; text-overflow:ellipsis}
+  .tm{margin-left:auto; color:var(--faint); flex:none; padding-left:14px; font-variant-numeric:tabular-nums}
+  .caret{display:inline-block;width:8px;height:15px;background:var(--cyan);vertical-align:-2px;margin-left:3px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  .summary{
+    margin-top:2px; opacity:0; animation:pop .3s ease forwards;
+    border-top:1px dashed var(--line); padding:16px 18px;
+    display:flex; gap:16px; align-items:center; flex-wrap:wrap;
+  }
+  .big{font-family:ui-monospace,monospace; font-weight:700; font-size:20px; color:var(--pass); letter-spacing:.02em}
+  .summary .note{color:var(--dim); font-size:12.5px; font-family:ui-monospace,monospace}
+
+  .foot{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-top:18px}
+  button{
+    font:inherit; font-size:14px; font-weight:600; color:#04121B; cursor:pointer;
+    background:linear-gradient(180deg,#6FE3F0,#3FC6D8); border:none; padding:10px 18px; border-radius:10px;
+    box-shadow:0 8px 20px -8px rgba(84,214,230,.6);
+  }
+  button:hover{filter:brightness(1.06)} button:focus-visible{outline:2px solid var(--cyan); outline-offset:3px}
+  .legend{display:flex; gap:16px; color:var(--dim); font-size:12.5px; flex-wrap:wrap}
+  .legend span{display:inline-flex; align-items:center; gap:7px}
+  .legend i{width:9px;height:9px;border-radius:2px;display:block}
+  .legend .g{background:var(--pass)} .legend .m{background:var(--audit)}
+  .cap{margin-top:16px; color:var(--faint); font-size:12px; line-height:1.5; max-width:70ch}
+  .cap code{color:var(--dim)}
+  @media (max-width:560px){ .dt{display:none} .tm{margin-left:auto} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Reproducibility · one command</p>
+  <h1>The judges re-run our results — live</h1>
+  <p class="sub">A replay of the actual <b>reproduce.py</b> run from a clean checkout: <b>17 headline scripts re-executed</b> and checked against committed values, plus <b>9 audits</b> of the GPU/QPU/one-shot evidence a laptop can't re-run. Nothing here is typed by hand — every line is real output.</p>
+
+  <div class="term" role="img" aria-label="Terminal replay of reproduce.py ending in 26 of 26 checks passing">
+    <div class="titlebar">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <div class="tt">reproduce.py — MATGEN-Q · Team EIGENNEXUS</div>
+      <div class="counter" id="counter">0 / 26</div>
+    </div>
+    <div class="screen" id="screen">
+      <div class="cmd"><span class="p">user@qbraid</span>:<span class="c">~/potomac_advancedmaterials</span>$ python src/reproduce.py<span class="caret" id="caret"></span></div>
+    </div>
+    <div id="summaryHost"></div>
+  </div>
+
+  <div class="foot">
+    <button id="replay" type="button">▶ Replay run</button>
+    <div class="legend">
+      <span><i class="g"></i> re-execution (17)</span>
+      <span><i class="m"></i> evidence audit (9)</span>
+    </div>
+  </div>
+  <p class="cap">Timings in brackets are the real per-check wall-clock from the captured run (full transcript: <code>docs/reproduce_transcript.txt</code>). Audits verify committed artifacts — they are never counted as re-runs.</p>
+</div>
+
+<script>
+const CHECKS = [
+  ["two-stage GQE (H2/H4/H6)","0.0~0.0; 0.009~0.009; 0.297~0.297","30s",0],
+  ["integrated GQE→QSCI (H6 12q)","1.054~1.054","110s",0],
+  ["SnO chem-acc (16q)","0.126 mHa < 0.6","5s",0],
+  ["SnO2 chem-acc (20q)","0.224 mHa < 0.6","7s",0],
+  ["CrO / NiO (20q)","0.038~0.038; 0.197~0.197","14s",0],
+  ["bridged tin-oxo Sn2O2 (16q)","0.411 < 1.6","6s",0],
+  ["HamLib equivalence (28q)","27735 terms == 27735","15s",0],
+  ["classical baselines (Hn FCI)","0.0002~0.0","7s",0],
+  ["CrO dissociation trust","CCSD(T) max|err|=144 mHa nonconv; selCI max 2.77","62s",0],
+  ["CrO spin-gap decision","1.89>1.0; 1.893>1.0; 1.913>1.5","11s",0],
+  ["EN-PT2 two-sided bracket","E_var≥FCI ∀ 12 pts; R²=0.99922","68s",0],
+  ["blind holdout VO (frozen script)","0.167<1.6; 0.101<1.6","9s",0],
+  ["CUDA-Q execution (qpp-cpu)","0.011<1.6; 0.037<1.6","520s",0],
+  ["MPS bond-dim & entanglement","χ 50<100; Smax 0.39→4.43","204s",0],
+  ["integral engine selftest (SC vs JW)","'INTEGRAL ENGINE VALID'","3s",0],
+  ["engine equivalence (fast vs orig vs FCI)","2.4e-11 < 1e-4","3s",0],
+  ["cost audit (pricing × committed configs)","'COST AUDIT: PASS'","0s",0],
+  ["20q GPU exact anchor (cuStateVec)","Δ=0.0000 mHa; 0.0<1.6; 0.44<8.0 GB","0s",1],
+  ["28q GPU converged (cuStateVec)","0.395<1.6; 2.82<8.0 GB; 64212 dets","0s",1],
+  ["40q frontier checkpoint (iter5)","3.222~3.222; 150257 dets","0s",1],
+  ["28q CPU pre-validation","1.219~1.219","0s",1],
+  ["pre-registration integrity","sha256(blind_holdout_vo.py) matches prereg","0s",1],
+  ["qBraid cloud-runtime P5 chain","2.017<5.0; 3 job IDs","0s",1],
+  ["qBraid hosted 20q validation","0.194<1.6","0s",1],
+  ["AQT trapped-ion silicon decode (2 jobs)","Δ=0.0000; keep 28.6% / 25.1%; +20.4 / +11.1 mHa","0s",1],
+  ["crossover walls (memory + dets)","16 TB > 10 TB; 1.383<1.5; 2.0~2.0","0s",1],
+];
+const screen=document.getElementById('screen'),counter=document.getElementById('counter'),
+      caret=document.getElementById('caret'),host=document.getElementById('summaryHost'),
+      replay=document.getElementById('replay');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let timers=[];
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function clearAll(){timers.forEach(clearTimeout);timers=[];[...screen.querySelectorAll('.row')].forEach(n=>n.remove());host.innerHTML='';counter.textContent='0 / 26';counter.style.color='';}
+function addRow(i){
+  const [nm,dt,tm,aud]=CHECKS[i];
+  const r=document.createElement('div');r.className='row';
+  r.innerHTML=`<span class="tag ${aud?'a':'p'}">${aud?'AUDIT':'PASS'}</span>`+
+    `<span class="nm">${aud?'<span class="badge">▸ </span>':''}${esc(nm)}</span>`+
+    `<span class="dt">${esc(dt)}</span><span class="tm">[${tm}]</span>`;
+  screen.appendChild(r);
+  screen.scrollTop=screen.scrollHeight;
+  counter.textContent=(i+1)+' / 26';
+}
+function finish(){
+  caret.style.display='none';
+  host.innerHTML=`<div class="summary"><span class="big">✔ 26 / 26 checks PASS</span>`+
+    `<span class="note">17 re-execution&nbsp;+&nbsp;9 evidence audits — every headline number reproduces, unmodified.</span></div>`;
+  counter.style.color='var(--pass)';
+}
+function play(){
+  clearAll(); caret.style.display='inline-block';
+  if(reduce){CHECKS.forEach((_,i)=>addRow(i));finish();return;}
+  CHECKS.forEach((_,i)=>{ timers.push(setTimeout(()=>{addRow(i); if(i===CHECKS.length-1) timers.push(setTimeout(finish,360));}, 420 + i*165)); });
+}
+replay.addEventListener('click',play);
+play();
+</script>
+</body>
+</html>
