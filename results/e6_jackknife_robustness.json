@@ -1,0 +1,54 @@
+{
+  "run": "e6_jackknife_robustness",
+  "role": "leave-one-out robustness of the E6 40q DMRG dw->0 extrapolation (reads committed evidence only)",
+  "chem_acc_threshold_mHa": 1.5936,
+  "E3_it5_Evar_Ha": -10.292009148892564,
+  "full_fit": {
+    "E0_Ha": -10.293598760256325,
+    "R2": 0.996606,
+    "gap_mHa": 1.59
+  },
+  "leave_one_out": [
+    {
+      "dropped_chi": 400,
+      "E0_Ha": -10.293558043599823,
+      "R2": 0.999999,
+      "gap_mHa": 1.549,
+      "within_chem_acc": true
+    },
+    {
+      "dropped_chi": 800,
+      "E0_Ha": -10.29358704010143,
+      "R2": 0.999467,
+      "gap_mHa": 1.578,
+      "within_chem_acc": true
+    },
+    {
+      "dropped_chi": 1200,
+      "E0_Ha": -10.293596479874925,
+      "R2": 0.996457,
+      "gap_mHa": 1.587,
+      "within_chem_acc": true
+    },
+    {
+      "dropped_chi": 1600,
+      "E0_Ha": -10.293604391701406,
+      "R2": 0.996432,
+      "gap_mHa": 1.595,
+      "within_chem_acc": false
+    },
+    {
+      "dropped_chi": 2400,
+      "E0_Ha": -10.2936139648735,
+      "R2": 0.99724,
+      "gap_mHa": 1.605,
+      "within_chem_acc": false
+    }
+  ],
+  "gap_range_mHa": [
+    1.549,
+    1.605
+  ],
+  "jackknife_halfspread_mHa": 0.028,
+  "verdict": "Flagship 40q E_var sits +1.59 mHa above the DMRG-extrapolated FCI(40q); leave-one-out spread 1.549..1.605 mHa (half-spread 0.028 mHa). The verdict is at the edge of the 1 kcal/mol band: the all-rung point estimate is inside chemical accuracy, one fold (drop chi=2400) reaches 1.605 mHa. Robust to ~+/-0.05 mHa; marginal, not comfortably inside \u2014 reported as such."
+}
