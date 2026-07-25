@@ -65,6 +65,7 @@
   .cmd .p{color:var(--cyan)} .cmd .c{color:#EAF0FB}
   .row{display:flex; gap:12px; align-items:baseline; white-space:nowrap; opacity:0; transform:translateY(3px); animation:pop .22s ease forwards}
   @keyframes pop{to{opacity:1;transform:none}}
+  .ln{flex:none; width:26px; text-align:right; color:var(--faint); font-variant-numeric:tabular-nums; user-select:none}
   .tag{flex:none; font-weight:700; width:52px}
   .tag.p{color:var(--pass)} .tag.a{color:var(--audit)}
   .nm{flex:none; color:#DDE6F5}
@@ -165,7 +166,8 @@ function clearAll(){timers.forEach(clearTimeout);timers=[];[...screen.querySelec
 function addRow(i){
   const [nm,dt,tm,aud]=CHECKS[i];
   const r=document.createElement('div');r.className='row';
-  r.innerHTML=`<span class="tag ${aud?'a':'p'}">${aud?'AUDIT':'PASS'}</span>`+
+  r.innerHTML=`<span class="ln">${String(i+1).padStart(2,'0')}</span>`+
+    `<span class="tag ${aud?'a':'p'}">${aud?'AUDIT':'PASS'}</span>`+
     `<span class="nm">${aud?'<span class="badge">▸ </span>':''}${esc(nm)}</span>`+
     `<span class="dt">${esc(dt)}</span><span class="tm">[${tm}]</span>`;
   screen.appendChild(r);
@@ -174,8 +176,9 @@ function addRow(i){
 }
 function finish(){
   caret.style.display='none';
-  host.innerHTML=`<div class="summary"><span class="big">✔ 26 / 26 checks PASS</span>`+
-    `<span class="note">17 re-execution&nbsp;+&nbsp;9 evidence audits — every headline number reproduces, unmodified.</span></div>`;
+  host.innerHTML=`<div class="summary">`+
+    `<span class="ln">27</span><span class="big">✔ 26 / 26 checks PASS</span>`+
+    `<span class="ln" style="align-self:center">28</span><span class="note">17 re-execution&nbsp;+&nbsp;9 evidence audits — every headline number reproduces, unmodified.</span></div>`;
   counter.style.color='var(--pass)';
 }
 function play(){
