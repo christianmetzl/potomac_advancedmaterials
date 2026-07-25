@@ -1,13 +1,14 @@
 {
-  "decision": "Rank two real metal-oxide centers by HIGH-SPIN PREFERENCE (spin-gap E(low)-E(high) [eV]); pick the stronger high-spin (paramagnetic) center to synthesize.",
+  "RANKING_STATUS": "WITHDRAWN \u2014 NOT ROBUST TO ACTIVE SPACE. The CAS(10,10) ranking below inverts to NiO>CrO at CAS(12,12)/(14,14) (see candidate_decision_larger_cas.json); the 'synthesize CrO / B3LYP advances the wrong candidate' claim is retracted. Only the single-molecule CrO quintet-ground SIGN (robust across CAS(10-14); cro_spin_gap.py) is claimed. This file is retained as CAS(10,10) provenance for the withdrawn ranking.",
+  "decision_at_cas10_10_WITHDRAWN": "Rank two metal-oxide centers by HIGH-SPIN PREFERENCE (spin-gap E(low)-E(high) [eV]) \u2014 computed here at CAS(10,10) but NOT a claimed result (see RANKING_STATUS).",
   "candidates": {
     "CrO": "X 5-Pi (quintet, S=2)",
     "NiO": "X 3-Sigma- (triplet, S=1)"
   },
   "active_space": "CAS(10,10) = 20 qubits, def2-SVP, per spin state (ROHF -> CASCI; QSCI selected-CI)",
   "gap_definition": "E(low-spin) - E(high-spin) [eV]; > 0 => high-spin ground; larger => stronger high-spin center",
-  "multireference_ranking": "CrO > NiO",
-  "multireference_pick_to_synthesize": "CrO",
+  "multireference_ranking_cas10_WITHDRAWN": "CrO > NiO",
+  "cas_robustness": "CrO gap +1.89 (CAS10) -> +0.85 (CAS12) -> +0.88 (CAS14) eV; NiO ~1.6 -> ranking inverts to NiO>CrO. See candidate_decision_larger_cas.json.",
   "decision_table": [
     {
       "method": "PBE",
@@ -66,14 +67,14 @@
       "inverts_multireference": false
     }
   ],
-  "functionals_that_invert_the_ranking": [
+  "functionals_that_inverted_at_cas10": [
     "B3LYP"
   ],
-  "key_finding": "The multireference treatment (CASCI +1.89 vs +1.66 eV; QSCI +1.89 vs +1.66 eV) ranks CrO as the far stronger high-spin center \u2014 synthesize CrO. But B3LYP INVERTS this ranking (it mis-assigns CrO's ground state), so that DFT-only screen would advance the wrong candidate. CrO's multireference call agrees with its experimental X 5-Pi quintet ground term.",
+  "surviving_robust_claim": "Single-molecule SIGN only: CrO is quintet(\u2075\u03a0)-ground (gap > 0) at CAS(10/12/14), matching its experimental X 5-Pi term, while B3LYP alone gives the wrong triplet sign. The two-candidate RANKING is withdrawn (not robust).",
   "honest_caveats": [
-    "CAS(10,10)/def2-SVP is a fixed modest active space; the robust claim is the ranking/sign (which candidate), not a benchmark-quality gap magnitude.",
-    "Each spin state uses CASCI on its own ROHF reference (standard), not state-averaged CASSCF.",
+    "RANKING WITHDRAWN: not robust to active-space size (inverts by CAS(12,12)); do not cite CrO>NiO.",
+    "CAS(10,10)/def2-SVP is a fixed modest active space; CASCI on per-state ROHF orbitals (not state-averaged CASSCF).",
     "DFT gaps are the committed dft_functional_spread_evidence.json values; CASCI/QSCI computed here.",
-    "The point is decision robustness: a widely-used functional flips which candidate you would synthesize; the multireference selector does not."
+    "What survives is the CAS-robust single-molecule CrO sign, not a candidate ranking."
   ]
 }

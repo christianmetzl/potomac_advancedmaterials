@@ -1,4 +1,15 @@
-"""CANDIDATE-RANKING DECISION: where a DFT-only screen advances the WRONG candidate and the
+"""CANDIDATE-RANKING at CAS(10,10) — RANKING CLAIM WITHDRAWN (kept for provenance).
+
+*** WITHDRAWN / SUPERSEDED ***: the two-candidate CrO-vs-NiO *ranking* this script computes at CAS(10,10)
+is NOT robust. An active-space robustness check (src/candidate_decision_larger_cas.py ->
+results/candidate_decision_larger_cas.json) shows the multireference ranking INVERTS to NiO>CrO at
+CAS(12,12) and CAS(14,14) (CrO's CAS(10,10) high-spin gap was unconverged). We therefore DO NOT claim the
+"synthesize CrO / B3LYP advances the wrong candidate" ranking. What SURVIVES and is claimed elsewhere is the
+CAS-robust single-molecule CrO SIGN result (CrO quintet/⁵Π ground, B3LYP alone wrong-sign; see cro_spin_gap.py).
+This script + evidence are retained only as the CAS(10,10) provenance behind that withdrawn claim.
+
+--- original description (context for the withdrawn ranking) ---
+CANDIDATE-RANKING DECISION: where a DFT-only screen advances the WRONG candidate and the
 multireference (CASCI / QSCI) treatment picks the right one.
 
 Two real transition-metal-oxide centers are ranked by their HIGH-SPIN PREFERENCE — the spin-gap
@@ -17,9 +28,10 @@ FROZEN DECISION RULE (stated before the multireference numbers are computed):
         the experimental ground terms via the gap SIGN);
     (4) flag any DFT functional whose ranking INVERTS the multireference ranking — that functional, used
         alone to screen, would advance the wrong candidate.
-Reported AS-MEASURED. HONEST SCOPE: CAS(10,10)/def2-SVP is a fixed modest active space; the defensible
-claim is the SIGN/ranking (which candidate), not a benchmark-quality gap magnitude.
-EIGENNEXUS - GIC 2026 Phase 3, decision-value demonstration (answers the 'flip a ranking' judge ask).
+Reported AS-MEASURED. HONEST SCOPE: CAS(10,10)/def2-SVP is a fixed modest active space. (The ranking below
+is WITHDRAWN — see the banner above; only the single-molecule CrO quintet-ground SIGN is defensible/claimed,
+and it is robust to active-space size.)
+EIGENNEXUS - GIC 2026 Phase 3.
 """
 import os, json, time
 import numpy as np
@@ -122,31 +134,34 @@ def main():
         if inv: inverted.append(m)
 
     out = {
-        "decision": "Rank two real metal-oxide centers by HIGH-SPIN PREFERENCE (spin-gap E(low)-E(high) [eV]); "
-                    "pick the stronger high-spin (paramagnetic) center to synthesize.",
+        "RANKING_STATUS": "WITHDRAWN — NOT ROBUST TO ACTIVE SPACE. The CAS(10,10) ranking below inverts to "
+                          "NiO>CrO at CAS(12,12)/(14,14) (see candidate_decision_larger_cas.json); the "
+                          "'synthesize CrO / B3LYP advances the wrong candidate' claim is retracted. Only the "
+                          "single-molecule CrO quintet-ground SIGN (robust across CAS(10-14); cro_spin_gap.py) "
+                          "is claimed. This file is retained as CAS(10,10) provenance for the withdrawn ranking.",
+        "decision_at_cas10_10_WITHDRAWN": "Rank two metal-oxide centers by HIGH-SPIN PREFERENCE (spin-gap "
+                    "E(low)-E(high) [eV]) — computed here at CAS(10,10) but NOT a claimed result (see RANKING_STATUS).",
         "candidates": {A: CANDIDATES[A]["exp"], B: CANDIDATES[B]["exp"]},
         "active_space": "CAS(10,10) = 20 qubits, def2-SVP, per spin state (ROHF -> CASCI; QSCI selected-CI)",
         "gap_definition": "E(low-spin) - E(high-spin) [eV]; > 0 => high-spin ground; larger => stronger high-spin center",
-        "multireference_ranking": f"{A} > {B}" if ref_rank == A else f"{B} > {A}",
-        "multireference_pick_to_synthesize": ref_rank,
+        "multireference_ranking_cas10_WITHDRAWN": f"{A} > {B}" if ref_rank == A else f"{B} > {A}",
+        "cas_robustness": "CrO gap +1.89 (CAS10) -> +0.85 (CAS12) -> +0.88 (CAS14) eV; NiO ~1.6 -> ranking inverts to NiO>CrO. See candidate_decision_larger_cas.json.",
         "decision_table": rows,
-        "functionals_that_invert_the_ranking": inverted,
-        "key_finding": (f"The multireference treatment (CASCI {gaps['CASCI'][A]:+.2f} vs {gaps['CASCI'][B]:+.2f} eV; "
-                        f"QSCI {gaps['QSCI'][A]:+.2f} vs {gaps['QSCI'][B]:+.2f} eV) ranks {ref_rank} as the far stronger "
-                        f"high-spin center — synthesize {ref_rank}. But {', '.join(inverted) if inverted else 'no functional'} "
-                        f"INVERTS this ranking (it mis-assigns {A}'s ground state), so that DFT-only screen would advance the "
-                        f"wrong candidate. {A}'s multireference call agrees with its experimental X 5-Pi quintet ground term."),
+        "functionals_that_inverted_at_cas10": inverted,
+        "surviving_robust_claim": (f"Single-molecule SIGN only: {A} is quintet(⁵Π)-ground (gap > 0) at CAS(10/12/14), "
+                        f"matching its experimental X 5-Pi term, while B3LYP alone gives the wrong triplet sign. "
+                        f"The two-candidate RANKING is withdrawn (not robust)."),
         "honest_caveats": [
-            "CAS(10,10)/def2-SVP is a fixed modest active space; the robust claim is the ranking/sign (which candidate), "
-            "not a benchmark-quality gap magnitude.",
-            "Each spin state uses CASCI on its own ROHF reference (standard), not state-averaged CASSCF.",
+            "RANKING WITHDRAWN: not robust to active-space size (inverts by CAS(12,12)); do not cite CrO>NiO.",
+            "CAS(10,10)/def2-SVP is a fixed modest active space; CASCI on per-state ROHF orbitals (not state-averaged CASSCF).",
             "DFT gaps are the committed dft_functional_spread_evidence.json values; CASCI/QSCI computed here.",
-            "The point is decision robustness: a widely-used functional flips which candidate you would synthesize; "
-            "the multireference selector does not."],
+            "What survives is the CAS-robust single-molecule CrO sign, not a candidate ranking."],
     }
     fn = os.path.join(_RES, "candidate_decision_evidence.json")
     json.dump(out, open(fn, "w"), indent=2)
-    print("\nMULTIREFERENCE PICK -> synthesize", ref_rank, "| functionals that INVERT the ranking:", inverted or "none")
+    print("\n*** RANKING WITHDRAWN (not robust to active space; inverts by CAS(12,12)) ***")
+    print(f"CAS(10,10) computed CrO/NiO gaps (provenance only, NOT a claim): ranking={ref_rank}>other, inverted-functionals={inverted or 'none'}")
+    print("Surviving robust claim: single-molecule CrO quintet-ground sign (see candidate_decision_larger_cas.json)")
     print("saved", os.path.relpath(fn))
 
 
