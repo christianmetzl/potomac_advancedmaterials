@@ -1,0 +1,59 @@
+{
+  "run": "e3_cipsi_crossvalidation",
+  "claim": "The 40-qubit exact (FCI) energy is pinned by TWO methodologically independent extrapolations that agree far inside chemical accuracy.",
+  "system": "H20 chain, 40 qubits, STO-6G, Jordan-Wigner (identical Hamiltonian for both routes)",
+  "routeA_classical_DMRG_discarded_weight": {
+    "E_Ha": -10.293598760256321,
+    "stated_uncertainty_mHa": 0.022,
+    "source": "e6_dmrg_extrap_40q_evidence.json (chi=400..2400)"
+  },
+  "routeB_selected_CI_PT2_to_zero": {
+    "E_Ha": -10.29362104954528,
+    "fit_windows": {
+      "it1-it5": {
+        "E0_Ha": -10.293662379238548,
+        "R2": 0.999902,
+        "n_points": 5
+      },
+      "it2-it5": {
+        "E0_Ha": -10.293606037666947,
+        "R2": 0.999989,
+        "n_points": 4
+      },
+      "it3-it5": {
+        "E0_Ha": -10.293594731730346,
+        "R2": 0.999996,
+        "n_points": 3
+      }
+    },
+    "window_spread_mHa": 0.0676,
+    "source": "e3_certificate_evidence.json (750,257 dets, |PT2| to 1.31 mHa)"
+  },
+  "agreement_routeB_minus_routeA_mHa": {
+    "it1-it5": -0.0636,
+    "it2-it5": -0.0073,
+    "it3-it5": 0.004
+  },
+  "agreement_best_mHa": 0.004,
+  "agreement_worst_mHa": 0.0636,
+  "chem_acc_mHa": 1.5936,
+  "inside_chemical_accuracy_by": "25x (worst window)",
+  "calibration_20q_known_FCI": {
+    "system": "H10/20q R=0.74",
+    "exact_FCI_Ha": -5.202826400621641,
+    "extrapolated_Ha": -5.1986925970556,
+    "error_mHa": 4.134,
+    "deepest_PT2_mHa": -44.731,
+    "deepest_ndet": 26,
+    "note": "Calibration only. This 20q trace stops at |PT2| ~ 45 mHa on 26 determinants \u2014 ~34x shallower than the 40q trace (|PT2| = 1.31 mHa on 750,257 dets). It bounds the extrapolator FAR from convergence; it does not bound it in the 40q regime."
+  },
+  "headline": "Two independent routes to FCI(H20/40q) agree to 0.064 mHa in the worst fit window and 0.004 mHa in the best \u2014 i.e. ~25x inside chemical accuracy. Consensus value: -10.293610 Ha.",
+  "honest_caveats": [
+    "BOTH routes are extrapolations; neither is an exact FCI calculation (FCI at 40q is intractable).",
+    "Route B's value depends on the fit window; the full window spread is reported, not just the best fit.",
+    "The routes share the same Hamiltonian by necessity (that is what makes them comparable); they share no solver, no extrapolation variable, and no code path.",
+    "The 20q calibration errs by ~4 mHa, but at ~34x shallower convergence than the 40q trace \u2014 it bounds the extrapolator far from convergence, not in this regime.",
+    "This is analysis of already-committed evidence: no new computation, nothing re-run or re-tuned.",
+    "E3's pre-registered criterion (|PT2| <= 0.5 mHa) still FAILED as-measured; that is unchanged. This result is additional value extracted from the trace that run did produce, not a re-scored outcome."
+  ]
+}

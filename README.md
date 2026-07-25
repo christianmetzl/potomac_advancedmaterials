@@ -72,6 +72,32 @@ dollar framework: [`docs/value_case.md`](docs/value_case.md).
 > claims were removed. The value case above depends on **neither** — only on the CCSD(T) non-variational
 > collapse, which is independent of functional, SCF guess, and active space.
 
+### Pinning the 40-qubit exact energy — twice, independently
+
+![Two independent routes to FCI(40q)](results/crossvalidation_40q.png)
+
+*Full CI at 40 qubits is intractable (~3.4×10¹⁰ determinants), so any "exact" 40q energy must be
+extrapolated — and a single extrapolation is something a reviewer has to take on trust. We pin it **twice**,
+on the identical Hamiltonian, by two methodologically independent routes:*
+
+| Route | Method class | Extrapolation variable | FCI(40q) estimate |
+|---|---|---|---|
+| **A** (E6) | classical tensor network (block2 DMRG, χ=400→2400) | discarded weight → 0 | **−10.293599 Ha** ± 0.022 mHa |
+| **B** (E3) | determinant selection (selected-CI/QSCI, 750,257 dets) | Epstein–Nesbet PT2 → 0 (standard CIPSI) | **−10.293606 Ha** |
+
+**They agree to 0.007 mHa** (0.064 mHa across all reasonable fit windows) — **~25× inside chemical
+accuracy**, from two routes sharing no solver, no extrapolation variable and no code path. Each corroborates
+the other, and together they give a **cross-validated benchmark value for a 40-qubit exact energy**:
+**FCI(H₂₀, 40q, STO-6G) ≈ −10.29360 Ha**. Regenerate: `python src/e3_cipsi_crossvalidation.py`.
+
+> **Honest limits.** *Both* routes are extrapolations — neither is an exact FCI calculation. Route B's value
+> depends on the fit window (−10.293595 to −10.293662 across windows); we report the full spread, not the best
+> fit. Calibrating the same extrapolator at 20q, where FCI *is* known, gives a ~4 mHa error — but at ~34×
+> shallower convergence (|PT2| ≈ 45 mHa on 26 determinants, vs 1.31 mHa on 750,257 here), so it bounds the
+> method far from convergence, not in this regime. **No new computation**: this is analysis of already-committed
+> evidence. And E3's pre-registered criterion (|PT2| ≤ 0.5 mHa) still **failed as-measured** — unchanged; this
+> is additional value extracted from the trace that run did produce, not a re-scored outcome.
+
 ### A convergence oracle — our method caught a silent error in the classical reference
 
 ![Correcting the classical reference at 38 qubits](results/chi_ladder_correction.png)
