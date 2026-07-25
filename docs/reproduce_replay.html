@@ -136,6 +136,13 @@
     <div class="card"><span class="k">real QPU</span><span class="lab">Trapped-ion silicon, decoded</span><span class="d">AQT ibex-q1 (2,000 shots/job) decoded; number-conserving post-selection, and device-seeded QSCI growth recovers exact FCI (0.000 mHa).</span><span class="src">qpu_aqt_evidence.json</span></div>
   </div>
 
+  <div class="sec" style="color:var(--violet)">Core findings — what the evidence itself revealed</div>
+  <div class="grid">
+    <div class="card"><span class="k g">0.007 mHa</span><span class="lab">FCI(40q) pinned twice, independently</span><span class="d">Classical DMRG (discarded weight→0) and selected-CI/QSCI (PT2→0) — two method classes, two extrapolation variables, no shared code path — agree to <b style="color:#DDE6F5">0.007 mHa</b> (0.064 across fit windows): ~25× inside chemical accuracy. A cross-validated benchmark where exact FCI is intractable.</span><span class="src">e3_cipsi_crossvalidation.py</span></div>
+    <div class="card"><span class="k a">≈2000×</span><span class="lab">When a classical reference silently fails</span><span class="d">Against <em>exact FCI</em> at 20q, DMRG truncation error at fixed χ grows ~2000× from equilibrium into strong correlation. And χ=400 — exact at 20q at every geometry — is <b style="color:#DDE6F5">≥0.92 mHa off at 40q</b>. A χ validated on a smaller system does not transfer.</span><span class="src">reference_reliability_map.py</span></div>
+    <div class="card"><span class="k v">798× short</span><span class="lab">E9 — why the 40q MPS path stalled</span><span class="d">Pre-registered, then <em>2 of 4 predictions refuted</em> and published as such. Seed yield grows only linearly in circuit depth and ~2× per shot-decade: 564 determinants where 450,257 were needed. The MP2-seeded classical growth was a <b style="color:#DDE6F5">necessary architecture</b>, not a workaround.</span><span class="src">e9_seed_depth.py</span></div>
+  </div>
+
   <div class="sec" style="color:var(--pass)">Core findings — accuracy &amp; trust</div>
   <div class="grid">
     <div class="card"><span class="k g">0.038 / 0.197</span><span class="lab">Open-shell multireference oxides (20q)</span><span class="d">CrO ⁵Π and NiO ³Σ⁻ to chemical accuracy vs exact CASCI — the regime where DFT and single-reference CCSD(T) both fail.</span><span class="src">transition_metal_qsci_evidence.json</span></div>
@@ -150,7 +157,8 @@
       <li>No quantum-<em>advantage</em> claim: at ≤40q classical FCI/DMRG still solve these instances — we show correctness, favourable scaling, and executed hardware, not a head-to-head speed win.</li>
       <li>Large-scale QSCI beyond 20q uses a determinant-space <em>proxy</em>, validated against real circuit-sampled shots at 12/16/20q.</li>
       <li>The 40q absolute result is <em>at</em> the chemical-accuracy edge, not comfortably inside; the full 40q tensornet-mps growth run remains owed.</li>
-      <li>Two DFT-based decision claims were tested and <em>withdrawn</em> (reported, not buried): a CrO-vs-NiO <em>ranking</em> (inverted at larger active space) and a "B3LYP flips CrO's spin sign" claim (an SCF-convergence artifact — proper SCF gives the correct sign). The value case rests only on the CCSD(T) non-variational collapse, which is independent of functional/SCF/active-space.</li>
+      <li>The 40q tensor-network backend <em>ran</em> (2.65 h, 12.06 GB) but its sampling yields ~108 determinants where ~450,000 are needed — E9 measures why, and it is a sampling-strategy limit, not GPU hours.</li>
+      <li>Two DFT-based decision claims were tested and <em>withdrawn</em> (reported, not buried): a CrO-vs-NiO <em>ranking</em> (inverted at larger active space) and a "B3LYP flips CrO's spin sign" claim (an SCF-convergence artifact — proper SCF gives the correct sign). The value case rests only on the CCSD(T) non-variational collapse, independent of functional/SCF/active-space.</li>
     </ul>
   </div>
 

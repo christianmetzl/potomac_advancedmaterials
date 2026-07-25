@@ -174,6 +174,51 @@ s.addText([{ text: "Why it matters:  ", options: { bold: true, color: GREEN } },
 s.addText("Honest limits: this is the METHOD, not the hardware — at 38q the determinant selection ran classically (the disclosed proxy; device-sampled selection is validated at 20q/28q). Not cheaper (19.1 h vs ~15 min to escalate χ classically) — the value is the trigger, not the compute. n = 2: a pattern, not a measured rate. Reported as the pre-registered P4 criterion failing as-measured.",
   { x: 7.95, y: 4.62, w: 4.6, h: 1.45, fontFace: BF, color: FAINT, fontSize: 10, lineSpacing: 14, margin: 0 });
 
+/* ---------------- 5c · when does the reference fail? ---------------- */
+s = slide();
+eyebrow(s, "THE PREDICTIVE RULE  ·  MEASURED AGAINST EXACT FCI", AMBER);
+title(s, "When can you trust a classical reference?", 31);
+s.addText("Two axes silently break a bond dimension you already validated — one measured against exact FCI.",
+  { x: 0.75, y: 1.78, w: 11.8, h: 0.42, fontFace: BF, color: TEXT, fontSize: 14.5, margin: 0 });
+try {
+  s.addImage({ path: path.join(ROOT, "results", "reference_reliability.png"), x: 1.05, y: 2.25, w: 11.2, h: 4.05 });
+} catch (e) { /* figure optional */ }
+card(s, 0.75, 6.4, 11.8, 0.85, PANEL2, { line: LINE });
+s.addText([{ text: "The rule:  ", options: { bold: true, color: AMBER } },
+           { text: "a bond dimension validated on a smaller or easier system tells you nothing about its error on a larger or harder one — and DMRG gives no internal signal either way. That is where an independent check earns its keep.", options: { color: TEXT } }],
+  { x: 1.1, y: 6.4, w: 11.1, h: 0.85, fontFace: BF, fontSize: 12.5, valign: "middle", lineSpacing: 16, margin: 0 });
+
+/* ---------------- 5d · cross-validated 40q benchmark ---------------- */
+s = slide();
+eyebrow(s, "THE STRONGEST SCIENTIFIC RESULT", GREEN);
+title(s, "The 40-qubit exact energy — pinned twice", 31);
+s.addText("Full CI at 40 qubits is intractable (~3.4×10¹⁰ determinants), so any \u201Cexact\u201D value is an extrapolation you must take on trust. We pin it by two independent routes.",
+  { x: 0.75, y: 1.8, w: 6.8, h: 1.15, fontFace: BF, color: TEXT, fontSize: 14.5, lineSpacing: 22, margin: 0 });
+const routes = [
+  ["Route A", CYAN, "classical tensor network", "block2 DMRG χ=400→2400, extrapolated on discarded weight → 0", "−10.293599 Ha"],
+  ["Route B", VIOLET, "determinant selection", "selected-CI/QSCI on 750,257 dets, extrapolated on PT2 → 0", "−10.293606 Ha"],
+];
+let ry2 = 3.05;
+routes.forEach(([tag, col, kind, how, val]) => {
+  card(s, 0.75, ry2, 6.8, 1.42, PANEL);
+  s.addText(tag, { x: 1.05, y: ry2 + 0.14, w: 1.5, h: 0.32, fontFace: BF, color: col, fontSize: 13, bold: true, charSpacing: 1.5, margin: 0 });
+  s.addText(kind, { x: 2.5, y: ry2 + 0.14, w: 3.0, h: 0.32, fontFace: BF, color: WHITE, fontSize: 12.5, bold: true, margin: 0 });
+  s.addText(val, { x: 4.5, y: ry2 + 0.1, w: 3.0, h: 0.4, align: "right", fontFace: BF, color: col, fontSize: 16, bold: true, margin: 0 });
+  s.addText(how, { x: 1.05, y: ry2 + 0.58, w: 6.2, h: 0.7, fontFace: BF, color: MUTED, fontSize: 11.5, lineSpacing: 16, margin: 0 });
+  ry2 += 1.55;
+});
+card(s, 0.75, 6.15, 6.8, 1.05, PANEL2, { line: LINE });
+s.addText([{ text: "They agree to 0.007 mHa", options: { bold: true, color: GREEN, fontSize: 15 } },
+           { text: "  (0.064 mHa across all fit windows) — ~25× inside chemical accuracy, sharing no solver, no extrapolation variable and no code path.", options: { color: TEXT, fontSize: 12 } }],
+  { x: 1.1, y: 6.15, w: 6.1, h: 1.05, fontFace: BF, valign: "middle", lineSpacing: 16, margin: 0 });
+try {
+  s.addImage({ path: path.join(ROOT, "results", "crossvalidation_40q.png"), x: 7.75, y: 2.0, w: 4.8, h: 2.78 });
+} catch (e) { /* optional */ }
+s.addText("A cross-validated benchmark other groups can cite:", { x: 7.75, y: 5.0, w: 4.8, h: 0.3, fontFace: BF, color: MUTED, fontSize: 11.5, margin: 0 });
+s.addText("FCI(H₂₀, 40q, STO-6G) ≈ −10.29360 Ha", { x: 7.75, y: 5.32, w: 4.8, h: 0.42, fontFace: BF, color: GREEN, fontSize: 15, bold: true, margin: 0 });
+s.addText("Both routes are extrapolations, not exact FCI; Route B is fit-window dependent (full spread reported). No new computation — analysis of already-committed evidence.",
+  { x: 7.75, y: 5.85, w: 4.8, h: 1.3, fontFace: BF, color: FAINT, fontSize: 10, lineSpacing: 14, margin: 0 });
+
 /* ---------------- 6 · scientific value ---------------- */
 s = slide();
 eyebrow(s, "THE SCIENTIFIC VALUE", GREEN);
@@ -181,7 +226,7 @@ title(s, "Built so a skeptic can check every number");
 const sci = [
   ["Pre-registered", "Every judged claim's threshold was git-timestamped BEFORE the run. Outcomes reported as measured — passes, a resource-DNF, a non-convergence.", GREEN],
   ["Re-runnable", "One command re-executes 17 headline scripts and audits 9 GPU/QPU artifacts: 26/26 PASS, no modification needed.", CYAN],
-  ["Self-corrected", "Two claims we tested and WITHDREW: an active-space-fragile candidate ranking, and a DFT sign-flip that proved to be an SCF artifact.", AMBER],
+  ["Self-corrected", "Two claims we tested and WITHDREW: an active-space-fragile ranking, and a DFT sign-flip that proved an SCF artifact. In E9, two of four pre-registered predictions FAILED — published as refuted.", AMBER],
   ["Reference-correcting", "At 38q our solver drops BELOW the classical DMRG reference — and χ=800/1200 confirm it is the reference that was truncated, not us.", VIOLET],
 ];
 let sy = 1.95;
@@ -225,15 +270,16 @@ const lims = [
   "No quantum ADVANTAGE at these sizes. At ≤40 qubits classical methods still solve these instances. The value is trust and correctness, not speed — the advantage regime is beyond, which the 40q run targets.",
   "The value case is a framework, not a Mitsubishi ROI. The mechanism is measured here; the dollar inputs are placeholders for your pipeline's own numbers.",
   "Large-ladder results beyond 20q use a determinant-space proxy for the measurement step — validated against real circuit-sampled shots at 12 / 16 / 20 qubits.",
-  "The 40q absolute result sits AT the chemical-accuracy threshold, not comfortably inside it. The full 40q tensor-network growth run remains owed.",
+  "The 40q absolute result sits AT the chemical-accuracy threshold, not comfortably inside it.",
+  "The 40q tensor-network backend RAN (2.65 h, 12.06 GB) but yielded only 108 determinants where ~450,000 were needed. E9 measured why — seed yield grows only linearly in depth, leaving it 798× short — so the MP2-seeded classical growth was a NECESSARY architecture, not a workaround. What is owed is a sampling strategy, not GPU hours.",
   "Two decision claims were tested and withdrawn rather than defended. The value story above depends on neither.",
 ];
-let ly = 1.95;
+let ly = 1.82;
 lims.forEach((t) => {
-  card(s, 0.75, ly, 11.8, 0.92, PANEL2, { line: LINE });
-  s.addText("⚑", { x: 1.05, y: ly + 0.12, w: 0.4, h: 0.6, fontFace: BF, color: AMBER, fontSize: 16, valign: "middle", margin: 0 });
-  s.addText(t, { x: 1.55, y: ly + 0.08, w: 10.7, h: 0.78, fontFace: BF, color: TEXT, fontSize: 13, lineSpacing: 18, valign: "middle", margin: 0 });
-  ly += 1.0;
+  card(s, 0.75, ly, 11.8, 0.82, PANEL2, { line: LINE });
+  s.addText("⚑", { x: 1.05, y: ly + 0.08, w: 0.4, h: 0.62, fontFace: BF, color: AMBER, fontSize: 16, valign: "middle", margin: 0 });
+  s.addText(t, { x: 1.55, y: ly + 0.05, w: 10.7, h: 0.74, fontFace: BF, color: TEXT, fontSize: 11.5, lineSpacing: 15, valign: "middle", margin: 0 });
+  ly += 0.9;
 });
 
 /* ---------------- 9 · bottom line ---------------- */
