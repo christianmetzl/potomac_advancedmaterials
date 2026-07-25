@@ -1,0 +1,105 @@
+{
+  "run": "reference_reliability_map",
+  "question": "When does a classical DMRG reference become silently untrustworthy?",
+  "axis1_correlation_strength": {
+    "basis": "20 qubits (H10), EXACT FCI known \u2014 these are true errors, not estimates",
+    "rows": [
+      {
+        "R_ang": 0.74,
+        "ccsd_t_err_mHa": 0.173,
+        "dmrg_trunc_err_vs_exact_FCI_mHa": {
+          "50": 0.1702,
+          "100": 0.0087,
+          "200": 0.0,
+          "400": 0.0
+        }
+      },
+      {
+        "R_ang": 1.0,
+        "ccsd_t_err_mHa": 0.132,
+        "dmrg_trunc_err_vs_exact_FCI_mHa": {
+          "50": 1.0376,
+          "100": 0.0859,
+          "200": 0.0008,
+          "400": 0.0
+        }
+      },
+      {
+        "R_ang": 1.5,
+        "ccsd_t_err_mHa": -30.742,
+        "dmrg_trunc_err_vs_exact_FCI_mHa": {
+          "50": 18.9329,
+          "100": 1.7609,
+          "200": 0.0,
+          "400": 0.0
+        }
+      },
+      {
+        "R_ang": 2.0,
+        "ccsd_t_err_mHa": -140.946,
+        "dmrg_trunc_err_vs_exact_FCI_mHa": {
+          "50": 79.1233,
+          "100": 12.3252,
+          "200": 0.138,
+          "400": 0.0
+        }
+      },
+      {
+        "R_ang": 2.5,
+        "ccsd_t_err_mHa": -224.716,
+        "dmrg_trunc_err_vs_exact_FCI_mHa": {
+          "50": 31.8024,
+          "100": 17.4794,
+          "200": 0.1229,
+          "400": 0.0002
+        }
+      }
+    ],
+    "growth_equilibrium_to_stretched": {
+      "chi50": {
+        "equilibrium_mHa": 0.1702,
+        "stretched_mHa": 31.8024,
+        "growth_factor": 186.9
+      },
+      "chi100": {
+        "equilibrium_mHa": 0.0087,
+        "stretched_mHa": 17.4794,
+        "growth_factor": 2009.1
+      }
+    },
+    "finding": "At fixed bond dimension, truncation error grows ~3 orders of magnitude from equilibrium into the strongly-correlated regime. A chi that looks perfectly converged at equilibrium can be an order of magnitude OUTSIDE chemical accuracy where bonds break \u2014 with no internal signal."
+  },
+  "axis2_system_size": {
+    "basis": "the SAME chi=400: exact at 20q, lower-bounded by the chi-ladder at 40q",
+    "chi400_error_at_20q_mHa": {
+      "0.74": 0.0,
+      "1.0": 0.0,
+      "1.5": 0.0,
+      "2.0": 0.0,
+      "2.5": 0.0002
+    },
+    "chi400_error_at_40q_lower_bound": [
+      {
+        "R_ang": 0.74,
+        "chi400_error_lower_bound_mHa": 0.92
+      },
+      {
+        "R_ang": 1.5,
+        "chi400_error_lower_bound_mHa": 40.54
+      },
+      {
+        "R_ang": 2.5,
+        "chi400_error_lower_bound_mHa": 177.43
+      }
+    ],
+    "finding": "chi=400 is exact at 20q at EVERY geometry tested (<=0.0002 mHa), yet the same chi=400 at 40q is off by at least 0.92 mHa at equilibrium and at least 177 mHa stretched. A bond dimension validated on a smaller system does not transfer."
+  },
+  "chem_acc_mHa": 1.5936,
+  "headline": "Two independent axes silently break a 'validated' classical reference: correlation strength (~2000x error growth at fixed chi, measured against exact FCI at 20q) and system size (chi=400 exact at 20q, >=0.92 mHa off at 40q). This is the measured mechanism behind the 38q reference correction \u2014 and the rule for when an independent variational check is needed.",
+  "honest_caveats": [
+    "Axis 1 is ground truth (exact FCI at 20q). Axis 2 values are LOWER BOUNDS: the chi=400->chi=800 gap under-counts chi=400's true error because chi=800 is itself not exact.",
+    "H_n chains are a strong-correlation model system, not a materials benchmark; the qualitative rule (error grows with correlation and with size) is the claim, not a transferable constant.",
+    "The 40q rungs use a frozen sweep schedule; a differently-tuned DMRG could land elsewhere.",
+    "No new computation \u2014 analysis of already-committed evidence (stretch_sweep_evidence.json)."
+  ]
+}

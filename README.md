@@ -124,6 +124,35 @@ opinion that tells you when to escalate it**. Regenerate: `python src/make_chi_l
 > investigating, **not a measured rate**. Reported exactly as pre-registered: this outcome is the P4
 > criterion *failing* as-measured, because P4 assumed DMRG(χ=400) was truth.
 
+### When *can* you trust a classical reference? — a measured reliability map
+
+![Two axes on which a validated bond dimension silently fails](results/reference_reliability.png)
+
+*The natural follow-up to the result above is: **when** does the classical reference go wrong — when do I
+actually need the independent check? Committed evidence answers it on two axes, one of them against **exact
+FCI ground truth**:*
+
+- **Axis 1 — correlation strength (20q, exact FCI known).** At fixed bond dimension, DMRG truncation error
+  grows by ~3 orders of magnitude as a bond stretches into the strongly-correlated regime. **χ=100 looks
+  perfectly converged at equilibrium (0.009 mHa — 180× inside chemical accuracy) and is 17.5 mHa off where
+  bonds break — a ≈2,000× growth, with no internal signal.** CCSD(T) over the same sweep goes from 0.17 mHa
+  to **−225 mHa** (and *below* exact = non-variational).
+- **Axis 2 — system size.** **χ=400 is exact at 20 qubits at every geometry tested (≤0.0002 mHa)** — yet the
+  *same* χ=400 at 40 qubits is off by **≥0.92 mHa at equilibrium and ≥177 mHa stretched**.
+
+**The rule this gives you:** *a bond dimension validated on a smaller or easier system tells you nothing
+about its error on a larger or harder one* — and DMRG offers no internal signal either way. That is exactly
+the mechanism behind the 38q reference correction above, and it says **where** an independent variational
+check earns its keep: strong correlation, larger systems — i.e. real materials chemistry.
+Regenerate: `python src/reference_reliability_map.py && python src/make_reliability_figure.py`.
+
+> **Honest limits.** Axis 1 is ground truth (exact FCI at 20q). **Axis 2 values are *lower bounds***: the
+> χ=400→χ=800 gap under-counts χ=400's true error, because χ=800 is itself not exact. Hₙ chains are a
+> strong-correlation model system, not a materials benchmark — the *qualitative rule* (error grows with
+> correlation and with size) is the claim, not a transferable constant. The 40q rungs use a frozen sweep
+> schedule; a differently-tuned DMRG could land elsewhere. **No new computation** — analysis of committed
+> evidence (`stretch_sweep_evidence.json`).
+
 ## Honest scope
 
 - The **integrated GQE→QSCI loop is measured at 12q and GPU-executed at 20q/28q** on real NVIDIA hardware (cuStateVec, device-sampled; +0.000 / +0.395 mHa). The at-scale ladder beyond that uses a **hardware-independent determinant-space proxy** for the measurement step, *validated against* the measured 12/16/20q pipeline.
