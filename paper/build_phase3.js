@@ -129,15 +129,15 @@ const children=[
 ];
 function refP(n,txt){return new Paragraph({spacing:{after:30,line:240,lineRule:"auto"},indent:{left:360,hanging:360},children:[new TextRun({text:"["+n+"] ",font:FONT,size:20,bold:true}),new TextRun({text:txt,font:FONT,size:20})]});}
 const refs=[
- refP(1,"K. Nakaji, et al. “The generative quantum eigensolver (GQE) and its application for ground state search.” arXiv:2401.09253 (2024). [AIST]"),
- refP(2,"N. P. D. Sawaya, et al. “HamLib: A library of Hamiltonians for benchmarking quantum algorithms and hardware.” Quantum 8, 1559 (2024)."),
- refP(3,"S. Minami, K. Nakaji, et al. “Generative quantum combinatorial optimization … conditional generative quantum eigensolver.” Digital Discovery 4(8) (2025)."),
- refP(4,"K. Kanno, et al. “Quantum-selected configuration interaction … subspaces selected by quantum computers.” arXiv:2302.11320 (2023)."),
- refP(5,"NVIDIA Corporation. CUDA-Q and cuQuantum SDK (cuStateVec, tensornet / tensornet-mps backends)."),
- refP(6,"J. Tilly, et al. “The Variational Quantum Eigensolver: A review of methods and best practices.” Physics Reports 986 (2022)."),
- refP(7,"C. Fare, et al. “A multi-fidelity machine learning approach to high throughput materials screening.” npj Computational Materials 8, 257 (2022)."),
- refP(8,"T. D. Kharazi, et al. “Quantum Simulations for Extreme Ultraviolet Photolithography.” arXiv:2602.20234 (2026). [Xanadu & Mitsubishi Chemical]"),
- refP(9,"R. Kemmoku, Q. Gao, S. Kanno, et al. “Generative Circuit Design for Quantum-Selected Configuration Interaction.” arXiv:2604.09756 (2026). [Mitsubishi Chemical]"),
+ refP(1,"K. Nakaji, L. B. Kristensen, J. A. Campos-Gonzalez-Angulo, M. Ghazi Vakili, H. Huang, M. Bagherimehrab, C. Gorgulla, F. Wong, A. McCaskey, J.-S. Kim, T. Nguyen, P. Rao, and A. Aspuru-Guzik, “The generative quantum eigensolver (GQE) and its application for ground state search,” arXiv:2401.09253 (2024)."),
+ refP(2,"N. P. D. Sawaya, D. Marti-Dafcik, Y. Ho, D. P. Tabor, D. E. Bernal Neira, A. B. Magann, S. Premaratne, P. Dubey, A. Matsuura, N. Bishop, W. A. de Jong, S. Benjamin, O. Parekh, N. Tubman, K. Klymko, and D. Camps, “HamLib: A library of Hamiltonians for benchmarking quantum algorithms and hardware,” Quantum 8, 1559 (2024). DOI: 10.22331/q-2024-12-11-1559."),
+ refP(3,"S. Minami, K. Nakaji, Y. Suzuki, A. Aspuru-Guzik, and T. Kadowaki, “Generative quantum combinatorial optimization by means of a novel conditional generative quantum eigensolver,” Digital Discovery 4(8), 2229–2243 (2025). DOI: 10.1039/D5DD00138B (arXiv:2501.16986)."),
+ refP(4,"K. Kanno, M. Kohda, R. Imai, S. Koh, K. Mitarai, W. Mizukami, and Y. O. Nakagawa, “Quantum-Selected Configuration Interaction: classical diagonalization of Hamiltonians in subspaces selected by quantum computers,” arXiv:2302.11320 (2023)."),
+ refP(5,"NVIDIA Corporation, “CUDA-Q (formerly CUDA Quantum) and the cuQuantum SDK: cuStateVec, tensornet, and tensornet-mps backends,” software (2024–2026). https://developer.nvidia.com/cuda-q."),
+ refP(6,"J. Tilly, H. Chen, S. Cao, D. Picozzi, K. Setia, Y. Li, E. Grant, L. Wossnig, I. Rungger, G. H. Booth, and J. Tennyson, “The Variational Quantum Eigensolver: A review of methods and best practices,” Physics Reports 986, 1–128 (2022). DOI: 10.1016/j.physrep.2022.08.003."),
+ refP(7,"C. Fare, P. Fenner, M. Benatan, et al., “A multi-fidelity machine learning approach to high-throughput materials screening,” npj Computational Materials 8, 257 (2022). DOI: 10.1038/s41524-022-00947-9."),
+ refP(8,"T. D. Kharazi, S. Fomichev, S. Kanno, T. Kobayashi, J. M. Arrazola, Q. Gao, and T. F. Stetina, “Quantum Simulations for Extreme Ultraviolet Photolithography,” arXiv:2602.20234 (2026). [Xanadu & Mitsubishi Chemical Corporation — a challenge provider]"),
+ refP(9,"R. Kemmoku, Q. Gao, S. Kanno, K. Keithley, I. Hamamura, N. Yamamoto, and K. Nakaji, “Generative Circuit Design for Quantum-Selected Configuration Interaction,” arXiv:2604.09756 (2026). [Mitsubishi Chemical Corporation — a challenge provider; N₂ active spaces to 32 qubits]"),
 ];
 children.push(...refs);
 children.push(new Paragraph({spacing:{before:160,after:40,line:240,lineRule:"auto"},children:[
