@@ -5,6 +5,8 @@
 Team **EIGENNEXUS** — Global Industry Challenge (GIC) 2026, *Advanced Materials* track (Mitsubishi Chemical Group & AIST).
 **Shortlisted through Phases 1 and 2 · Phase 3 finalist.**
 
+> **License:** proprietary — see [`LICENSE`](LICENSE). Judges and organizers may freely view, clone, and run this repository to verify the GIC 2026 results (non-commercial evaluation). All other use — commercial or production use, incorporation into products, model training, redistribution, or derivatives — requires the authors' written permission. Public visibility does not grant free-use rights.
+
 [![Launch on qBraid](https://qbraid-static.s3.amazonaws.com/logos/Launch_on_qBraid_white.png)](https://account.qbraid.com/?gitHubUrl=https://github.com/christianmetzl/potomac_advancedmaterials.git)
 
 > **Phase 3 reviewers:** click **Launch on qBraid**, then follow [Running on qBraid](#running-on-qbraid-phase-3) to reproduce every headline result without modification.

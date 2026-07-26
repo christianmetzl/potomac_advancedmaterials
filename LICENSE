@@ -1,0 +1,57 @@
+MATGEN-Q — PROPRIETARY LICENSE WITH LIMITED EVALUATION GRANT
+Copyright (c) 2026 Team EIGENNEXUS. All rights reserved.
+
+This repository and its contents — source code, scripts, documents, figures,
+data files, and the write-up (collectively, the "Work"), excluding the
+third-party components identified in Section 4 — are proprietary works of the
+authors. No rights are granted except the limited grant in Section 1. Making
+this repository publicly visible does not place it in the public domain and
+does not grant any license beyond Section 1.
+
+1. LIMITED EVALUATION GRANT
+   Solely for judging, reviewing, and verifying the results of the Global
+   Industry Challenge (GIC) 2026 — Advanced Materials track, Mitsubishi
+   Chemical Group & AIST — and for no other purpose, the authors grant the
+   challenge organizers, judges, and their designated reviewers a
+   non-exclusive, non-transferable, non-sublicensable, royalty-free, revocable
+   license to view, download, clone, execute, and reproduce the Work for
+   non-commercial evaluation and results-verification.
+
+2. RESERVED RIGHTS
+   All rights not expressly granted in Section 1 are reserved. Without the
+   authors' prior written permission, no person or entity may:
+     (a) use the Work, in whole or in part, for any commercial or production
+         purpose;
+     (b) incorporate the Work into any product, service, or offering;
+     (c) use the Work to train, fine-tune, evaluate, or benchmark any
+         machine-learning or AI model;
+     (d) redistribute, republish, sublicense, sell, or host the Work; or
+     (e) create derivative works based on the Work.
+
+3. NO IMPLIED LICENSE FROM PUBLIC HOSTING
+   Viewing or forking this repository under a hosting platform's or a
+   competition platform's terms of service does not confer any use right
+   beyond Section 1. Where a hosting or competition platform's terms would
+   grant broader rights in a copy uploaded to that platform, such grant is
+   limited to that uploaded copy and does not enlarge any right in this
+   repository.
+
+4. THIRD-PARTY COMPONENTS
+   The Work depends on and cites third-party software (including, without
+   limitation, PySCF, OpenFermion, NVIDIA CUDA-Q / cuQuantum, block2, PyTorch,
+   PennyLane) and prior-art methods (including GQE, QSCI, and the HamLib
+   benchmark set), each governed by its own license held by its respective
+   owner. Nothing in this license alters, supersedes, or relicenses those
+   components; your use of them remains subject to their own terms.
+
+5. NO WARRANTY; LIMITATION OF LIABILITY
+   THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. IN NO EVENT SHALL
+   THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING
+   FROM, OUT OF, OR IN CONNECTION WITH THE WORK OR ITS USE.
+
+6. PERMISSIONS
+   For any use beyond the Limited Evaluation Grant, contact Team EIGENNEXUS
+   through the GIC 2026 / Aqora challenge channel to request written
+   permission.
