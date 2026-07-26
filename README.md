@@ -242,7 +242,7 @@ rather than asserted. Regenerate: `python src/e9_seed_depth.py` (~6 s, CPU).
 ## Pre-registered predictions (GPU/QPU) and blind holdout
 
 Every at-scale run was **pre-registered before qBraid access, then executed**: `results/preregistration_v1.json`
-(+ `v2.json` for extensions E1–E5) commits quantitative pass/fail predictions (P1–P5) derived *only* from
+(+ `preregistration_v2.json` for extensions E1–E5) commits quantitative pass/fail predictions (P1–P5) derived *only* from
 already-committed measured data — bond-dimension χ=400 at 40q, the determinant-budget band, memory
 footprint, and QPU accuracy thresholds — **before** access, with git history as the tamper-evident
 timestamp. **Outcomes reported as-is, pass or fail:** P1/P2 PASS (40q flagship), P3 FAIL-as-measured
