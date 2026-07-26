@@ -8,7 +8,7 @@ is prepended separately by the team, per GIC rules).
 
 Run: python paper/build_pdf.py
 """
-import os, sys, zipfile, subprocess, html, xml.etree.ElementTree as ET
+import os, sys, re, zipfile, subprocess, html, xml.etree.ElementTree as ET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DOCX = os.path.join(HERE, "EIGENNEXUS_Phase3_Content.docx")
@@ -59,7 +59,7 @@ def para_html(p, imgs):
     # image placeholder substitution (in document order)
     while "\x00IMG\x00" in inner:
         src = imgs.pop(0) if imgs else ""
-        inner = inner.replace("\x00IMG\x00", f'<img src="{src}" style="max-width:62%;display:block;margin:6px auto"/>', 1)
+        inner = inner.replace("\x00IMG\x00", f'<img src="{src}" style="max-width:100%;display:block;margin:4px auto"/>', 1)
     if not inner.strip():
         return ""
     align = f"text-align:{ {'center':'center','right':'right'}.get(jc,'left') }"
@@ -93,12 +93,20 @@ def table_html(tbl):
 
 def main():
     z = zipfile.ZipFile(DOCX)
-    media = sorted([n for n in z.namelist() if n.startswith("word/media/")])
+    docxml = z.read("word/document.xml").decode("utf-8", "ignore")
+    rels = z.read("word/_rels/document.xml.rels").decode("utf-8", "ignore")
+    # map relationship id -> media target (image parts only)
+    relmap = dict(re.findall(r'Id="([^"]+)"[^>]*Target="(media/[^"]+)"', rels))
+    # extract images in the order their embeds appear in the document (not hash-sorted;
+    # and skips the "word/media/" directory entry, which is not a real image)
     imgs = []
-    for m in media:
-        ext = os.path.splitext(m)[1]
+    for rid in re.findall(r'r:embed="([^"]+)"', docxml):
+        tgt = relmap.get(rid)
+        if not tgt:
+            continue
+        ext = os.path.splitext(tgt)[1]
         outp = os.path.join(HERE, "_img" + str(len(imgs)) + ext)
-        open(outp, "wb").write(z.read(m))
+        open(outp, "wb").write(z.read("word/" + tgt))
         imgs.append(os.path.basename(outp))
     root = ET.fromstring(z.read("word/document.xml"))
     body = root.find(f"{W}body")
@@ -108,6 +116,16 @@ def main():
             parts.append(para_html(el, imgs))
         elif el.tag == f"{W}tbl":
             parts.append(table_html(el))
+    # lay consecutive figure blocks side by side (img+caption | img+caption) to save vertical space
+    fig_idx = [i for i, x in enumerate(parts) if "<img" in x]
+    if len(fig_idx) == 2 and fig_idx[1] == fig_idx[0] + 2:
+        a, b = fig_idx
+        col1 = parts[a] + parts[a + 1]
+        col2 = parts[b] + parts[b + 1]
+        row = ('<div style="display:flex;gap:18px;align-items:flex-start;page-break-inside:avoid">'
+               f'<div style="flex:1;min-width:0">{col1}</div>'
+               f'<div style="flex:1;min-width:0">{col2}</div></div>')
+        parts = parts[:a] + [row] + parts[b + 2:]
     css = """
     @page { size: Letter; margin: 0.8in; }
     body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.0; color:#000; }
