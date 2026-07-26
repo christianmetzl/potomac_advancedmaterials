@@ -42,14 +42,14 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 | Sn-oxides (EUV target) | SnO (16q) & SnO₂ (20q) chemical accuracy — **≤1.6 mHa (1 kcal/mol) asserted by reproduce.py** (observed 0.11–0.46 / 0.13–0.23 over 7 logged runs; run-sensitive by a **known mechanism** — unseeded `eigsh` plus a growth loop that stops at the first sub-0.5 mHa iterate, so the value is a stop-point, not a limit; `sno_version_sensitivity.json`) | Sn effective-core-potential CASCI active spaces; construction validated on H₄ to 0.0000 mHa |
 | **CrO ⁵Π / NiO ³Σ⁻ (20q)** | **0.038 / 0.197 mHa** | open-shell multireference oxides vs CASCI (`transition_metal_oxide_qsci.py`) |
 | **Candidate ranking (CrO vs NiO) — tested, NOT robust, withdrawn** | at CAS(10,10) the multireference ranks CrO>NiO, but this **inverts to NiO>CrO at CAS(12,12)/CAS(14,14)** (CrO's gap was unconverged); we therefore **withdraw the two-candidate ranking claim** and rely only on the CAS-robust single-molecule sign above | honesty over headline — the ranking did not survive an active-space robustness check (`candidate_decision_larger_cas.py`) |
-| **CrO dissociation trust (real oxide)** | in-active-space CCSD(T) erratic / non-convergent (to 144–162 mHa vs CASCI across runs; the R=2.6 Å point is non-convergent); QSCI variational ≤2.8 mHa | the strong-correlation trust story on a real Cr–O bond, not toy H₁₀ (`cro_dissociation.py`) |
+| **CrO dissociation trust (real oxide)** | in-active-space CCSD(T) erratic / non-convergent (to ~144 mHa vs CASCI in the committed evidence; three of five geometries non-convergent, and those points scatter on re-runs — the harness max varied 144↔162); QSCI variational ≤2.8 mHa | the strong-correlation trust story on a real Cr–O bond, not toy H₁₀ (`cro_dissociation.py`) |
 | EN-PT2 error certificate | E_var (rigorous upper bound) + E_var+PT2 (estimate, converges to FCI from above); equilibrium extrapolation → FCI +4.1 mHa (R²=0.999) | certifies convergence, CIPSI standard (`encoder/selci_pt2.py`) |
 | Generator learned MP2 hierarchy | Spearman ρ=0.31 (p<0.002), 4/8 top-double overlap | energy-trained generator (blind to MP2) recovers the MP2 amplitude ordering (`encoder/generator_mp2.py`) |
 | **CUDA-Q execution (qpp-cpu)** | H₄ VQE **within 0.02 mHa** of FCI (0.011–0.013 across runs); QSCI within chemical accuracy (sampling-based) | GQE/QSCI pipeline runs through the CUDA-Q SDK on CPU (`cudaq.observe`/`cudaq.sample`); `src/cudaq_qsci.py` |
 | **MPS bond-dim / entanglement (pillar 1)** | χ for chem-acc ≈50/100/400 @20/28/40q; Sₘₐₓ 0.39→4.43 | bond dimension grows slowly with size; area-law near equilibrium → strong correlation; `src/mps_bonddim_study.py` (block2 DMRG) |
 | **Quantum-vs-classical crossover** | 40q: 16 TB statevector → 195 MB MPS (measured χ=400); FCI 3.4×10¹⁰ dets → ~1.1×10⁶ QSCI (0.003%) | the two classical walls removed, synthesized from measured χ + determinant scaling; `src/crossover_study.py` |
 | **Bridged tin-oxo (real EUV motif)** | Sn₂O₂ rhombus (Sn–O–Sn) **0.41 mHa** vs CASCI (16q) | genuine bridged tin-oxo unit, not a diatomic/linear O=Sn=O; `src/tin_oxo_demo.py` |
-| **Blind one-shot holdout (VO)** | pre-registered predictions **held**: QSCI 0.167/0.134 mHa; quartet ground = experimental X⁴Σ⁻ | frozen code (SHA pre-committed), untouched molecule, single run reported as-is; `src/blind_holdout_vo.py` |
+| **Blind one-shot holdout (VO)** | pre-registered predictions **held**: QSCI 0.167/0.133 mHa; quartet ground = experimental X⁴Σ⁻ | frozen code (SHA pre-committed), untouched molecule, single run reported as-is; `src/blind_holdout_vo.py` |
 | **QSCI under real CUDA-Q noise channel** | H₄ holds chemical accuracy to **5% per-gate depolarizing** (density-matrix-cpu) | physical noise channel via the CUDA-Q SDK — hardware-representative QPU stand-in; `src/cudaq_noise.py` |
 
 ### Decision value — not paying for a confidently-wrong classical prediction
@@ -57,7 +57,7 @@ All numbers are reproducible from the scripts in `src/` and recorded in `results
 The value case rests on a **textbook, unarguable** classical failure mode. For strongly-correlated
 metal-oxide chemistry the gold-standard **CCSD(T) collapses non-variationally** — it returns an energy
 *below* the exact answer, confidently, with **no internal error signal**. On a real Cr–O bond stretch its
-error grows to **144–162 mHa and goes non-convergent** (the spread across runs is itself the non-convergence); on the Sn₂O₂ EUV motif under cleavage it grows
+error grows to **~144 mHa and goes non-convergent** (committed evidence; the non-convergent points scatter on re-runs, up to ~162 — that scatter is itself the non-convergence); on the Sn₂O₂ EUV motif under cleavage it grows
 **0.14→5.49 mHa (~40×)**. The variational, self-certifying selected-CI/QSCI selector stays within chemical
 accuracy throughout and carries its own EN-PT2 error certificate — so it **never returns a confidently-wrong
 answer** (it is either certified-converged or it tells you it is not). A screen that trusts CCSD(T) can commit
@@ -229,7 +229,7 @@ between the CPU-verified and GPU runs).
 The same discipline applied to something executable today: **a blind one-shot holdout** (entry H1) —
 `src/blind_holdout_vo.py` was frozen (SHA-256 in the pre-registration) before its first and only
 execution, predicting VO's quartet/doublet ordering with untouched code on a molecule appearing
-nowhere else in this repository. Result: `results/blind_holdout_vo_result.json`, committed unedited — **both predictions held** (QSCI 0.167/0.134 mHa vs CASCI; quartet 1.09 eV below doublet, matching the experimental X⁴Σ⁻ ground term). Re-running the frozen script in other environments lands the doublet anywhere in 0.10–0.17 mHa (PySCF/ROHF numerics); every value is far inside chemical accuracy, so the pre-registered prediction holds regardless, and the committed one-shot numbers above are the ones claimed.
+nowhere else in this repository. Result: `results/blind_holdout_vo_result.json`, committed unedited — **both predictions held** (QSCI 0.167/0.133 mHa vs CASCI; quartet 1.09 eV below doublet, matching the experimental X⁴Σ⁻ ground term). Re-running the frozen script in other environments lands the doublet anywhere in 0.10–0.17 mHa (PySCF/ROHF numerics; 0.134/0.135/0.142 in our own three re-runs); every value is far inside chemical accuracy, so the pre-registered prediction holds regardless, and the committed one-shot numbers above are the ones claimed.
 
 ## Third-party HamLib re-verification
 

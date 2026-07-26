@@ -79,7 +79,7 @@ s.addText("On strongly-correlated bonds, CCSD(T) collapses non-variationally: it
   { x: 0.75, y: 1.9, w: 11.8, h: 0.85, fontFace: BF, color: TEXT, fontSize: 16, lineSpacing: 24, margin: 0 });
 const fails = [
   ["217 mHa", "below the exact energy", "H₁₀ stretched to dissociation — an unphysical, confidently-wrong number.", "strong_correlation.py"],
-  ["144–162 mHa", "and non-convergent", "A real Cr–O bond stretch, identical active space as the exact reference. The spread across runs IS the non-convergence.", "cro_dissociation.py"],
+  ["~144 mHa", "and non-convergent", "A real Cr–O bond stretch, identical active space as the exact reference. Non-convergent points scatter on re-runs (to ~162) — that scatter IS the failure.", "cro_dissociation.py"],
   ["40× error growth", "0.14 → 5.49 mHa", "The real Sn₂O₂ EUV motif under bridge cleavage — QSCI stays ≤0.48 mHa.", "sn2o2_dissociation.py"],
 ];
 let fx = 0.75;

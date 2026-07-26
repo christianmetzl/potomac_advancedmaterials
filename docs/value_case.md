@@ -16,7 +16,7 @@ In EUV-photoresist and transition-metal-oxide chemistry the bonds are **strongly
 There, the gold standard **CCSD(T) does not merely lose precision — it collapses *non-variationally***: it
 returns an energy *below* the exact answer, confidently, **with no internal signal that it is wrong**.
 
-- **Real oxide (CrO bond stretch, CAS(10,10)=20q):** in-active-space CCSD(T) error grows to **144–162 mHa and
+- **Real oxide (CrO bond stretch, CAS(10,10)=20q):** in-active-space CCSD(T) error grows to **~144 mHa (committed; re-runs scatter to ~162) and
   goes non-convergent** as multireference character turns on, while the determinant-subspace method
   (selected-CI / QSCI) stays a **rigorous variational bound within chemical accuracy (≤2.8 mHa) throughout**
   (`cro_dissociation.py`, in the 26/26 reproduce suite).
@@ -36,7 +36,7 @@ have executed this pipeline on the real chemistry up to **40 qubits on GPU/QPU h
 | Factor | Meaning | Grounding |
 |---|---|---|
 | **C** — cost of a false lead | fully-loaded cost of carrying one candidate from computation into **multi-month synthesis + lithographic evaluation** | *illustrative* — plug your own; EUV-resist candidate synthesis + test is widely months and high-cost |
-| **p** — silent-failure rate | fraction of **multireference** candidates where the classical gold standard is confidently wrong with no warning | *measured mechanism here:* CCSD(T) non-variational collapse (to 144–162 mHa on CrO; below FCI on H₁₀); the rate over your library is yours to measure |
+| **p** — silent-failure rate | fraction of **multireference** candidates where the classical gold standard is confidently wrong with no warning | *measured mechanism here:* CCSD(T) non-variational collapse (to ~144 mHa on CrO, committed; below FCI on H₁₀); the rate over your library is yours to measure |
 | **N** — candidates screened / yr | throughput of the classical filter feeding synthesis | your pipeline's number |
 
 ## The arithmetic (plug your own numbers)
