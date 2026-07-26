@@ -37,8 +37,8 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
    (it was omitted from the Phase 2 cover page; access was gated on this). In/under the Team Name cell:
      Classical:  NVIDIA A100/H100 80 GB GPU (qBraid, CUDA-Q host); CPU for classical references
                  (PySCF FCI/CCSD(T), block2 DMRG).
-     Quantum:    AQT ibex-q1 trapped-ion QPU via qBraid (executed, 10-16q); IonQ/IQM per qBraid
-                 catalog (on-record options).
+     Quantum:    AQT ibex-q1 trapped-ion QPU via qBraid (executed, 10-16q); IonQ Forte-1,
+                 IQM Garnet/Emerald per qBraid catalog (on-record options, not executed).
      Simulators: CUDA-Q tensornet-mps (24-40q) and cuStateVec (exact <=32q) on GPU; qpp-cpu,
                  density-matrix-cpu; qBraid qir-sv (cloud).
 
