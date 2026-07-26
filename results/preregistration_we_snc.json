@@ -1,0 +1,27 @@
+{
+  "preregistration": "WE-SNC — industrial worked example: Sn–C homolysis ligand decision (Me vs n-Bu)",
+  "frozen": "2026-07-26, committed BEFORE the study executes; git history is the timestamp",
+  "motivation": "Every panel critique of this submission converged on one gap: 'EUV-relevant chemistry' vs an actual resist decision. Organotin EUV resists are R–Sn oxo/hydroxo systems; the formulation choice of the alkyl ligand R is a real decision, and the decision-relevant quantity is the Sn–C homolysis energy — the EUV activation step (Kharazi et al. 2026, already cited in the write-up). This study runs our full trust-gate workflow on that exact decision.",
+  "protocol": {
+    "candidates": ["CH3-Sn(OH)3 (methyltin trihydroxide, model monomer)", "n-C4H9-Sn(OH)3 (butyltin trihydroxide, model monomer)"],
+    "geometry": "idealized model geometry, rigid ligands: Sn tetrahedral; Sn-O 1.97 A, O-H 0.96 A, Sn-C variable, C-C 1.53 A anti chain, C-H 1.09 A; ONLY the Sn-C bond is stretched (rigid-fragment homolysis coordinate)",
+    "basis": "def2-SVP all atoms, def2-ECP on Sn (identical to the committed Sn2O2/E4 treatment)",
+    "R_grid_ang": [2.15, 2.55, 2.95, 3.35, 3.90, 4.60],
+    "reference": "CASSCF(8,8) singlet per point (AVAS ['Sn 5p','alphaC 2p'] initial guess; orbitals chained R->R+1). The CASSCF CI energy is EXACT in the optimized 8-orbital active space.",
+    "classical_screen": "in-CAS CCSD(T) on the IDENTICAL h1eff/h2eff integrals the CAS reference sees (apples-to-apples; same machinery as the committed CrO and Sn2O2 trust curves)",
+    "trust_gate": "selected-CI/QSCI on the JW-mapped 16-qubit active Hamiltonian; identical engine and caps as src/sn2o2_dissociation.py (<=6000 dets, 45 s, target <0.5 mHa)",
+    "bde_definition": "in-model BDE := E_CASSCF(R=4.60) - E_CASSCF(R=2.15) per ligand; the DECISION MARGIN := |BDE(Me) - BDE(Bu)|",
+    "failure_handling": "any non-converged CASSCF point is reported as DNF; all outcomes reported as measured, pass or fail"
+  },
+  "predictions": {
+    "P-WE1_trust": "selected-CI/QSCI reaches <= 1.6 mHa vs the exact-in-CAS energy at EVERY point on BOTH curves",
+    "P-WE2_failure_mechanism": "in-CAS CCSD(T) develops |error| > 5 mHa vs exact-in-CAS, or fails to converge, at R >= 3.35 A on at least one curve; and somewhere along a curve it lands non-variationally BELOW the exact-in-CAS energy",
+    "P-WE3_chemistry": "in-model BDE(Me) > BDE(Bu) (larger alkyl radical is more stabilized, weakening the bond)",
+    "P-WE4_decision_relevance": "the maximum in-CAS CCSD(T) |error| along either curve EXCEEDS the decision margin |BDE(Me)-BDE(Bu)| — i.e. the silent screen error is larger than the gap the decision rests on"
+  },
+  "disclosures": {
+    "feasibility_probe": "Before freezing this protocol we ran RHF-only feasibility probes (convergence + AVAS dimensioning) at R=2.15 and R=3.90 for both ligands. Those probes revealed Delta-E_RHF(2.15->3.90): Me 0.0897 Ha, Bu 0.0762 Ha. P-WE3 is therefore INFORMED by an RHF-level signal, not blind; we freeze it anyway because the correlated ordering can differ from RHF. P-WE1/2/4 are untouched by the probe. No CASSCF, CCSD(T), selected-CI or full-curve computation of any kind has been run at freeze time.",
+    "honest_scope": "Model monomers, not the industrial oxo-cage cluster; idealized rigid geometries, not optimized; in-model BDEs in a modest basis/CAS, NOT experimental-grade absolute values; no photophysics, no electron cascade, no kinetics. The deliverable is the DECISION WORKFLOW executed end-to-end on the decision-relevant coordinate with a verifiable exact reference — not a resist simulation."
+  },
+  "outputs": ["results/we_snc_homolysis_evidence.json", "results/we_snc_homolysis.png", "docs/worked_example_decision_memo.md"]
+}
