@@ -72,6 +72,33 @@ dollar framework: [`docs/value_case.md`](docs/value_case.md).
 > claims were removed. The value case above depends on **neither** — only on the CCSD(T) non-variational
 > collapse, which is independent of functional, SCF guess, and active space.
 
+### Worked industrial example — the organotin resist ligand decision
+
+![The alkyl-ligand decision run through the trust gate](results/we_snc_homolysis.png)
+
+The one gap every hostile reviewer flags is *"EUV-relevant chemistry" vs an actual resist decision.* So we
+ran the real decision through the full workflow: **methyl vs n-butyl** as the alkyl ligand on tin, along the
+**Sn–C homolysis coordinate** — the EUV activation step (Kharazi et al. 2026, the challenge-provider paper we
+cite). Per point: CASSCF(8,8) = exact-in-CAS reference (16q), in-CAS CCSD(T) = the classical screen, QSCI =
+the trust gate. **Frozen before execution** (`results/preregistration_we_snc.json`); outcome reported as
+measured — **2 of 5 predictions held**:
+
+- ✅ **The gate self-certified on real organotin**: QSCI stayed **≤0.43 mHa** vs the exact CASSCF energy at
+  every geometry, *through genuine Sn–C homolysis* (natural-orbital occupations confirm a true σ/σ* diradical
+  pair at stretch — `we_snc_diagnostic.json`).
+- ✅ **The silent-failure mechanism is real here too**: in-CAS CCSD(T) goes **non-variational (−4.4 mHa below
+  exact)** on the methyl curve — the same collapse we showed on H₁₀/CrO, now on a resist-relevant molecule.
+- ❌ **Honestly, the gate did *not* flip this decision**: the screen's error (≤4.4 mHa) is far below the
+  ligand gap (~47 mHa), so CCSD(T) would have ranked these two correctly. The gate **confirmed and certified**
+  the classical answer rather than overturning it — and a pre-registered chemistry prediction (Me BDE larger)
+  was **refuted** (measured Bu > Me). We publish both.
+
+*Honest scope:* model monomers, idealized geometries, in-model BDEs — a demonstration of the decision
+**workflow** on the decision-relevant coordinate with a verifiable exact reference, **not** a resist
+simulation or a claim to have changed a real formulation call. Full memo:
+[`docs/worked_example_decision_memo.md`](docs/worked_example_decision_memo.md). Reproduce:
+`python src/we_snc_homolysis.py` (~30 min CPU; separate from the fast 26/26 suite).
+
 ### Pinning the 40-qubit exact energy — twice, independently
 
 ![Two independent routes to FCI(40q)](results/crossvalidation_40q.png)

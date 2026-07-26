@@ -1,0 +1,43 @@
+{
+ "diagnostic": "CASSCF(8,8) active-space natural-orbital occupations at R(Sn-C)=4.60 A",
+ "question": "is each curve a genuine homolysis at stretch (a sigma/sigma* pair ~1/1, diradical) or did the active space rotate away from the breaking Sn-C bond?",
+ "points": {
+  "me": {
+   "casscf_converged": true,
+   "noons": [
+    1.982,
+    1.98,
+    1.972,
+    1.137,
+    0.864,
+    0.03,
+    0.02,
+    0.015
+   ],
+   "frontier_occupations_0.2-1.8": [
+    1.137,
+    0.864
+   ],
+   "diradical_pair_present": true
+  },
+  "bu": {
+   "casscf_converged": true,
+   "noons": [
+    1.981,
+    1.978,
+    1.975,
+    1.073,
+    0.93,
+    0.025,
+    0.02,
+    0.018
+   ],
+   "frontier_occupations_0.2-1.8": [
+    1.073,
+    0.93
+   ],
+   "diradical_pair_present": true
+  }
+ },
+ "verdict": "Me diradical pair present: True; Bu diradical pair present: True. Both solutions show the same qualitative character; the BDE comparison stands as-frozen."
+}

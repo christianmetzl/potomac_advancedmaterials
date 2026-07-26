@@ -105,7 +105,8 @@ def main():
     # code + evidence + key docs
     copytree(os.path.join(REPO, "src"), STAGE)
     copytree(os.path.join(REPO, "results"), STAGE)
-    for d in ("claims_ledger.md", "reproduce_transcript.txt", "reproduce_replay.html"):
+    for d in ("claims_ledger.md", "reproduce_transcript.txt", "reproduce_replay.html",
+              "worked_example_decision_memo.md"):
         s = os.path.join(REPO, "docs", d)
         if os.path.exists(s):
             os.makedirs(os.path.join(STAGE, "docs"), exist_ok=True)

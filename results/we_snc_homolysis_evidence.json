@@ -1,0 +1,189 @@
+{
+ "run": "we_snc_homolysis",
+ "prereg": "results/preregistration_we_snc.json (frozen and committed BEFORE execution)",
+ "decision": "organotin EUV resist ligand choice, R = methyl vs n-butyl; coordinate = Sn-C homolysis",
+ "method": "CASSCF(8,8) singlet = 16 qubits; in-CAS CCSD(T) on identical integrals; selected-CI/QSCI trust gate (same engine as sn2o2_dissociation.py)",
+ "curves": {
+  "me": {
+   "molecule": "CH3-Sn(OH)3",
+   "points": [
+    {
+     "R_SnC_ang": 2.15,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -479.10268980199277,
+     "dominant_det_weight": 0.9475,
+     "E_ccsdt_incas_Ha": -479.1023013605605,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": 0.388,
+     "selci_err_mHa": 0.417,
+     "selci_dets": 801,
+     "wall_s": 47.9
+    },
+    {
+     "R_SnC_ang": 2.55,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -479.1177016402844,
+     "dominant_det_weight": 0.8532,
+     "E_ccsdt_incas_Ha": -479.11711769123605,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": 0.584,
+     "selci_err_mHa": 0.165,
+     "selci_dets": 1201,
+     "wall_s": 21.3
+    },
+    {
+     "R_SnC_ang": 2.95,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -479.10610387147403,
+     "dominant_det_weight": 0.7117,
+     "E_ccsdt_incas_Ha": -479.1055317473521,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": 0.572,
+     "selci_err_mHa": 0.231,
+     "selci_dets": 1201,
+     "wall_s": 22.1
+    },
+    {
+     "R_SnC_ang": 3.35,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -479.0932448149008,
+     "dominant_det_weight": 0.5902,
+     "E_ccsdt_incas_Ha": -479.09329731384497,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": -0.052,
+     "selci_err_mHa": 0.308,
+     "selci_dets": 1201,
+     "wall_s": 23.2
+    },
+    {
+     "R_SnC_ang": 3.9,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -479.08311107775023,
+     "dominant_det_weight": 0.4665,
+     "E_ccsdt_incas_Ha": -479.08519226533605,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": -2.081,
+     "selci_err_mHa": 0.367,
+     "selci_dets": 1201,
+     "wall_s": 22.2
+    },
+    {
+     "R_SnC_ang": 4.6,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -479.0790225583038,
+     "dominant_det_weight": 0.3801,
+     "E_ccsdt_incas_Ha": -479.08344974767255,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": -4.427,
+     "selci_err_mHa": 0.431,
+     "selci_dets": 1201,
+     "wall_s": 22.6
+    }
+   ]
+  },
+  "bu": {
+   "molecule": "n-C4H9-Sn(OH)3",
+   "points": [
+    {
+     "R_SnC_ang": 2.15,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -594.4257865524971,
+     "dominant_det_weight": 0.9609,
+     "E_ccsdt_incas_Ha": -594.4256558151917,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": 0.131,
+     "selci_err_mHa": 0.082,
+     "selci_dets": 801,
+     "wall_s": 573.2
+    },
+    {
+     "R_SnC_ang": 2.55,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -594.4038894054349,
+     "dominant_det_weight": 0.9393,
+     "E_ccsdt_incas_Ha": -594.403737705328,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": 0.152,
+     "selci_err_mHa": 0.157,
+     "selci_dets": 801,
+     "wall_s": 176.7
+    },
+    {
+     "R_SnC_ang": 2.95,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -594.3843887869118,
+     "dominant_det_weight": 0.8774,
+     "E_ccsdt_incas_Ha": -594.3842544019401,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": 0.134,
+     "selci_err_mHa": 0.231,
+     "selci_dets": 801,
+     "wall_s": 285.6
+    },
+    {
+     "R_SnC_ang": 3.35,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -594.3719570279228,
+     "dominant_det_weight": 0.8238,
+     "E_ccsdt_incas_Ha": -594.3718290573777,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": 0.128,
+     "selci_err_mHa": 0.311,
+     "selci_dets": 801,
+     "wall_s": 102.4
+    },
+    {
+     "R_SnC_ang": 3.9,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -594.3567837722537,
+     "dominant_det_weight": 0.7849,
+     "E_ccsdt_incas_Ha": -594.3566536006913,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": 0.13,
+     "selci_err_mHa": 0.371,
+     "selci_dets": 801,
+     "wall_s": 81.6
+    },
+    {
+     "R_SnC_ang": 4.6,
+     "rhf_converged": true,
+     "casscf_converged": true,
+     "E_casscf_Ha": -594.3401584974732,
+     "dominant_det_weight": 0.7643,
+     "E_ccsdt_incas_Ha": -594.3400217784825,
+     "ccsdt_converged": true,
+     "ccsdt_err_mHa": 0.137,
+     "selci_err_mHa": 0.386,
+     "selci_dets": 801,
+     "wall_s": 85.5
+    }
+   ]
+  }
+ },
+ "bde_in_model_mHa": {
+  "me": 23.667,
+  "bu": 85.628
+ },
+ "decision_margin_mHa": 61.961,
+ "max_ccsdt_abs_err_mHa": 4.427,
+ "predictions_as_measured": {
+  "P-WE1_trust_selci_chemacc_everywhere": true,
+  "P-WE2a_ccsdt_breaks_at_stretch": false,
+  "P-WE2b_ccsdt_nonvariational_somewhere": true,
+  "P-WE3_BDE_Me_gt_Bu": false,
+  "P-WE4_screen_error_exceeds_decision_margin": false
+ },
+ "dnf_points": [],
+ "honest_scope": "Model monomers (not the industrial oxo-cage cluster); idealized rigid geometries; in-model BDEs in def2-SVP/CAS(8,8) \u2014 NOT experimental-grade absolute values; no photophysics or kinetics. The deliverable is the decision WORKFLOW executed end-to-end on the decision-relevant coordinate, with an exact-in-CAS reference a judge can re-verify on CPU."
+}
