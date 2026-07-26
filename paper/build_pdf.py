@@ -2,7 +2,7 @@
 
 LibreOffice cannot load the docx-js output in this environment, but Chromium is available. This parses
 word/document.xml from EIGENNEXUS_Phase3_Content.docx (paragraphs, runs with bold/italic/color, tables,
-embedded figures) into styled HTML (11pt Times New Roman, single-spaced, 1in margins), then prints it to
+embedded figures) into styled HTML (11pt Times New Roman, single-spaced, narrow 0.5in side margins), then prints it to
 PDF headless via Chromium. Output: EIGENNEXUS_Phase3_Writeup.pdf (the write-up; the official cover page
 is prepended separately by the team, per GIC rules).
 
@@ -127,7 +127,7 @@ def main():
                f'<div style="flex:1;min-width:0">{col2}</div></div>')
         parts = parts[:a] + [row] + parts[b + 2:]
     css = """
-    @page { size: Letter; margin: 0.8in; }
+    @page { size: Letter; margin: 0.75in 0.5in; }
     body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; line-height: 1.0; color:#000; }
     h1 { font-size: 13pt; margin: 0 0 2px 0; }
     h3 { font-size: 11pt; margin: 4px 0 2px 0; }

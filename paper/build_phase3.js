@@ -146,6 +146,6 @@ children.push(new Paragraph({spacing:{before:160,after:40,line:240,lineRule:"aut
 
 const doc=new Document({
   styles:{default:{document:{run:{font:FONT,size:SZ}}}},
-  sections:[{properties:{page:{size:{width:12240,height:15840},margin:{top:1224,right:1224,bottom:1224,left:1224}}},children}]
+  sections:[{properties:{page:{size:{width:12240,height:15840},margin:{top:1080,right:720,bottom:1080,left:720}}},children}]
 });
 Packer.toBuffer(doc).then(b=>{fs.writeFileSync("EIGENNEXUS_Phase3_Content.docx",b);console.log("Created EIGENNEXUS_Phase3_Content.docx:",b.length,"bytes");});
