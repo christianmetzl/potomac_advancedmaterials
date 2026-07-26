@@ -10,7 +10,7 @@ strategy must address it. See "Resolution & required action" at the bottom.
 
 Two different versions of the Phase 2 §2 "materials" sentence exist:
 
-- **Repo version** (`paper/EIGENNEXUS_Phase2_Submission.docx`): ends at
+- **Repo version** (the Phase 2 submission — *removed from the repo for privacy; it carried team emails*): ended at
   *"SnO 0.11 mHa (16q), SnO₂ 0.23 mHa (20q) — real target chemistry, not only hydrogen."*
   **No CrO/NiO.** Fully reproducible (`src/sno_demo.py`, `src/sno2_demo.py`).
 
