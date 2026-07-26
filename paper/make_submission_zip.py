@@ -33,9 +33,10 @@ NOTES = """# EIGENNEXUS — GIC 2026 Phase 3 submission (Advanced Materials, Mit
 1. **Prepend the official GIC_2026 cover page** (the provided .docx template, unmodified) as page 1 of the
    final write-up PDF. The cover page is required and is excluded from the 5-page limit. Do NOT recreate or
    modify the template. Final write-up PDF = [cover page] + EIGENNEXUS_Phase3_Writeup.pdf.
-2. **Record the device selection on the Phase 3 cover page** = qBraid GPU (CUDA-Q) + IonQ/IBM QPU. It was
-   omitted from the Phase 2 cover page; access is gated on this, and it has been raised with the organizers.
-   It MUST appear on the Phase 3 cover page.
+2. **Record the device selection on the Phase 3 cover page**, exactly as put on record with the organizers
+   (it was omitted from the Phase 2 cover page; access was gated on this): qBraid GPU compute — NVIDIA
+   CUDA-Q on A100/H100 80 GB (primary); QPU validation via qBraid — AQT ibex-q1 trapped-ion (executed),
+   IonQ/IQM per the qBraid catalog. One line in/under the Team Name cell is sufficient.
 
 ## Reproducing (judges)
 `pip install -r requirements.txt` then `python src/reproduce.py` -> 26/26 PASS (17 re-execution + 9 evidence audits) with full deps;
