@@ -7,9 +7,9 @@ Team **EIGENNEXUS** — Global Industry Challenge (GIC) 2026, *Advanced Material
 
 > **License:** proprietary — see [`LICENSE`](LICENSE). Judges and organizers may freely view, clone, and run this repository to verify the GIC 2026 results (non-commercial evaluation). All other use — commercial or production use, incorporation into products, model training, redistribution, or derivatives — requires the authors' written permission. Public visibility does not grant free-use rights.
 
-[![Launch on qBraid](https://qbraid-static.s3.amazonaws.com/logos/Launch_on_qBraid_white.png)](https://account.qbraid.com?gitHubUrl=https://github.com/christianmetzl/potomac_advancedmaterials.git)
+[![Launch on qBraid](https://qbraid-static.s3.amazonaws.com/logos/Launch_on_qBraid_white.png)](https://account.qbraid.com?gitHubUrl=https://github.com/christianmetzl/potomac_advancedmaterials.git&redirectUrl=/START_HERE.ipynb)
 
-> **Phase 3 reviewers:** click **Launch on qBraid**, then follow [Running on qBraid](#running-on-qbraid-phase-3) to reproduce every headline result without modification.
+> **Phase 3 reviewers:** click **Launch on qBraid**. Once your instance is up it opens **`START_HERE.ipynb`** automatically — choose **Run → Run All Cells** to reproduce the headline results (a ~2-minute fast check, then the full 26/26 suite). Details: [Running on qBraid](#running-on-qbraid-phase-3).
 
 ---
 
@@ -377,12 +377,14 @@ qubits (`results/classical_baselines_evidence.json`).
 The headline scaling runs (40q flagship, 38q transition-metal + Sn₂O₂ oxide audits, QPU validation) were
 **executed** on qBraid with CUDA-Q + GPU credits and are re-runnable there. Step-by-step:
 
-1. **Launch:** click the **Launch on qBraid** badge above to clone this repo into your qBraid account.
-2. **Environment:** select a GPU instance; `pip install -r requirements.txt` then `pip install -r
-   requirements-gpu.txt` (the GPU-only `cudaq`, `quimb`, `block2`). On a CPU-only box install only
-   `requirements.txt` — the GPU extras will not install without CUDA.
-3. **Reproduce CPU results first:** run the commands in [Reproduce](#reproduce-cpu--verified) to confirm
-   the verified numbers in the qBraid environment.
+1. **Launch:** click the **Launch on qBraid** badge above. It clones this repo into your qBraid account and,
+   once the instance is up, **opens `START_HERE.ipynb` automatically** (via the `redirectUrl` parameter).
+2. **Run the notebook:** in `START_HERE.ipynb`, choose **Run → Run All Cells**. It installs the CPU
+   dependencies, runs a ~2-minute fast verification of four representative results, then offers the full
+   26/26 suite (`python src/reproduce.py`). This is the one-click path — no manual setup required.
+3. **For the at-scale runs:** select a **GPU instance**, then `pip install -r requirements.txt` and
+   `pip install -r requirements-gpu.txt` (the GPU-only `cudaq`, `quimb`, `block2`). On a CPU-only box install
+   only `requirements.txt` — the GPU extras will not install without CUDA.
 4. **GPU/QPU scaling runs (executed; re-runnable):** 40q GQE/QSCI on H₂₀; 38q CrO + Sn₂O₂ audits;
    quantum-vs-classical wall-clock; trapped-ion QPU validation (AQT via OpenQuantum, decoded). Each
    prints qubit count, circuit depth, shot budget, bond dimension, and wall-clock, and writes a

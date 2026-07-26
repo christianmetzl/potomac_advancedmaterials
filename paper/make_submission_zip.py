@@ -100,7 +100,7 @@ def main():
     shutil.copy2(os.path.join(REPO, "paper", "EIGENNEXUS_Phase3_Writeup.pdf"),
                  os.path.join(STAGE, "EIGENNEXUS_Phase3_Writeup.pdf"))
     # top-level files
-    for f in ("README.md", "LICENSE", "requirements.txt", "requirements-gpu.txt"):
+    for f in ("README.md", "LICENSE", "START_HERE.ipynb", "requirements.txt", "requirements-gpu.txt"):
         shutil.copy2(os.path.join(REPO, f), os.path.join(STAGE, f))
     # code + evidence + key docs
     copytree(os.path.join(REPO, "src"), STAGE)
